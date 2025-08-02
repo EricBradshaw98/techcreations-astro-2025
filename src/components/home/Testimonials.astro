@@ -1,0 +1,1448 @@
+---
+// Testimonials.astro - Client testimonials and social proof section
+import theme from '../../lib/therme';
+
+export interface Props {
+  // Content props
+  eyebrow?: string;
+  headline?: string;
+  description?: string;
+  
+  // Layout props
+  variant?: 'carousel' | 'grid' | 'featured';
+  showRatings?: boolean;
+  showLogos?: boolean;
+  autoplay?: boolean;
+  
+  // Testimonials data
+  testimonials?: Array<{
+    id: string;
+    content: string;
+    author: {
+      name: string;
+      title: string;
+      company: string;
+      avatar?: string;
+      linkedIn?: string;
+    };
+    rating?: number;
+    project?: string;
+    results?: string;
+    featured?: boolean;
+    verified?: boolean;
+  }>;
+  
+  // Trust indicators
+  overallRating?: {
+    score: number;
+    totalReviews: number;
+    platform?: string;
+  };
+  
+  // Client logos for social proof
+  clientLogos?: Array<{
+    src: string;
+    alt: string;
+    width?: number;
+    height?: number;
+  }>;
+}
+
+const {
+  eyebrow = "Client Testimonials",
+  headline = "Trusted by Industry Leaders",
+  description = "Don't just take our word for it. Hear what our clients have to say about their experience working with us and the results we've delivered.",
+  variant = "carousel",
+  showRatings = true,
+  showLogos = true,
+  autoplay = true,
+  overallRating = {
+    score: 4.9,
+    totalReviews: 127,
+    platform: "Google Reviews"
+  },
+  testimonials = [
+    {
+      id: "sarah-chen",
+      content: "Working with this team was a game-changer for our business. They didn't just build us a website – they crafted a digital experience that perfectly captures our brand and converts visitors into customers. The attention to detail and strategic thinking exceeded all our expectations.",
+      author: {
+        name: "Sarah Chen",
+        title: "CEO & Founder",
+        company: "TechGear Pro",
+        avatar: "/testimonials/sarah-chen.jpg",
+        linkedIn: "https://linkedin.com/in/sarahchen"
+      },
+      rating: 5,
+      project: "E-commerce Platform Redesign",
+      results: "300% increase in online sales",
+      featured: true,
+      verified: true
+    },
+    {
+      id: "michael-rodriguez",
+      content: "The team's expertise in SaaS development is outstanding. They built our platform from the ground up with scalability in mind. Six months post-launch, we're handling 10x the traffic we anticipated, and everything runs smoothly. Their ongoing support has been invaluable.",
+      author: {
+        name: "Michael Rodriguez",
+        title: "CTO",
+        company: "CloudFlow",
+        avatar: "/testimonials/michael-rodriguez.jpg",
+        linkedIn: "https://linkedin.com/in/michaelrodriguez"
+      },
+      rating: 5,
+      project: "SaaS Platform Development",
+      results: "10K+ active users in 6 months",
+      featured: false,
+      verified: true
+    },
+    {
+      id: "dr-emily-watson",
+      content: "Security and compliance were our biggest concerns for our healthcare app. The team not only delivered a HIPAA-compliant solution but made the complex simple for our users. Patient engagement has increased dramatically, and we've had zero security incidents.",
+      author: {
+        name: "Dr. Emily Watson",
+        title: "Chief Medical Officer",
+        company: "MedConnect",
+        avatar: "/testimonials/emily-watson.jpg",
+        linkedIn: "https://linkedin.com/in/emilywatson"
+      },
+      rating: 5,
+      project: "Healthcare Mobile App",
+      results: "25K+ app downloads, 95% user satisfaction",
+      featured: false,
+      verified: true
+    },
+    {
+      id: "james-kim",
+      content: "Their fintech expertise is unmatched. Building a secure, scalable investment platform seemed impossible until we partnered with them. The AI-powered insights feature they developed has become our key differentiator in the market.",
+      author: {
+        name: "James Kim",
+        title: "Founder & CEO",
+        company: "InvestSmart",
+        avatar: "/testimonials/james-kim.jpg",
+        linkedIn: "https://linkedin.com/in/jameskim"
+      },
+      rating: 5,
+      project: "Fintech Platform",
+      results: "$2.5B+ in managed assets",
+      featured: true,
+      verified: true
+    },
+    {
+      id: "lisa-thompson",
+      content: "What impressed me most was their strategic approach. They didn't just execute our requirements – they challenged our assumptions and proposed better solutions. The result? A digital transformation that positioned us ahead of competitors.",
+      author: {
+        name: "Lisa Thompson",
+        title: "VP of Marketing",
+        company: "RetailMax",
+        avatar: "/testimonials/lisa-thompson.jpg",
+        linkedIn: "https://linkedin.com/in/lisathompson"
+      },
+      rating: 5,
+      project: "Digital Transformation",
+      results: "40% increase in customer engagement",
+      featured: false,
+      verified: true
+    },
+    {
+      id: "david-park",
+      content: "The level of communication and transparency throughout the project was exceptional. Weekly updates, clear timelines, and proactive problem-solving made this the smoothest development project we've ever managed. Highly recommend!",
+      author: {
+        name: "David Park",
+        title: "Head of Product",
+        company: "StartupCo",
+        avatar: "/testimonials/david-park.jpg",
+        linkedIn: "https://linkedin.com/in/davidpark"
+      },
+      rating: 5,
+      project: "MVP Development",
+      results: "Successful Series A funding raised",
+      featured: false,
+      verified: true
+    }
+  ],
+  clientLogos = [
+    { src: "/logos/techgear.svg", alt: "TechGear Pro", width: 140, height: 40 },
+    { src: "/logos/cloudflow.svg", alt: "CloudFlow", width: 140, height: 40 },
+    { src: "/logos/medconnect.svg", alt: "MedConnect", width: 140, height: 40 },
+    { src: "/logos/investsmart.svg", alt: "InvestSmart", width: 140, height: 40 },
+    { src: "/logos/retailmax.svg", alt: "RetailMax", width: 140, height: 40 },
+    { src: "/logos/startupco.svg", alt: "StartupCo", width: 140, height: 40 }
+  ]
+} = Astro.props;
+
+// Sort testimonials to show featured ones first
+const sortedTestimonials = testimonials.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+const featuredTestimonial = sortedTestimonials.find(t => t.featured);
+const regularTestimonials = sortedTestimonials.filter(t => !t.featured);
+---
+
+<section class="testimonials" aria-labelledby="testimonials-headline">
+  <div class="testimonials-container">
+    
+    <!-- Section Header -->
+    <div class="section-header" data-animate="fade-up">
+      <span class="section-eyebrow">{eyebrow}</span>
+      <h2 id="testimonials-headline" class="section-headline">
+        {headline}
+      </h2>
+      <p class="section-description">
+        {description}
+      </p>
+      
+      <!-- Overall Rating -->
+      {showRatings && overallRating && (
+        <div class="overall-rating">
+          <div class="rating-display">
+            <div class="stars">
+              {Array.from({ length: 5 }, (_, i) => (
+                <svg 
+                  class={`star ${i < Math.floor(overallRating.score) ? 'filled' : ''}`}
+                  width="24" 
+                  height="24" 
+                  viewBox="0 0 24 24" 
+                  fill="none"
+                  key={i}
+                >
+                  <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z" fill="currentColor"/>
+                </svg>
+              ))}
+            </div>
+            <div class="rating-text">
+              <span class="score">{overallRating.score}</span>
+              <span class="reviews">({overallRating.totalReviews} {overallRating.platform})</span>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+
+    <!-- Featured Testimonial -->
+    {variant === 'featured' && featuredTestimonial && (
+      <div class="featured-testimonial" data-animate="fade-up" data-delay="200">
+        <div class="featured-content">
+          <div class="featured-text">
+            <div class="quote-icon">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                <path d="M12 21C12 17.686 14.686 15 18 15C21.314 15 24 17.686 24 21C24 24.314 21.314 27 18 27H15V33H12V21ZM36 21C36 17.686 38.686 15 42 15C45.314 15 48 17.686 48 21C48 24.314 45.314 27 42 27H39V33H36V21Z" fill="currentColor"/>
+              </svg>
+            </div>
+            
+            <blockquote class="featured-quote">
+              "{featuredTestimonial.content}"
+            </blockquote>
+            
+            <div class="testimonial-meta">
+              <div class="project-info">
+                <div class="project-label">Project:</div>
+                <div class="project-name">{featuredTestimonial.project}</div>
+              </div>
+              <div class="results-info">
+                <div class="results-label">Results:</div>
+                <div class="results-text">{featuredTestimonial.results}</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="featured-author">
+            <div class="author-avatar">
+              <img 
+                src={featuredTestimonial.author.avatar}
+                alt={featuredTestimonial.author.name}
+                width="80"
+                height="80"
+                loading="lazy"
+              />
+              {featuredTestimonial.verified && (
+                <div class="verified-badge">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M6.25 10L8.75 12.5L13.75 7.5M17.5 10C17.5 14.1421 14.1421 17.5 10 17.5C5.85786 17.5 2.5 14.1421 2.5 10C2.5 5.85786 5.85786 2.5 10 2.5C14.1421 2.5 17.5 5.85786 17.5 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+              )}
+            </div>
+            
+            <div class="author-info">
+              <div class="author-name">{featuredTestimonial.author.name}</div>
+              <div class="author-title">{featuredTestimonial.author.title}</div>
+              <div class="author-company">{featuredTestimonial.author.company}</div>
+              
+              {showRatings && featuredTestimonial.rating && (
+                <div class="testimonial-rating">
+                  {Array.from({ length: 5 }, (_, i) => (
+                    <svg 
+                      class={`star ${i < featuredTestimonial.rating ? 'filled' : ''}`}
+                      width="16" 
+                      height="16" 
+                      viewBox="0 0 16 16" 
+                      fill="none"
+                      key={i}
+                    >
+                      <path d="M8 1L10.06 5.51L15 6L11.5 9.34L12.18 14L8 11.85L3.82 14L4.5 9.34L1 6L5.94 5.51L8 1Z" fill="currentColor"/>
+                    </svg>
+                  ))}
+                </div>
+              )}
+              
+              {featuredTestimonial.author.linkedIn && (
+                <a 
+                  href={featuredTestimonial.author.linkedIn}
+                  class="linkedin-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`View ${featuredTestimonial.author.name}'s LinkedIn profile`}
+                >
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M16.25 2.5H3.75C3.06 2.5 2.5 3.06 2.5 3.75V16.25C2.5 16.94 3.06 17.5 3.75 17.5H16.25C16.94 17.5 17.5 16.94 17.5 16.25V3.75C17.5 3.06 16.94 2.5 16.25 2.5ZM7.5 15H5V8.75H7.5V15ZM6.25 7.5C5.56 7.5 5 6.94 5 6.25S5.56 5 6.25 5S7.5 5.56 7.5 6.25S6.94 7.5 6.25 7.5ZM15 15H12.5V12C12.5 11.17 12.33 10.5 11.5 10.5C10.67 10.5 10.5 11.17 10.5 12V15H8V8.75H10.5V9.75C10.83 9.17 11.67 8.75 12.5 8.75C14.17 8.75 15 9.83 15 11.67V15Z" fill="currentColor"/>
+                  </svg>
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+
+    <!-- Testimonials Carousel/Grid -->
+    <div 
+      class={`testimonials-display variant-${variant}`}
+      data-animate="fade-up"
+      data-delay="400"
+    >
+      {variant === 'carousel' && (
+        <div class="carousel-container">
+          <div class="carousel-track" data-carousel-track>
+            {sortedTestimonials.map((testimonial, index) => (
+              <div 
+                class={`testimonial-slide ${index === 0 ? 'active' : ''}`}
+                data-slide={index}
+                key={testimonial.id}
+              >
+                <div class="testimonial-card">
+                  <div class="card-content">
+                    <div class="quote-icon">
+                      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                        <path d="M8 14C8 11.79 9.79 10 12 10C14.21 10 16 11.79 16 14C16 16.21 14.21 18 12 18H10V22H8V14ZM24 14C24 11.79 25.79 10 28 10C30.21 10 32 11.79 32 14C32 16.21 30.21 18 28 18H26V22H24V14Z" fill="currentColor"/>
+                      </svg>
+                    </div>
+                    
+                    <blockquote class="testimonial-quote">
+                      "{testimonial.content}"
+                    </blockquote>
+                    
+                    <div class="testimonial-footer">
+                      <div class="author-section">
+                        <div class="author-avatar">
+                          <img 
+                            src={testimonial.author.avatar}
+                            alt={testimonial.author.name}
+                            width="48"
+                            height="48"
+                            loading="lazy"
+                          />
+                          {testimonial.verified && (
+                            <div class="verified-badge small">
+                              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M5 8L7 10L11 6M14 8C14 11.31 11.31 14 8 14C4.69 14 2 11.31 2 8C2 4.69 4.69 2 8 2C11.31 2 14 4.69 14 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                              </svg>
+                            </div>
+                          )}
+                        </div>
+                        
+                        <div class="author-details">
+                          <div class="author-name">{testimonial.author.name}</div>
+                          <div class="author-title">{testimonial.author.title}</div>
+                          <div class="author-company">{testimonial.author.company}</div>
+                        </div>
+                      </div>
+                      
+                      {showRatings && testimonial.rating && (
+                        <div class="testimonial-rating">
+                          {Array.from({ length: 5 }, (_, i) => (
+                            <svg 
+                              class={`star ${i < testimonial.rating ? 'filled' : ''}`}
+                              width="14" 
+                              height="14" 
+                              viewBox="0 0 14 14" 
+                              fill="none"
+                              key={i}
+                            >
+                              <path d="M7 1L8.53 4.76L12.5 5L9.75 7.67L10.47 11.5L7 9.77L3.53 11.5L4.25 7.67L1.5 5L5.47 4.76L7 1Z" fill="currentColor"/>
+                            </svg>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    
+                    {testimonial.results && (
+                      <div class="testimonial-results">
+                        <span class="results-label">Results: </span>
+                        <span class="results-text">{testimonial.results}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <!-- Carousel Controls -->
+          <div class="carousel-controls">
+            <button 
+              class="carousel-btn prev" 
+              data-carousel-prev
+              aria-label="Previous testimonial"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            
+            <div class="carousel-indicators" data-carousel-indicators>
+              {sortedTestimonials.map((_, index) => (
+                <button 
+                  class={`indicator ${index === 0 ? 'active' : ''}`}
+                  data-slide-to={index}
+                  aria-label={`Go to testimonial ${index + 1}`}
+                  key={index}
+                ></button>
+              ))}
+            </div>
+            
+            <button 
+              class="carousel-btn next" 
+              data-carousel-next
+              aria-label="Next testimonial"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {variant === 'grid' && (
+        <div class="testimonials-grid">
+          {sortedTestimonials.map((testimonial, index) => (
+            <div 
+              class="testimonial-card"
+              data-animate="fade-up"
+              data-delay={300 + (index * 100)}
+              key={testimonial.id}
+            >
+              <div class="card-content">
+                <div class="quote-icon">
+                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <path d="M8 14C8 11.79 9.79 10 12 10C14.21 10 16 11.79 16 14C16 16.21 14.21 18 12 18H10V22H8V14ZM24 14C24 11.79 25.79 10 28 10C30.21 10 32 11.79 32 14C32 16.21 30.21 18 28 18H26V22H24V14Z" fill="currentColor"/>
+                  </svg>
+                </div>
+                
+                <blockquote class="testimonial-quote">
+                  "{testimonial.content}"
+                </blockquote>
+                
+                <div class="testimonial-footer">
+                  <div class="author-section">
+                    <div class="author-avatar">
+                      <img 
+                        src={testimonial.author.avatar}
+                        alt={testimonial.author.name}
+                        width="48"
+                        height="48"
+                        loading="lazy"
+                      />
+                      {testimonial.verified && (
+                        <div class="verified-badge small">
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M5 8L7 10L11 6M14 8C14 11.31 11.31 14 8 14C4.69 14 2 11.31 2 8C2 4.69 4.69 2 8 2C11.31 2 14 4.69 14 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div class="author-details">
+                      <div class="author-name">{testimonial.author.name}</div>
+                      <div class="author-title">{testimonial.author.title}</div>
+                      <div class="author-company">{testimonial.author.company}</div>
+                    </div>
+                  </div>
+                  
+                  {showRatings && testimonial.rating && (
+                    <div class="testimonial-rating">
+                      {Array.from({ length: 5 }, (_, i) => (
+                        <svg 
+                          class={`star ${i < testimonial.rating ? 'filled' : ''}`}
+                          width="14" 
+                          height="14" 
+                          viewBox="0 0 14 14" 
+                          fill="none"
+                          key={i}
+                        >
+                          <path d="M7 1L8.53 4.76L12.5 5L9.75 7.67L10.47 11.5L7 9.77L3.53 11.5L4.25 7.67L1.5 5L5.47 4.76L7 1Z" fill="currentColor"/>
+                        </svg>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                
+                {testimonial.results && (
+                  <div class="testimonial-results">
+                    <span class="results-label">Results: </span>
+                    <span class="results-text">{testimonial.results}</span>
+                  </div>
+                )}
+              </div>
+              
+              {testimonial.featured && (
+                <div class="featured-badge">Featured</div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+
+    <!-- Client Logos -->
+    {showLogos && clientLogos.length > 0 && (
+      <div class="client-logos" data-animate="fade-up" data-delay="600">
+        <h3 class="logos-title">Trusted by Leading Companies</h3>
+        <div class="logos-grid">
+          {clientLogos.map((logo, index) => (
+            <div class="logo-item" key={index}>
+              <img 
+                src={logo.src}
+                alt={logo.alt}
+                width={logo.width || 140}
+                height={logo.height || 40}
+                loading="lazy"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+
+  <!-- Background Decoration -->
+  <div class="background-decoration" aria-hidden="true">
+    <div class="decoration-circles">
+      <div class="circle circle-1"></div>
+      <div class="circle circle-2"></div>
+      <div class="circle circle-3"></div>
+    </div>
+  </div>
+</section>
+
+<style define:vars={{
+  primaryColor: theme.colors.primary[500],
+  primaryHover: theme.colors.primary[600],
+  primaryLight: theme.colors.primary[100],
+  secondaryColor: theme.colors.secondary[500],
+  successColor: theme.colors.success[500],
+  warningColor: theme.colors.warning[500],
+  neutralWhite: theme.colors.neutral[50],
+  neutralGray: theme.colors.neutral[500],
+  neutralDark: theme.colors.neutral[900],
+  neutralLight: theme.colors.neutral[100],
+  borderColor: theme.colors.border,
+  fontSans: theme.typography.fontFamily.sans.join(', '),
+  fontDisplay: theme.typography.fontFamily.display.join(', '),
+  spacing4: theme.spacing[4],
+  spacing6: theme.spacing[6],
+  spacing8: theme.spacing[8],
+  spacing12: theme.spacing[12],
+  spacing16: theme.spacing[16],
+  spacing20: theme.spacing[20],
+  spacing24: theme.spacing[24],
+  spacing32: theme.spacing[32],
+  borderRadiusLg: theme.borderRadius.lg,
+  borderRadius2xl: theme.borderRadius['2xl'],
+  shadowMd: theme.boxShadow.md,
+  shadowLg: theme.boxShadow.lg,
+  shadow2xl: theme.boxShadow['2xl']
+}}>
+  .testimonials {
+    position: relative;
+    padding: var(--spacing24) 0;
+    background: var(--neutralDark);
+    color: var(--neutralWhite);
+    overflow: hidden;
+  }
+
+  .testimonials-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 var(--spacing4);
+    position: relative;
+    z-index: 10;
+  }
+
+  @media (min-width: 768px) {
+    .testimonials-container {
+      padding: 0 var(--spacing6);
+    }
+  }
+
+  /* Section Header */
+  .section-header {
+    text-align: center;
+    margin-bottom: var(--spacing20);
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .section-eyebrow {
+    display: inline-block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primaryColor);
+    background: rgba(14, 165, 233, 0.1);
+    padding: var(--spacing2) var(--spacing4);
+    border-radius: var(--borderRadiusLg);
+    margin-bottom: var(--spacing6);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 1px solid rgba(14, 165, 233, 0.2);
+  }
+
+  .section-headline {
+    font-family: var(--fontDisplay);
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--neutralWhite);
+    margin: 0 0 var(--spacing6) 0;
+  }
+
+  @media (min-width: 768px) {
+    .section-headline {
+      font-size: 3rem;
+    }
+  }
+
+  .section-description {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: #d1d5db;
+    margin: 0 0 var(--spacing8) 0;
+  }
+
+  /* Overall Rating */
+  .overall-rating {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--spacing6);
+  }
+
+  .rating-display {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing4);
+    padding: var(--spacing4) var(--spacing6);
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--borderRadiusLg);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .stars {
+    display: flex;
+    gap: 2px;
+  }
+
+  .star {
+    color: #6b7280;
+    transition: color 0.3s ease;
+  }
+
+  .star.filled {
+    color: var(--warningColor);
+  }
+
+  .rating-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .score {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--neutralWhite);
+    line-height: 1;
+  }
+
+  .reviews {
+    font-size: 0.875rem;
+    color: #d1d5db;
+  }
+
+  /* Featured Testimonial */
+  .featured-testimonial {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--borderRadius2xl);
+    padding: var(--spacing12);
+    margin-bottom: var(--spacing20);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+  }
+
+  .featured-content {
+    display: grid;
+    gap: var(--spacing8);
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .featured-content {
+      grid-template-columns: 2fr 1fr;
+      gap: var(--spacing16);
+    }
+  }
+
+  .featured-text {
+    order: 1;
+  }
+
+  .featured-author {
+    order: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .quote-icon {
+    color: var(--primaryColor);
+    margin-bottom: var(--spacing6);
+    opacity: 0.8;
+  }
+
+  .featured-quote {
+    font-family: var(--fontDisplay);
+    font-size: 1.5rem;
+    font-weight: 400;
+    line-height: 1.6;
+    color: var(--neutralWhite);
+    margin: 0 0 var(--spacing8) 0;
+    font-style: italic;
+  }
+
+  @media (min-width: 768px) {
+    .featured-quote {
+      font-size: 1.75rem;
+    }
+  }
+
+  .testimonial-meta {
+    display: grid;
+    gap: var(--spacing6);
+    margin-bottom: var(--spacing8);
+    padding: var(--spacing6);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--borderRadiusLg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  @media (min-width: 640px) {
+    .testimonial-meta {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .project-info,
+  .results-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing2);
+  }
+
+  .project-label,
+  .results-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primaryColor);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .project-name,
+  .results-text {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--neutralWhite);
+  }
+
+  /* Author Section */
+  .author-avatar {
+    position: relative;
+    margin-bottom: var(--spacing4);
+  }
+
+  .author-avatar img {
+    border-radius: 50%;
+    border: 3px solid var(--primaryColor);
+  }
+
+  .verified-badge {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: var(--successColor);
+    color: var(--neutralWhite);
+    border-radius: 50%;
+    padding: var(--spacing2);
+    border: 2px solid var(--neutralDark);
+  }
+
+  .verified-badge.small {
+    padding: 2px;
+    bottom: -2px;
+    right: -2px;
+  }
+
+  .author-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing2);
+    align-items: center;
+  }
+
+  .author-name {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--neutralWhite);
+  }
+
+  .author-title {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--primaryColor);
+  }
+
+  .author-company {
+    font-size: 0.9375rem;
+    color: #d1d5db;
+  }
+
+  .testimonial-rating {
+    display: flex;
+    gap: 2px;
+    margin-top: var(--spacing2);
+  }
+
+  .linkedin-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--primaryColor);
+    color: var(--neutralWhite);
+    border-radius: 50%;
+    text-decoration: none;
+    margin-top: var(--spacing3);
+    transition: all 0.3s ease;
+  }
+
+  .linkedin-link:hover,
+  .linkedin-link:focus {
+    background: var(--primaryHover);
+    transform: translateY(-2px);
+  }
+
+  .linkedin-link:focus {
+    outline: 2px solid var(--primaryColor);
+    outline-offset: 2px;
+  }
+
+  /* Carousel */
+  .carousel-container {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .carousel-track {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--borderRadius2xl);
+  }
+
+  .testimonial-slide {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .testimonial-slide.active {
+    display: block;
+    opacity: 1;
+  }
+
+  /* Grid Layout */
+  .testimonials-grid {
+    display: grid;
+    gap: var(--spacing8);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .testimonials-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .testimonials-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* Testimonial Cards */
+  .testimonial-card {
+    position: relative;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--borderRadius2xl);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    overflow: hidden;
+  }
+
+  .testimonial-card:hover {
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--primaryColor);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  }
+
+  .card-content {
+    padding: var(--spacing8);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .testimonial-card .quote-icon {
+    color: var(--primaryColor);
+    margin-bottom: var(--spacing6);
+    opacity: 0.6;
+  }
+
+  .testimonial-quote {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--neutralWhite);
+    margin: 0 0 var(--spacing6) 0;
+    flex: 1;
+    font-style: italic;
+  }
+
+  .testimonial-footer {
+    margin-top: auto;
+  }
+
+  .author-section {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing4);
+    margin-bottom: var(--spacing4);
+  }
+
+  .author-section .author-avatar img {
+    border-radius: 50%;
+    border: 2px solid var(--primaryColor);
+  }
+
+  .author-details {
+    flex: 1;
+  }
+
+  .author-details .author-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--neutralWhite);
+    margin-bottom: 2px;
+  }
+
+  .author-details .author-title {
+    font-size: 0.875rem;
+    color: var(--primaryColor);
+    margin-bottom: 2px;
+  }
+
+  .author-details .author-company {
+    font-size: 0.875rem;
+    color: #d1d5db;
+  }
+
+  .testimonial-results {
+    padding-top: var(--spacing4);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.875rem;
+  }
+
+  .results-label {
+    color: var(--primaryColor);
+    font-weight: 600;
+  }
+
+  .results-text {
+    color: var(--neutralWhite);
+    font-weight: 500;
+  }
+
+  .featured-badge {
+    position: absolute;
+    top: var(--spacing4);
+    right: var(--spacing4);
+    background: var(--primaryColor);
+    color: var(--neutralWhite);
+    padding: var(--spacing2) var(--spacing3);
+    border-radius: var(--borderRadiusLg);
+    font-size: 0.75rem;
+    font-weight: 600;
+    z-index: 2;
+  }
+
+  /* Carousel Controls */
+  .carousel-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing6);
+    margin-top: var(--spacing8);
+  }
+
+  .carousel-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    color: var(--neutralWhite);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .carousel-btn:hover,
+  .carousel-btn:focus {
+    background: var(--primaryColor);
+    border-color: var(--primaryColor);
+    transform: scale(1.1);
+  }
+
+  .carousel-btn:focus {
+    outline: 2px solid var(--primaryColor);
+    outline-offset: 2px;
+  }
+
+  .carousel-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .carousel-indicators {
+    display: flex;
+    gap: var(--spacing3);
+  }
+
+  .indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .indicator.active {
+    background: var(--primaryColor);
+    transform: scale(1.2);
+  }
+
+  .indicator:hover {
+    background: var(--primaryColor);
+  }
+
+  /* Client Logos */
+  .client-logos {
+    text-align: center;
+    margin-top: var(--spacing20);
+    padding-top: var(--spacing20);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .logos-title {
+    font-family: var(--fontDisplay);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #d1d5db;
+    margin: 0 0 var(--spacing8) 0;
+  }
+
+  .logos-grid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing8);
+    flex-wrap: wrap;
+  }
+
+  .logo-item {
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+    filter: brightness(0) invert(1);
+  }
+
+  .logo-item:hover {
+    opacity: 1;
+  }
+
+  .logo-item img {
+    height: 40px;
+    width: auto;
+  }
+
+  /* Background Decoration */
+  .background-decoration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .decoration-circles {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .circle {
+    position: absolute;
+    border-radius: 50%;
+    background: linear-gradient(45deg, rgba(14, 165, 233, 0.1), rgba(168, 85, 247, 0.1));
+    animation: float 8s ease-in-out infinite;
+  }
+
+  .circle-1 {
+    width: 200px;
+    height: 200px;
+    top: 20%;
+    left: -100px;
+    animation-delay: 0s;
+  }
+
+  .circle-2 {
+    width: 150px;
+    height: 150px;
+    top: 60%;
+    right: -75px;
+    animation-delay: 3s;
+  }
+
+  .circle-3 {
+    width: 100px;
+    height: 100px;
+    bottom: 20%;
+    left: 50%;
+    animation-delay: 6s;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-30px) rotate(180deg); }
+  }
+
+  /* Animations */
+  [data-animate] {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease;
+  }
+
+  [data-animate].animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Mobile Optimizations */
+  @media (max-width: 640px) {
+    .testimonials {
+      padding: var(--spacing16) 0;
+    }
+
+    .section-headline {
+      font-size: 2rem;
+    }
+
+    .featured-quote {
+      font-size: 1.25rem;
+    }
+
+    .featured-testimonial {
+      padding: var(--spacing8);
+    }
+
+    .testimonial-meta {
+      grid-template-columns: 1fr;
+    }
+
+    .logos-grid {
+      justify-content: center;
+      gap: var(--spacing4);
+    }
+
+    .decoration-circles {
+      display: none;
+    }
+  }
+
+  /* Reduced Motion */
+  @media (prefers-reduced-motion: reduce) {
+    .testimonial-card,
+    .carousel-btn,
+    .circle,
+    .testimonial-slide {
+      animation: none;
+      transition: none;
+    }
+    
+    .testimonial-card:hover,
+    .carousel-btn:hover {
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  // Testimonials Animation and Carousel Controller
+  class TestimonialsManager {
+    constructor() {
+      this.animatedElements = document.querySelectorAll('.testimonials [data-animate]');
+      this.carouselTrack = document.querySelector('[data-carousel-track]');
+      this.slides = document.querySelectorAll('.testimonial-slide');
+      this.prevBtn = document.querySelector('[data-carousel-prev]');
+      this.nextBtn = document.querySelector('[data-carousel-next]');
+      this.indicators = document.querySelectorAll('[data-carousel-indicators] .indicator');
+      this.currentSlide = 0;
+      this.autoplayInterval = null;
+      this.autoplayDelay = 5000; // 5 seconds
+      
+      this.init();
+    }
+
+    init() {
+      this.setupScrollAnimations();
+      this.setupCarousel();
+      this.setupAutoplay();
+    }
+
+    setupScrollAnimations() {
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !entry.target.hasAnimated) {
+            const delay = parseInt(entry.target.dataset.delay) || 0;
+            setTimeout(() => {
+              entry.target.classList.add('animate');
+            }, delay);
+            entry.target.hasAnimated = true;
+          }
+        });
+      }, observerOptions);
+
+      this.animatedElements.forEach(el => {
+        observer.observe(el);
+      });
+    }
+
+    setupCarousel() {
+      if (!this.carouselTrack || this.slides.length === 0) return;
+
+      // Previous button
+      if (this.prevBtn) {
+        this.prevBtn.addEventListener('click', () => {
+          this.previousSlide();
+        });
+      }
+
+      // Next button
+      if (this.nextBtn) {
+        this.nextBtn.addEventListener('click', () => {
+          this.nextSlide();
+        });
+      }
+
+      // Indicators
+      this.indicators.forEach((indicator, index) => {
+        indicator.addEventListener('click', () => {
+          this.goToSlide(index);
+        });
+      });
+
+      // Keyboard navigation
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') {
+          this.previousSlide();
+        } else if (e.key === 'ArrowRight') {
+          this.nextSlide();
+        }
+      });
+
+      // Touch/swipe support
+      this.setupTouchNavigation();
+    }
+
+    setupTouchNavigation() {
+      if (!this.carouselTrack) return;
+
+      let startX = 0;
+      let endX = 0;
+
+      this.carouselTrack.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+      });
+
+      this.carouselTrack.addEventListener('touchend', (e) => {
+        endX = e.changedTouches[0].clientX;
+        this.handleSwipe();
+      });
+
+      this.carouselTrack.addEventListener('mousedown', (e) => {
+        startX = e.clientX;
+        this.carouselTrack.style.cursor = 'grabbing';
+      });
+
+      this.carouselTrack.addEventListener('mouseup', (e) => {
+        endX = e.clientX;
+        this.handleSwipe();
+        this.carouselTrack.style.cursor = 'grab';
+      });
+    }
+
+    handleSwipe() {
+      const swipeThreshold = 50;
+      const diff = startX - endX;
+
+      if (Math.abs(diff) > swipeThreshold) {
+        if (diff > 0) {
+          this.nextSlide();
+        } else {
+          this.previousSlide();
+        }
+      }
+    }
+
+    setupAutoplay() {
+      const autoplayElement = document.querySelector('[data-autoplay="true"]');
+      if (!autoplayElement || this.slides.length <= 1) return;
+
+      this.startAutoplay();
+
+      // Pause on hover
+      if (this.carouselTrack) {
+        this.carouselTrack.addEventListener('mouseenter', () => {
+          this.stopAutoplay();
+        });
+
+        this.carouselTrack.addEventListener('mouseleave', () => {
+          this.startAutoplay();
+        });
+      }
+
+      // Pause when page is not visible
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          this.stopAutoplay();
+        } else {
+          this.startAutoplay();
+        }
+      });
+    }
+
+    startAutoplay() {
+      this.stopAutoplay(); // Clear any existing interval
+      this.autoplayInterval = setInterval(() => {
+        this.nextSlide();
+      }, this.autoplayDelay);
+    }
+
+    stopAutoplay() {
+      if (this.autoplayInterval) {
+        clearInterval(this.autoplayInterval);
+        this.autoplayInterval = null;
+      }
+    }
+
+    goToSlide(index) {
+      if (index < 0 || index >= this.slides.length) return;
+
+      // Hide current slide
+      this.slides[this.currentSlide].classList.remove('active');
+      if (this.indicators[this.currentSlide]) {
+        this.indicators[this.currentSlide].classList.remove('active');
+      }
+
+      // Show new slide
+      this.currentSlide = index;
+      this.slides[this.currentSlide].classList.add('active');
+      if (this.indicators[this.currentSlide]) {
+        this.indicators[this.currentSlide].classList.add('active');
+      }
+
+      // Update button states
+      this.updateButtonStates();
+
+      // Reset autoplay
+      if (this.autoplayInterval) {
+        this.startAutoplay();
+      }
+    }
+
+    nextSlide() {
+      const nextIndex = (this.currentSlide + 1) % this.slides.length;
+      this.goToSlide(nextIndex);
+    }
+
+    previousSlide() {
+      const prevIndex = (this.currentSlide - 1 + this.slides.length) % this.slides.length;
+      this.goToSlide(prevIndex);
+    }
+
+    updateButtonStates() {
+      if (this.prevBtn) {
+        this.prevBtn.disabled = this.currentSlide === 0;
+      }
+      if (this.nextBtn) {
+        this.nextBtn.disabled = this.currentSlide === this.slides.length - 1;
+      }
+    }
+  }
+
+  // Initialize when DOM is loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    new TestimonialsManager();
+  });
+
+  // Performance optimization
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(() => {
+      console.log('Testimonials animations optimized');
+    });
+  }
+</script>

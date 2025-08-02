@@ -1,0 +1,1443 @@
+---
+// CTASection.astro - Call-to-action section for converting visitors
+import theme from '../../lib/therme';
+
+export interface Props {
+  // Content props
+  eyebrow?: string;
+  headline?: string;
+  description?: string;
+  
+  // Primary CTA
+  primaryCTA?: {
+    text: string;
+    href: string;
+    icon?: string;
+    external?: boolean;
+  };
+  
+  // Secondary CTA
+  secondaryCTA?: {
+    text: string;
+    href: string;
+    icon?: string;
+    external?: boolean;
+  };
+  
+  // Additional actions
+  additionalActions?: Array<{
+    id: string;
+    text: string;
+    href: string;
+    description?: string;
+    icon: string;
+    featured?: boolean;
+  }>;
+  
+  // Social proof elements
+  socialProof?: {
+    show: boolean;
+    stats?: Array<{
+      number: string;
+      label: string;
+      suffix?: string;
+    }>;
+    testimonial?: {
+      quote: string;
+      author: string;
+      company: string;
+      avatar?: string;
+    };
+    logos?: Array<{
+      name: string;
+      src: string;
+      alt: string;
+    }>;
+  };
+  
+  // Contact information
+  contactInfo?: {
+    show: boolean;
+    phone?: string;
+    email?: string;
+    address?: string;
+    hours?: string;
+  };
+  
+  // Urgency/incentive elements
+  incentive?: {
+    show: boolean;
+    type: 'discount' | 'bonus' | 'limited-time' | 'free-consultation';
+    text: string;
+    details?: string;
+    expires?: string;
+  };
+  
+  // Layout variant
+  variant?: 'default' | 'split' | 'centered' | 'minimal' | 'hero-style';
+  
+  // Visual settings
+  backgroundStyle?: 'gradient' | 'solid' | 'pattern' | 'image';
+  showDecorations?: boolean;
+  colorScheme?: 'primary' | 'secondary' | 'dark' | 'light';
+}
+
+const {
+  eyebrow = "Ready to Get Started?",
+  headline = "Let's Build Something Amazing Together",
+  description = "Join hundreds of successful businesses that have transformed their digital presence with our proven approach. Your project could be our next success story.",
+  variant = "default",
+  backgroundStyle = "gradient",
+  showDecorations = true,
+  colorScheme = "primary",
+  primaryCTA = {
+    text: "Start Your Project",
+    href: "/contact",
+    icon: "🚀",
+    external: false
+  },
+  secondaryCTA = {
+    text: "View Our Work",
+    href: "/portfolio",
+    icon: "👀",
+    external: false
+  },
+  additionalActions = [
+    {
+      id: "consultation",
+      text: "Free Consultation",
+      href: "/consultation",
+      description: "30-minute strategy session",
+      icon: "💬",
+      featured: true
+    },
+    {
+      id: "case-studies",
+      text: "Case Studies",
+      href: "/case-studies",
+      description: "See our success stories",
+      icon: "📊",
+      featured: false
+    },
+    {
+      id: "pricing",
+      text: "View Pricing",
+      href: "/pricing",
+      description: "Transparent pricing options",
+      icon: "💰",
+      featured: false
+    },
+    {
+      id: "resources",
+      text: "Free Resources",
+      href: "/resources",
+      description: "Guides, tools, and templates",
+      icon: "📚",
+      featured: false
+    }
+  ],
+  socialProof = {
+    show: true,
+    stats: [
+      { number: "500", suffix: "+", label: "Happy Clients" },
+      { number: "95", suffix: "%", label: "Client Retention" },
+      { number: "50M", suffix: "+", label: "Revenue Generated" }
+    ],
+    testimonial: {
+      quote: "Working with this team transformed our business. Revenue increased 300% in just 6 months.",
+      author: "Sarah Johnson",
+      company: "TechStart Inc.",
+      avatar: "👩‍💼"
+    }
+  },
+  contactInfo = {
+    show: true,
+    phone: "+1 (555) 123-4567",
+    email: "hello@yourcompany.com",
+    address: "123 Business St, Suite 100, City, State 12345",
+    hours: "Mon-Fri 9AM-6PM EST"
+  },
+  incentive = {
+    show: true,
+    type: "free-consultation",
+    text: "Free Strategy Session",
+    details: "Get a personalized roadmap for your project",
+    expires: "Limited time offer"
+  }
+} = Astro.props;
+---
+
+<section class={`cta-section variant-${variant} bg-${backgroundStyle} scheme-${colorScheme}`} aria-labelledby="cta-headline">
+  <div class="cta-container">
+    
+    <!-- Background Decorations -->
+    {showDecorations && (
+      <div class="cta-decorations" aria-hidden="true">
+        <div class="decoration-grid">
+          <div class="decoration-element element-1"></div>
+          <div class="decoration-element element-2"></div>
+          <div class="decoration-element element-3"></div>
+          <div class="decoration-element element-4"></div>
+        </div>
+        <div class="floating-icons">
+          <div class="floating-icon icon-1">⚡</div>
+          <div class="floating-icon icon-2">🎯</div>
+          <div class="floating-icon icon-3">🚀</div>
+        </div>
+      </div>
+    )}
+
+    <div class="cta-content-wrapper">
+      
+      <!-- Main Content -->
+      <div class="cta-main-content" data-animate="fade-up">
+        
+        <!-- Incentive Banner -->
+        {incentive.show && (
+          <div class="incentive-banner" data-animate="fade-up" data-delay="100">
+            <div class="incentive-content">
+              <div class="incentive-icon">
+                {incentive.type === 'discount' && '🏷️'}
+                {incentive.type === 'bonus' && '🎁'}
+                {incentive.type === 'limited-time' && '⏰'}
+                {incentive.type === 'free-consultation' && '💬'}
+              </div>
+              <div class="incentive-text">
+                <span class="incentive-main">{incentive.text}</span>
+                {incentive.details && (
+                  <span class="incentive-details">{incentive.details}</span>
+                )}
+              </div>
+              {incentive.expires && (
+                <div class="incentive-expires">{incentive.expires}</div>
+              )}
+            </div>
+          </div>
+        )}
+
+        <!-- Header Content -->
+        <div class="cta-header" data-animate="fade-up" data-delay="200">
+          <span class="cta-eyebrow">{eyebrow}</span>
+          <h2 id="cta-headline" class="cta-headline">
+            {headline}
+          </h2>
+          <p class="cta-description">
+            {description}
+          </p>
+        </div>
+
+        <!-- Primary Actions -->
+        <div class="cta-actions" data-animate="fade-up" data-delay="300">
+          <a 
+            href={primaryCTA.href} 
+            class="cta-primary"
+            {...(primaryCTA.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+          >
+            {primaryCTA.icon && (
+              <span class="cta-icon" role="img" aria-hidden="true">{primaryCTA.icon}</span>
+            )}
+            {primaryCTA.text}
+            <svg class="cta-arrow" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M4.16667 10H15.8333M15.8333 10L10.8333 5M15.8333 10L10.8333 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+          
+          <a 
+            href={secondaryCTA.href}
+            class="cta-secondary"
+            {...(secondaryCTA.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+          >
+            {secondaryCTA.icon && (
+              <span class="cta-icon" role="img" aria-hidden="true">{secondaryCTA.icon}</span>
+            )}
+            {secondaryCTA.text}
+          </a>
+        </div>
+
+        <!-- Additional Actions Grid -->
+        {additionalActions && additionalActions.length > 0 && (
+          <div class="additional-actions" data-animate="fade-up" data-delay="400">
+            <div class="actions-grid">
+              {additionalActions.map((action, index) => (
+                <a 
+                  href={action.href}
+                  class={`action-card ${action.featured ? 'featured' : ''}`}
+                  data-animate="fade-up"
+                  data-delay={500 + (index * 100)}
+                  key={action.id}
+                >
+                  <div class="action-icon">
+                    <span role="img" aria-hidden="true">{action.icon}</span>
+                  </div>
+                  <div class="action-content">
+                    <h3 class="action-title">{action.text}</h3>
+                    {action.description && (
+                      <p class="action-description">{action.description}</p>
+                    )}
+                  </div>
+                  <div class="action-arrow">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M3.33334 8H12.6667M12.6667 8L8.66668 4M12.6667 8L8.66668 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <!-- Social Proof Section -->
+        {socialProof.show && (
+          <div class="social-proof-section" data-animate="fade-up" data-delay="600">
+            
+            <!-- Stats -->
+            {socialProof.stats && socialProof.stats.length > 0 && (
+              <div class="proof-stats">
+                <div class="stats-grid">
+                  {socialProof.stats.map((stat, index) => (
+                    <div class="stat-item" key={index}>
+                      <div class="stat-number">
+                        {stat.number}<span class="stat-suffix">{stat.suffix || ""}</span>
+                      </div>
+                      <div class="stat-label">{stat.label}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <!-- Testimonial -->
+            {socialProof.testimonial && (
+              <div class="proof-testimonial">
+                <div class="testimonial-content">
+                  <blockquote class="testimonial-quote">
+                    "{socialProof.testimonial.quote}"
+                  </blockquote>
+                  <div class="testimonial-author">
+                    <div class="author-avatar">
+                      {socialProof.testimonial.avatar && (
+                        <span role="img" aria-hidden="true">{socialProof.testimonial.avatar}</span>
+                      )}
+                    </div>
+                    <div class="author-info">
+                      <cite class="author-name">{socialProof.testimonial.author}</cite>
+                      <div class="author-company">{socialProof.testimonial.company}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        <!-- Contact Information -->
+        {contactInfo.show && (
+          <div class="contact-info-section" data-animate="fade-up" data-delay="700">
+            <div class="contact-header">
+              <h3 class="contact-title">Get in Touch</h3>
+              <p class="contact-subtitle">Multiple ways to reach us</p>
+            </div>
+            
+            <div class="contact-grid">
+              {contactInfo.phone && (
+                <div class="contact-item">
+                  <div class="contact-icon">📞</div>
+                  <div class="contact-details">
+                    <div class="contact-label">Phone</div>
+                    <a href={`tel:${contactInfo.phone.replace(/\D/g, '')}`} class="contact-value">
+                      {contactInfo.phone}
+                    </a>
+                  </div>
+                </div>
+              )}
+              
+              {contactInfo.email && (
+                <div class="contact-item">
+                  <div class="contact-icon">✉️</div>
+                  <div class="contact-details">
+                    <div class="contact-label">Email</div>
+                    <a href={`mailto:${contactInfo.email}`} class="contact-value">
+                      {contactInfo.email}
+                    </a>
+                  </div>
+                </div>
+              )}
+              
+              {contactInfo.address && (
+                <div class="contact-item">
+                  <div class="contact-icon">📍</div>
+                  <div class="contact-details">
+                    <div class="contact-label">Address</div>
+                    <div class="contact-value">{contactInfo.address}</div>
+                  </div>
+                </div>
+              )}
+              
+              {contactInfo.hours && (
+                <div class="contact-item">
+                  <div class="contact-icon">🕒</div>
+                  <div class="contact-details">
+                    <div class="contact-label">Hours</div>
+                    <div class="contact-value">{contactInfo.hours}</div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        <!-- Trust Signals -->
+        <div class="trust-signals" data-animate="fade-up" data-delay="800">
+          <div class="trust-items">
+            <div class="trust-item">
+              <svg class="trust-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M10 0L12.245 6.91L20 7.639L14.27 13.18L15.89 21L10 17.09L4.11 21L5.73 13.18L0 7.639L7.755 6.91L10 0Z" fill="currentColor"/>
+              </svg>
+              <span class="trust-text">5-Star Rated</span>
+            </div>
+            
+            <div class="trust-item">
+              <svg class="trust-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M10 0C4.477 0 0 4.477 0 10C0 15.523 4.477 20 10 20C15.523 20 20 15.523 20 10C20 4.477 15.523 0 10 0ZM8 15L3 10L4.414 8.586L8 12.172L15.586 4.586L17 6L8 15Z" fill="currentColor"/>
+              </svg>
+              <span class="trust-text">Certified Experts</span>
+            </div>
+            
+            <div class="trust-item">
+              <svg class="trust-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M10 0L13 7H20L15 11L17 20L10 16L3 20L5 11L0 7H7L10 0Z" fill="currentColor"/>
+              </svg>
+              <span class="trust-text">Award Winning</span>
+            </div>
+            
+            <div class="trust-item">
+              <svg class="trust-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M10 1L12.09 6.26L18 7L13 11.74L14.18 18L10 15.27L5.82 18L7 11.74L2 7L7.91 6.26L10 1Z" fill="currentColor"/>
+              </svg>
+              <span class="trust-text">500+ Projects</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style define:vars={{
+  primaryColor: theme.colors.primary[500],
+  primaryHover: theme.colors.primary[600],
+  primaryLight: theme.colors.primary[100],
+  primaryDark: theme.colors.primary[700],
+  secondaryColor: theme.colors.secondary[500],
+  successColor: theme.colors.success[500],
+  warningColor: theme.colors.warning[500],
+  neutralWhite: theme.colors.neutral[50],
+  neutralGray: theme.colors.neutral[500],
+  neutralDark: theme.colors.neutral[900],
+  neutralLight: theme.colors.neutral[100],
+  borderColor: theme.colors.border,
+  fontSans: theme.typography.fontFamily.sans.join(', '),
+  fontDisplay: theme.typography.fontFamily.display.join(', '),
+  spacing2: theme.spacing[2],
+  spacing3: theme.spacing[3],
+  spacing4: theme.spacing[4],
+  spacing6: theme.spacing[6],
+  spacing8: theme.spacing[8],
+  spacing12: theme.spacing[12],
+  spacing16: theme.spacing[16],
+  spacing20: theme.spacing[20],
+  spacing24: theme.spacing[24],
+  borderRadiusLg: theme.borderRadius.lg,
+  borderRadius2xl: theme.borderRadius['2xl'],
+  shadowMd: theme.boxShadow.md,
+  shadowLg: theme.boxShadow.lg,
+  shadow2xl: theme.boxShadow['2xl']
+}}>
+  .cta-section {
+    position: relative;
+    padding: var(--spacing24) 0;
+    overflow: hidden;
+  }
+
+  /* Background Styles */
+  .cta-section.bg-gradient {
+    background: linear-gradient(135deg, var(--primaryColor) 0%, var(--primaryDark) 100%);
+    color: var(--neutralWhite);
+  }
+
+  .cta-section.bg-solid {
+    background: var(--primaryColor);
+    color: var(--neutralWhite);
+  }
+
+  .cta-section.bg-pattern {
+    background: var(--primaryColor);
+    background-image: 
+      radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 0%, transparent 50%),
+      radial-gradient(circle at 75% 75%, rgba(255,255,255,0.1) 0%, transparent 50%);
+    color: var(--neutralWhite);
+  }
+
+  .cta-section.bg-image {
+    background: linear-gradient(135deg, rgba(var(--primaryColor), 0.9) 0%, rgba(var(--primaryDark), 0.9) 100%),
+                url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)" /></svg>');
+    color: var(--neutralWhite);
+  }
+
+  /* Color Schemes */
+  .cta-section.scheme-secondary {
+    background: linear-gradient(135deg, var(--secondaryColor) 0%, #0c4a6e 100%);
+  }
+
+  .cta-section.scheme-dark {
+    background: linear-gradient(135deg, var(--neutralDark) 0%, #1f2937 100%);
+  }
+
+  .cta-section.scheme-light {
+    background: linear-gradient(135deg, var(--neutralWhite) 0%, var(--neutralLight) 100%);
+    color: var(--neutralDark);
+  }
+
+  .cta-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 var(--spacing4);
+    position: relative;
+    z-index: 10;
+  }
+
+  @media (min-width: 768px) {
+    .cta-container {
+      padding: 0 var(--spacing6);
+    }
+  }
+
+  .cta-content-wrapper {
+    position: relative;
+    z-index: 10;
+  }
+
+  /* Incentive Banner */
+  .incentive-banner {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--borderRadius2xl);
+    padding: var(--spacing4) var(--spacing6);
+    margin-bottom: var(--spacing8);
+    backdrop-filter: blur(10px);
+  }
+
+  .incentive-content {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing4);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .incentive-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .incentive-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing2);
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .incentive-text {
+      text-align: left;
+    }
+  }
+
+  .incentive-main {
+    font-weight: 600;
+    font-size: 1.125rem;
+  }
+
+  .incentive-details {
+    font-size: 0.875rem;
+    opacity: 0.9;
+  }
+
+  .incentive-expires {
+    font-size: 0.75rem;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.2);
+    padding: var(--spacing2) var(--spacing3);
+    border-radius: var(--borderRadiusLg);
+    white-space: nowrap;
+  }
+
+  /* Header Content */
+  .cta-header {
+    text-align: center;
+    margin-bottom: var(--spacing12);
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cta-eyebrow {
+    display: inline-block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.2);
+    padding: var(--spacing2) var(--spacing4);
+    border-radius: var(--borderRadiusLg);
+    margin-bottom: var(--spacing6);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .cta-headline {
+    font-family: var(--fontDisplay);
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 var(--spacing6) 0;
+  }
+
+  @media (min-width: 768px) {
+    .cta-headline {
+      font-size: 3rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .cta-headline {
+      font-size: 3.5rem;
+    }
+  }
+
+  .cta-description {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    margin: 0;
+    opacity: 0.9;
+  }
+
+  @media (min-width: 768px) {
+    .cta-description {
+      font-size: 1.25rem;
+    }
+  }
+
+  /* Primary Actions */
+  .cta-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing4);
+    align-items: center;
+    margin-bottom: var(--spacing16);
+  }
+
+  @media (min-width: 640px) {
+    .cta-actions {
+      flex-direction: row;
+      justify-content: center;
+    }
+  }
+
+  .cta-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing3);
+    background: var(--neutralWhite);
+    color: var(--primaryColor);
+    padding: var(--spacing4) var(--spacing8);
+    border-radius: var(--borderRadiusLg);
+    font-weight: 600;
+    font-size: 1.125rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadowLg);
+  }
+
+  .cta-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow2xl);
+    background: var(--neutralLight);
+  }
+
+  .cta-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing3);
+    color: var(--neutralWhite);
+    padding: var(--spacing4) var(--spacing8);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--borderRadiusLg);
+    font-weight: 600;
+    font-size: 1.125rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .cta-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .cta-icon {
+    font-size: 1.25rem;
+  }
+
+  .cta-arrow {
+    transition: transform 0.3s ease;
+  }
+
+  .cta-primary:hover .cta-arrow {
+    transform: translateX(4px);
+  }
+
+  /* Additional Actions */
+  .additional-actions {
+    margin-bottom: var(--spacing16);
+  }
+
+  .actions-grid {
+    display: grid;
+    gap: var(--spacing4);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .actions-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .actions-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .action-card {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--borderRadius2xl);
+    padding: var(--spacing6);
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .action-card:hover {
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .action-card.featured {
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .action-icon {
+    font-size: 2rem;
+    background: rgba(255, 255, 255, 0.2);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing4);
+  }
+
+  .action-content {
+    flex: 1;
+    margin-bottom: var(--spacing4);
+  }
+
+  .action-title {
+    font-family: var(--fontDisplay);
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 var(--spacing2) 0;
+    line-height: 1.3;
+  }
+
+  .action-description {
+    font-size: 0.875rem;
+    margin: 0;
+    opacity: 0.8;
+    line-height: 1.4;
+  }
+
+  .action-arrow {
+    opacity: 0.6;
+    transition: all 0.3s ease;
+  }
+
+  .action-card:hover .action-arrow {
+    opacity: 1;
+    transform: translateX(2px);
+  }
+
+  /* Social Proof */
+  .social-proof-section {
+    margin-bottom: var(--spacing16);
+  }
+
+  .proof-stats {
+    margin-bottom: var(--spacing8);
+  }
+
+  .stats-grid {
+    display: grid;
+    gap: var(--spacing6);
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    text-align: center;
+  }
+
+  .stat-item {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--borderRadiusLg);
+    padding: var(--spacing4);
+    backdrop-filter: blur(10px);
+  }
+
+  .stat-number {
+    font-family: var(--fontDisplay);
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: var(--spacing2);
+  }
+
+  .stat-suffix {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .stat-label {
+    font-size: 0.875rem;
+    opacity: 0.9;
+  }
+
+  .proof-testimonial {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .testimonial-content {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--borderRadius2xl);
+    padding: var(--spacing8);
+    backdrop-filter: blur(10px);
+    text-align: center;
+  }
+
+  .testimonial-quote {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    margin: 0 0 var(--spacing6) 0;
+    font-style: italic;
+    opacity: 0.95;
+  }
+
+  .testimonial-author {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing4);
+  }
+
+  .author-avatar {
+    font-size: 2rem;
+    background: rgba(255, 255, 255, 0.2);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .author-info {
+    text-align: left;
+  }
+
+  .author-name {
+    font-weight: 600;
+    font-size: 1rem;
+    display: block;
+    margin-bottom: var(--spacing2);
+    font-style: normal;
+  }
+
+  .author-company {
+    font-size: 0.875rem;
+    opacity: 0.8;
+  }
+
+  /* Contact Information */
+  .contact-info-section {
+    margin-bottom: var(--spacing16);
+  }
+
+  .contact-header {
+    text-align: center;
+    margin-bottom: var(--spacing8);
+  }
+
+  .contact-title {
+    font-family: var(--fontDisplay);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 var(--spacing2) 0;
+  }
+
+  .contact-subtitle {
+    font-size: 1rem;
+    margin: 0;
+    opacity: 0.8;
+  }
+
+  .contact-grid {
+    display: grid;
+    gap: var(--spacing4);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .contact-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .contact-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .contact-item {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--borderRadius2xl);
+    padding: var(--spacing6);
+    text-align: center;
+    backdrop-filter: blur(10px);
+  }
+
+  .contact-icon {
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing3);
+  }
+
+  .contact-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: var(--spacing2);
+    opacity: 0.8;
+  }
+
+  .contact-value {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: inherit;
+    text-decoration: none;
+    line-height: 1.4;
+  }
+
+  .contact-value:hover {
+    opacity: 0.8;
+  }
+
+  /* Trust Signals */
+  .trust-signals {
+    text-align: center;
+  }
+
+  .trust-items {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing6);
+  }
+
+  .trust-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing2);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--borderRadiusLg);
+    padding: var(--spacing3) var(--spacing4);
+    backdrop-filter: blur(10px);
+  }
+
+  .trust-icon {
+    color: var(--warningColor);
+    flex-shrink: 0;
+  }
+
+  .trust-text {
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  /* Background Decorations */
+  .cta-decorations {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .decoration-grid {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .decoration-element {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    animation: float 8s ease-in-out infinite;
+  }
+
+  .element-1 {
+    width: 200px;
+    height: 200px;
+    top: 10%;
+    left: -5%;
+    animation-delay: 0s;
+  }
+
+  .element-2 {
+    width: 150px;
+    height: 150px;
+    top: 60%;
+    right: -3%;
+    animation-delay: 2s;
+  }
+
+  .element-3 {
+    width: 100px;
+    height: 100px;
+    top: 30%;
+    right: 15%;
+    animation-delay: 4s;
+  }
+
+  .element-4 {
+    width: 180px;
+    height: 180px;
+    bottom: 10%;
+    left: 10%;
+    animation-delay: 6s;
+  }
+
+  .floating-icons {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .floating-icon {
+    position: absolute;
+    font-size: 2rem;
+    opacity: 0.2;
+    animation: iconFloat 10s ease-in-out infinite;
+  }
+
+  .icon-1 {
+    top: 20%;
+    left: 10%;
+    animation-delay: 0s;
+  }
+
+  .icon-2 {
+    top: 70%;
+    right: 20%;
+    animation-delay: 3s;
+  }
+
+  .icon-3 {
+    bottom: 30%;
+    left: 80%;
+    animation-delay: 6s;
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-30px) rotate(5deg);
+    }
+  }
+
+  @keyframes iconFloat {
+    0%, 100% {
+      transform: translateY(0px) scale(1);
+      opacity: 0.2;
+    }
+    50% {
+      transform: translateY(-20px) scale(1.1);
+      opacity: 0.3;
+    }
+  }
+
+  /* Variant Styles */
+  .cta-section.variant-split .cta-content-wrapper {
+    display: grid;
+    gap: var(--spacing12);
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .cta-section.variant-split .cta-content-wrapper {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .cta-section.variant-centered .cta-header {
+    max-width: 900px;
+  }
+
+  .cta-section.variant-minimal .additional-actions,
+  .cta-section.variant-minimal .contact-info-section {
+    display: none;
+  }
+
+  .cta-section.variant-hero-style {
+    padding: var(--spacing24) 0 var(--spacing20) 0;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+  }
+
+  .cta-section.variant-hero-style .cta-headline {
+    font-size: 3rem;
+  }
+
+  @media (min-width: 768px) {
+    .cta-section.variant-hero-style .cta-headline {
+      font-size: 4rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .cta-section.variant-hero-style .cta-headline {
+      font-size: 5rem;
+    }
+  }
+
+  /* Animation utilities */
+  [data-animate] {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease;
+  }
+
+  [data-animate].animate-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Light scheme adjustments */
+  .cta-section.scheme-light .cta-eyebrow {
+    background: var(--primaryLight);
+    color: var(--primaryColor);
+  }
+
+  .cta-section.scheme-light .incentive-banner,
+  .cta-section.scheme-light .action-card,
+  .cta-section.scheme-light .testimonial-content,
+  .cta-section.scheme-light .contact-item,
+  .cta-section.scheme-light .trust-item,
+  .cta-section.scheme-light .stat-item {
+    background: var(--neutralWhite);
+    border-color: var(--borderColor);
+    color: var(--neutralDark);
+    backdrop-filter: none;
+  }
+
+  .cta-section.scheme-light .cta-primary {
+    background: var(--primaryColor);
+    color: var(--neutralWhite);
+  }
+
+  .cta-section.scheme-light .cta-secondary {
+    color: var(--primaryColor);
+    border-color: var(--primaryColor);
+  }
+
+  .cta-section.scheme-light .action-icon,
+  .cta-section.scheme-light .author-avatar {
+    background: var(--primaryLight);
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .cta-section {
+      padding: var(--spacing16) 0;
+    }
+
+    .cta-headline {
+      font-size: 2rem;
+    }
+
+    .cta-primary,
+    .cta-secondary {
+      font-size: 1rem;
+      padding: var(--spacing3) var(--spacing6);
+    }
+
+    .action-icon {
+      width: 50px;
+      height: 50px;
+      font-size: 1.5rem;
+    }
+
+    .incentive-content {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .contact-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .trust-items {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    }
+
+    .testimonial-author {
+      flex-direction: column;
+    }
+
+    .author-info {
+      text-align: center;
+    }
+  }
+
+  /* Focus states for accessibility */
+  .cta-primary:focus,
+  .cta-secondary:focus,
+  .action-card:focus,
+  .contact-value:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.8);
+    outline-offset: 2px;
+  }
+
+  .cta-section.scheme-light .cta-primary:focus,
+  .cta-section.scheme-light .cta-secondary:focus,
+  .cta-section.scheme-light .action-card:focus {
+    outline-color: var(--primaryColor);
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .decoration-element,
+    .floating-icon {
+      animation: none;
+    }
+
+    .cta-primary:hover,
+    .action-card:hover {
+      transform: none;
+    }
+
+    [data-animate] {
+      transition: opacity 0.3s ease;
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    .cta-decorations,
+    .floating-icons {
+      display: none;
+    }
+
+    .cta-section {
+      background: white !important;
+      color: black !important;
+    }
+
+    .cta-primary,
+    .cta-secondary,
+    .action-card,
+    .contact-item,
+    .trust-item {
+      border: 1px solid #ccc !important;
+      background: white !important;
+      color: black !important;
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .cta-section {
+      background: #000 !important;
+      color: #fff !important;
+    }
+
+    .cta-primary {
+      background: #fff !important;
+      color: #000 !important;
+      border: 2px solid #fff !important;
+    }
+
+    .cta-secondary,
+    .action-card,
+    .contact-item,
+    .trust-item {
+      border: 2px solid #fff !important;
+    }
+  }
+</style>
+
+<script>
+  // Animation on scroll
+  document.addEventListener('DOMContentLoaded', function() {
+    const animatedElements = document.querySelectorAll('[data-animate]');
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const delay = entry.target.getAttribute('data-delay') || 0;
+          setTimeout(() => {
+            entry.target.classList.add('animate-in');
+          }, parseInt(delay));
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    });
+
+    animatedElements.forEach(el => observer.observe(el));
+  });
+
+  // Dynamic phone number formatting
+  function formatPhoneNumber(phoneNumber) {
+    const cleaned = phoneNumber.replace(/\D/g, '');
+    if (cleaned.length === 10) {
+      return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
+    } else if (cleaned.length === 11) {
+      return `+${cleaned.slice(0, 1)} (${cleaned.slice(1, 4)}) ${cleaned.slice(4, 7)}-${cleaned.slice(7)}`;
+    }
+    return phoneNumber;
+  }
+
+  // Analytics tracking for CTA clicks
+  function trackCTAClick(ctaType, ctaText) {
+    if (typeof gtag !== 'undefined') {
+      gtag('event', 'click', {
+        event_category: 'CTA',
+        event_label: `${ctaType}: ${ctaText}`,
+        value: 1
+      });
+    }
+    
+    if (typeof fbq !== 'undefined') {
+      fbq('track', 'Lead', {
+        content_name: ctaText,
+        content_category: ctaType
+      });
+    }
+  }
+
+  // Add click tracking to CTA buttons
+  document.addEventListener('DOMContentLoaded', function() {
+    const ctaPrimary = document.querySelector('.cta-primary');
+    const ctaSecondary = document.querySelector('.cta-secondary');
+    const actionCards = document.querySelectorAll('.action-card');
+
+    if (ctaPrimary) {
+      ctaPrimary.addEventListener('click', () => {
+        trackCTAClick('primary', ctaPrimary.textContent.trim());
+      });
+    }
+
+    if (ctaSecondary) {
+      ctaSecondary.addEventListener('click', () => {
+        trackCTAClick('secondary', ctaSecondary.textContent.trim());
+      });
+    }
+
+    actionCards.forEach(card => {
+      card.addEventListener('click', () => {
+        const title = card.querySelector('.action-title')?.textContent.trim();
+        trackCTAClick('additional', title);
+      });
+    });
+  });
+
+  // Urgency timer for limited time offers
+  function startUrgencyTimer(expiryDate) {
+    const timerElement = document.querySelector('.incentive-expires');
+    if (!timerElement || !expiryDate) return;
+
+    function updateTimer() {
+      const now = new Date().getTime();
+      const expiry = new Date(expiryDate).getTime();
+      const distance = expiry - now;
+
+      if (distance < 0) {
+        timerElement.textContent = 'Offer expired';
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+
+      if (days > 0) {
+        timerElement.textContent = `Expires in ${days} days`;
+      } else if (hours > 0) {
+        timerElement.textContent = `Expires in ${hours} hours`;
+      } else {
+        timerElement.textContent = `Expires in ${minutes} minutes`;
+      }
+    }
+
+    updateTimer();
+    setInterval(updateTimer, 60000); // Update every minute
+  }
+
+  // Initialize urgency timer if present
+  document.addEventListener('DOMContentLoaded', function() {
+    const incentiveBanner = document.querySelector('.incentive-banner');
+    const expiryElement = document.querySelector('.incentive-expires');
+    
+    if (incentiveBanner && expiryElement) {
+      const expiryDate = expiryElement.dataset.expiry;
+      if (expiryDate) {
+        startUrgencyTimer(expiryDate);
+      }
+    }
+  });
+</script>

@@ -1,0 +1,1416 @@
+---
+// Process.astro - How we work process section
+import theme from '../../lib/therme';
+
+export interface Props {
+  // Content props
+  eyebrow?: string;
+  headline?: string;
+  description?: string;
+  ctaText?: string;
+  ctaHref?: string;
+  
+  // Layout props
+  variant?: 'timeline' | 'cards' | 'minimal';
+  showCta?: boolean;
+  showTimeline?: boolean;
+  
+  // Process steps
+  steps?: Array<{
+    id: string;
+    number: number;
+    title: string;
+    description: string;
+    details: string[];
+    duration: string;
+    deliverables: string[];
+    icon: string;
+    image?: string;
+    imageAlt?: string;
+  }>;
+  
+  // Additional info
+  processHighlights?: Array<{
+    title: string;
+    description: string;
+    icon: string;
+  }>;
+}
+
+const {
+  eyebrow = "Our Process",
+  headline = "A Proven Approach That Delivers Results",
+  description = "We've refined our process over hundreds of projects to ensure smooth collaboration, clear communication, and exceptional outcomes. Here's exactly what you can expect when working with us.",
+  ctaText = "Start Your Project",
+  ctaHref = "/contact",
+  variant = "timeline",
+  showCta = true,
+  showTimeline = true,
+  steps = [
+    {
+      id: "discovery",
+      number: 1,
+      title: "Discovery & Strategy",
+      description: "We start by understanding your business, goals, and challenges through comprehensive research and stakeholder interviews.",
+      details: [
+        "Stakeholder interviews and workshops",
+        "Competitive analysis and market research",
+        "Technical requirements gathering",
+        "User persona development",
+        "Project roadmap creation"
+      ],
+      duration: "1-2 weeks",
+      deliverables: ["Project brief", "Technical specifications", "Timeline & milestones"],
+      icon: "🔍",
+      image: "/process/discovery.jpg",
+      imageAlt: "Team conducting discovery workshop"
+    },
+    {
+      id: "design",
+      number: 2,
+      title: "Design & Prototyping",
+      description: "Our design team creates intuitive, user-centered designs that align with your brand and business objectives.",
+      details: [
+        "Information architecture planning",
+        "Wireframing and user flow mapping",
+        "Visual design and brand integration",
+        "Interactive prototype development",
+        "User testing and feedback incorporation"
+      ],
+      duration: "2-3 weeks",
+      deliverables: ["Design system", "Interactive prototypes", "User testing results"],
+      icon: "🎨",
+      image: "/process/design.jpg",
+      imageAlt: "Designer creating user interface mockups"
+    },
+    {
+      id: "development",
+      number: 3,
+      title: "Development & Testing",
+      description: "Our developers bring designs to life using modern technologies, with rigorous testing throughout the process.",
+      details: [
+        "Agile development methodology",
+        "Regular code reviews and testing",
+        "Performance optimization",
+        "Security implementation",
+        "Cross-platform compatibility testing"
+      ],
+      duration: "4-8 weeks",
+      deliverables: ["Working application", "Documentation", "Test reports"],
+      icon: "⚙️",
+      image: "/process/development.jpg",
+      imageAlt: "Developers coding and collaborating"
+    },
+    {
+      id: "launch",
+      number: 4,
+      title: "Launch & Optimization",
+      description: "We ensure a smooth launch with comprehensive testing, training, and ongoing optimization based on real user data.",
+      details: [
+        "Pre-launch testing and quality assurance",
+        "Deployment and go-live support",
+        "Team training and documentation",
+        "Performance monitoring setup",
+        "Post-launch optimization and refinements"
+      ],
+      duration: "1-2 weeks",
+      deliverables: ["Live application", "Training materials", "Analytics setup"],
+      icon: "🚀",
+      image: "/process/launch.jpg",
+      imageAlt: "Team celebrating successful project launch"
+    },
+    {
+      id: "support",
+      number: 5,
+      title: "Ongoing Support",
+      description: "Our relationship doesn't end at launch. We provide ongoing support, maintenance, and strategic guidance for continued success.",
+      details: [
+        "24/7 monitoring and maintenance",
+        "Regular security updates",
+        "Performance optimization",
+        "Feature enhancements",
+        "Strategic consultation and planning"
+      ],
+      duration: "Ongoing",
+      deliverables: ["Monthly reports", "Update releases", "Support tickets"],
+      icon: "🛠️",
+      image: "/process/support.jpg",
+      imageAlt: "Support team providing ongoing assistance"
+    }
+  ],
+  processHighlights = [
+    {
+      title: "Agile Methodology",
+      description: "Flexible, iterative approach with regular feedback and adjustments throughout the project.",
+      icon: "🔄"
+    },
+    {
+      title: "Transparent Communication",
+      description: "Weekly updates, shared project dashboards, and direct access to your dedicated team.",
+      icon: "💬"
+    },
+    {
+      title: "Quality Assurance",
+      description: "Rigorous testing at every stage ensures your project meets the highest standards.",
+      icon: "✅"
+    },
+    {
+      title: "On-Time Delivery",
+      description: "Detailed planning and project management ensure we meet deadlines and stay within budget.",
+      icon: "⏰"
+    }
+  ]
+} = Astro.props;
+---
+
+<section class="process" aria-labelledby="process-headline">
+  <div class="process-container">
+    
+    <!-- Section Header -->
+    <div class="section-header" data-animate="fade-up">
+      <span class="section-eyebrow">{eyebrow}</span>
+      <h2 id="process-headline" class="section-headline">
+        {headline}
+      </h2>
+      <p class="section-description">
+        {description}
+      </p>
+    </div>
+
+    <!-- Process Highlights -->
+    {processHighlights.length > 0 && (
+      <div class="process-highlights" data-animate="fade-up" data-delay="200">
+        <div class="highlights-grid">
+          {processHighlights.map((highlight, index) => (
+            <div 
+              class="highlight-item"
+              data-animate="fade-up"
+              data-delay={250 + (index * 50)}
+              key={index}
+            >
+              <div class="highlight-icon">
+                <span role="img" aria-hidden="true">{highlight.icon}</span>
+              </div>
+              <div class="highlight-content">
+                <h3 class="highlight-title">{highlight.title}</h3>
+                <p class="highlight-description">{highlight.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- Process Steps -->
+    <div class={`process-steps variant-${variant}`} data-animate="fade-up" data-delay="400">
+      
+      {/* Timeline Variant */}
+      {variant === 'timeline' && showTimeline && (
+        <div class="timeline-container">
+          <div class="timeline-line" aria-hidden="true"></div>
+          
+          {steps.map((step, index) => (
+            <div 
+              class={`timeline-item ${index % 2 === 0 ? 'left' : 'right'}`}
+              data-animate="fade-up"
+              data-delay={500 + (index * 100)}
+              key={step.id}
+            >
+              <div class="timeline-marker">
+                <div class="marker-number">{step.number}</div>
+                <div class="marker-icon">
+                  <span role="img" aria-hidden="true">{step.icon}</span>
+                </div>
+              </div>
+              
+              <div class="timeline-content">
+                <div class="step-header">
+                  <div class="step-meta">
+                    <span class="step-number">Step {step.number}</span>
+                    <span class="step-duration">{step.duration}</span>
+                  </div>
+                  <h3 class="step-title">{step.title}</h3>
+                  <p class="step-description">{step.description}</p>
+                </div>
+                
+                <div class="step-details">
+                  <div class="details-section">
+                    <h4 class="details-title">What We Do:</h4>
+                    <ul class="details-list">
+                      {step.details.map((detail, detailIndex) => (
+                        <li key={detailIndex}>
+                          <svg class="check-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M13.5 4.5L6 12L2.5 8.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                          {detail}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  <div class="deliverables-section">
+                    <h4 class="deliverables-title">Deliverables:</h4>
+                    <div class="deliverables-grid">
+                      {step.deliverables.map((deliverable, deliverableIndex) => (
+                        <div class="deliverable-item" key={deliverableIndex}>
+                          <svg class="deliverable-icon" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M12 7C12 9.76142 9.76142 12 7 12C4.23858 12 2 9.76142 2 7C2 4.23858 4.23858 2 7 2C9.76142 2 12 4.23858 12 7Z" fill="currentColor"/>
+                          </svg>
+                          {deliverable}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                
+                {step.image && (
+                  <div class="step-image">
+                    <img 
+                      src={step.image}
+                      alt={step.imageAlt}
+                      width="400"
+                      height="250"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Cards Variant */}
+      {variant === 'cards' && (
+        <div class="cards-grid">
+          {steps.map((step, index) => (
+            <div 
+              class="step-card"
+              data-animate="fade-up"
+              data-delay={400 + (index * 100)}
+              key={step.id}
+            >
+              <div class="card-header">
+                <div class="card-icon">
+                  <span role="img" aria-hidden="true">{step.icon}</span>
+                </div>
+                <div class="card-meta">
+                  <span class="card-number">{step.number}</span>
+                  <span class="card-duration">{step.duration}</span>
+                </div>
+              </div>
+              
+              <div class="card-content">
+                <h3 class="card-title">{step.title}</h3>
+                <p class="card-description">{step.description}</p>
+                
+                <div class="card-details">
+                  <h4 class="card-details-title">Key Activities:</h4>
+                  <ul class="card-details-list">
+                    {step.details.slice(0, 3).map((detail, detailIndex) => (
+                      <li key={detailIndex}>
+                        <svg class="check-icon" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                          <path d="M11.5 3.5L5 10L2.5 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        {detail}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                
+                <div class="card-deliverables">
+                  <strong>Deliverables:</strong> {step.deliverables.join(', ')}
+                </div>
+              </div>
+              
+              {step.image && (
+                <div class="card-image">
+                  <img 
+                    src={step.image}
+                    alt={step.imageAlt}
+                    width="300"
+                    height="180"
+                    loading="lazy"
+                  />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Minimal Variant */}
+      {variant === 'minimal' && (
+        <div class="minimal-steps">
+          {steps.map((step, index) => (
+            <div 
+              class="minimal-step"
+              data-animate="fade-up"
+              data-delay={400 + (index * 100)}
+              key={step.id}
+            >
+              <div class="minimal-header">
+                <div class="minimal-icon">
+                  <span role="img" aria-hidden="true">{step.icon}</span>
+                </div>
+                <div class="minimal-content">
+                  <div class="minimal-meta">
+                    <span class="minimal-number">{step.number}</span>
+                    <span class="minimal-duration">{step.duration}</span>
+                  </div>
+                  <h3 class="minimal-title">{step.title}</h3>
+                  <p class="minimal-description">{step.description}</p>
+                </div>
+              </div>
+              
+              {index < steps.length - 1 && (
+                <div class="minimal-connector" aria-hidden="true">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+
+    <!-- Call to Action */
+    {showCta && (
+      <div 
+        class="process-cta"
+        data-animate="fade-up"
+        data-delay="800"
+      >
+        <div class="cta-content">
+          <h3 class="cta-title">Ready to Get Started?</h3>
+          <p class="cta-description">
+            Let's discuss your project and show you exactly how our proven process can deliver exceptional results for your business.
+          </p>
+          <a href={ctaHref} class="cta-button">
+            {ctaText}
+            <svg class="cta-arrow" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M4.16667 10H15.8333M15.8333 10L10.8333 5M15.8333 10L10.8333 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    )}
+  </div>
+
+  <!-- Background Decoration -->
+  <div class="background-decoration" aria-hidden="true">
+    <div class="decoration-grid">
+      <div class="grid-line grid-line-1"></div>
+      <div class="grid-line grid-line-2"></div>
+      <div class="grid-line grid-line-3"></div>
+      <div class="grid-dot grid-dot-1"></div>
+      <div class="grid-dot grid-dot-2"></div>
+      <div class="grid-dot grid-dot-3"></div>
+    </div>
+  </div>
+</section>
+
+<style define:vars={{
+  primaryColor: theme.colors.primary[500],
+  primaryHover: theme.colors.primary[600],
+  primaryLight: theme.colors.primary[100],
+  secondaryColor: theme.colors.secondary[500],
+  successColor: theme.colors.success[500],
+  neutralWhite: theme.colors.neutral[50],
+  neutralGray: theme.colors.neutral[500],
+  neutralDark: theme.colors.neutral[900],
+  neutralLight: theme.colors.neutral[100],
+  borderColor: theme.colors.border,
+  fontSans: theme.typography.fontFamily.sans.join(', '),
+  fontDisplay: theme.typography.fontFamily.display.join(', '),
+  spacing4: theme.spacing[4],
+  spacing6: theme.spacing[6],
+  spacing8: theme.spacing[8],
+  spacing12: theme.spacing[12],
+  spacing16: theme.spacing[16],
+  spacing20: theme.spacing[20],
+  spacing24: theme.spacing[24],
+  spacing32: theme.spacing[32],
+  borderRadiusLg: theme.borderRadius.lg,
+  borderRadius2xl: theme.borderRadius['2xl'],
+  shadowMd: theme.boxShadow.md,
+  shadowLg: theme.boxShadow.lg,
+  shadow2xl: theme.boxShadow['2xl']
+}}>
+  .process {
+    position: relative;
+    padding: var(--spacing24) 0;
+    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
+    overflow: hidden;
+  }
+
+  .process-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 var(--spacing4);
+    position: relative;
+    z-index: 10;
+  }
+
+  @media (min-width: 768px) {
+    .process-container {
+      padding: 0 var(--spacing6);
+    }
+  }
+
+  /* Section Header */
+  .section-header {
+    text-align: center;
+    margin-bottom: var(--spacing20);
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .section-eyebrow {
+    display: inline-block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primaryColor);
+    background: var(--primaryLight);
+    padding: var(--spacing2) var(--spacing4);
+    border-radius: var(--borderRadiusLg);
+    margin-bottom: var(--spacing6);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .section-headline {
+    font-family: var(--fontDisplay);
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing6) 0;
+  }
+
+  @media (min-width: 768px) {
+    .section-headline {
+      font-size: 3rem;
+    }
+  }
+
+  .section-description {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: var(--neutralGray);
+    margin: 0;
+  }
+
+  /* Process Highlights */
+  .process-highlights {
+    margin-bottom: var(--spacing20);
+  }
+
+  .highlights-grid {
+    display: grid;
+    gap: var(--spacing6);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .highlights-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .highlights-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .highlight-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing4);
+    padding: var(--spacing6);
+    background: var(--neutralWhite);
+    border-radius: var(--borderRadiusLg);
+    border: 1px solid var(--borderColor);
+    transition: all 0.3s ease;
+  }
+
+  .highlight-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadowMd);
+    border-color: var(--primaryColor);
+  }
+
+  .highlight-icon {
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .highlight-content {
+    flex: 1;
+  }
+
+  .highlight-title {
+    font-family: var(--fontDisplay);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing2) 0;
+  }
+
+  .highlight-description {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--neutralGray);
+    margin: 0;
+  }
+
+  /* Timeline Variant */
+  .timeline-container {
+    position: relative;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .timeline-line {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--primaryColor), var(--secondaryColor));
+    border-radius: 2px;
+    transform: translateX(-50%);
+    z-index: 1;
+  }
+
+  @media (max-width: 768px) {
+    .timeline-line {
+      left: 30px;
+    }
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: var(--spacing16);
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .timeline-item.left {
+    flex-direction: row;
+  }
+
+  .timeline-item.right {
+    flex-direction: row-reverse;
+  }
+
+  @media (max-width: 768px) {
+    .timeline-item,
+    .timeline-item.right {
+      flex-direction: row;
+    }
+  }
+
+  .timeline-marker {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 var(--spacing8);
+  }
+
+  @media (max-width: 768px) {
+    .timeline-marker {
+      margin: 0 var(--spacing6) 0 0;
+    }
+  }
+
+  .marker-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: var(--primaryColor);
+    color: var(--neutralWhite);
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 1.125rem;
+    margin-bottom: var(--spacing2);
+    border: 4px solid var(--neutralWhite);
+    box-shadow: var(--shadowMd);
+  }
+
+  .marker-icon {
+    font-size: 1.25rem;
+    background: var(--neutralWhite);
+    padding: var(--spacing2);
+    border-radius: 50%;
+    border: 2px solid var(--primaryColor);
+  }
+
+  .timeline-content {
+    flex: 1;
+    max-width: 450px;
+    background: var(--neutralWhite);
+    border-radius: var(--borderRadius2xl);
+    padding: var(--spacing8);
+    box-shadow: var(--shadowLg);
+    border: 1px solid var(--borderColor);
+  }
+
+  @media (max-width: 768px) {
+    .timeline-content {
+      max-width: none;
+    }
+  }
+
+  .step-header {
+    margin-bottom: var(--spacing6);
+  }
+
+  .step-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing4);
+    margin-bottom: var(--spacing4);
+  }
+
+  .step-number {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primaryColor);
+    background: var(--primaryLight);
+    padding: 2px var(--spacing3);
+    border-radius: var(--borderRadiusLg);
+  }
+
+  .step-duration {
+    font-size: 0.875rem;
+    color: var(--neutralGray);
+    background: var(--neutralLight);
+    padding: 2px var(--spacing3);
+    border-radius: var(--borderRadiusLg);
+  }
+
+  .step-title {
+    font-family: var(--fontDisplay);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing3) 0;
+  }
+
+  .step-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--neutralGray);
+    margin: 0;
+  }
+
+  .step-details {
+    display: grid;
+    gap: var(--spacing6);
+    margin-bottom: var(--spacing6);
+  }
+
+  @media (min-width: 640px) {
+    .step-details {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .details-section,
+  .deliverables-section {
+    padding: var(--spacing4);
+    background: var(--neutralLight);
+    border-radius: var(--borderRadiusLg);
+  }
+
+  .details-title,
+  .deliverables-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing3) 0;
+  }
+
+  .details-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .details-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing2);
+    margin-bottom: var(--spacing2);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--neutralGray);
+  }
+
+  .check-icon {
+    color: var(--successColor);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .deliverables-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing2);
+  }
+
+  .deliverable-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing2);
+    font-size: 0.875rem;
+    color: var(--neutralGray);
+  }
+
+  .deliverable-icon {
+    color: var(--primaryColor);
+    flex-shrink: 0;
+  }
+
+  .step-image {
+    border-radius: var(--borderRadiusLg);
+    overflow: hidden;
+    margin-top: var(--spacing4);
+  }
+
+  .step-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Cards Variant */
+  .cards-grid {
+    display: grid;
+    gap: var(--spacing8);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .cards-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .cards-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .step-card {
+    background: var(--neutralWhite);
+    border-radius: var(--borderRadius2xl);
+    padding: var(--spacing8);
+    box-shadow: var(--shadowMd);
+    border: 1px solid var(--borderColor);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .step-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow2xl);
+    border-color: var(--primaryColor);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing4);
+    margin-bottom: var(--spacing6);
+  }
+
+  .card-icon {
+    font-size: 2rem;
+    background: var(--primaryLight);
+    padding: var(--spacing3);
+    border-radius: var(--borderRadiusLg);
+  }
+
+  .card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing2);
+  }
+
+  .card-number {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primaryColor);
+  }
+
+  .card-duration {
+    font-size: 0.875rem;
+    color: var(--neutralGray);
+  }
+
+  .card-content {
+    flex: 1;
+  }
+
+  .card-title {
+    font-family: var(--fontDisplay);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing3) 0;
+  }
+
+  .card-description {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--neutralGray);
+    margin: 0 0 var(--spacing6) 0;
+  }
+
+  .card-details {
+    margin-bottom: var(--spacing4);
+  }
+
+  .card-details-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing3) 0;
+  }
+
+  .card-details-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .card-details-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing2);
+    margin-bottom: var(--spacing2);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--neutralGray);
+  }
+
+  .card-deliverables {
+    font-size: 0.875rem;
+    color: var(--neutralGray);
+    padding: var(--spacing3);
+    background: var(--neutralLight);
+    border-radius: var(--borderRadiusLg);
+    margin-bottom: var(--spacing4);
+  }
+
+  .card-image {
+    border-radius: var(--borderRadiusLg);
+    overflow: hidden;
+    margin-top: auto;
+  }
+
+  .card-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Minimal Variant */
+  .minimal-steps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing8);
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  @media (min-width: 768px) {
+    .minimal-steps {
+      gap: var(--spacing12);
+    }
+  }
+
+  .minimal-step {
+    position: relative;
+  }
+
+  .minimal-header {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing6);
+    padding: var(--spacing8);
+    background: var(--neutralWhite);
+    border-radius: var(--borderRadius2xl);
+    box-shadow: var(--shadowMd);
+    border: 1px solid var(--borderColor);
+    transition: all 0.3s ease;
+  }
+
+  .minimal-header:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadowLg);
+    border-color: var(--primaryColor);
+  }
+
+  .minimal-icon {
+    font-size: 2rem;
+    background: var(--primaryLight);
+    padding: var(--spacing4);
+    border-radius: var(--borderRadiusLg);
+    flex-shrink: 0;
+  }
+
+  .minimal-content {
+    flex: 1;
+  }
+
+  .minimal-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing4);
+    margin-bottom: var(--spacing3);
+  }
+
+  .minimal-number {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--primaryColor);
+    background: var(--primaryLight);
+    padding: var(--spacing2) var(--spacing3);
+    border-radius: var(--borderRadiusLg);
+  }
+
+  .minimal-duration {
+    font-size: 0.875rem;
+    color: var(--neutralGray);
+    background: var(--neutralLight);
+    padding: var(--spacing2) var(--spacing3);
+    border-radius: var(--borderRadiusLg);
+  }
+
+  .minimal-title {
+    font-family: var(--fontDisplay);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing3) 0;
+  }
+
+  .minimal-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--neutralGray);
+    margin: 0;
+  }
+
+  .minimal-connector {
+    display: flex;
+    justify-content: center;
+    margin: var(--spacing4) 0;
+    color: var(--primaryColor);
+  }
+
+  @media (max-width: 640px) {
+    .minimal-connector {
+      transform: rotate(90deg);
+    }
+  }
+
+  /* Process CTA */
+  .process-cta {
+    text-align: center;
+    margin-top: var(--spacing20);
+    padding: var(--spacing12);
+    background: linear-gradient(135deg, var(--primaryLight) 0%, var(--neutralWhite) 100%);
+    border-radius: var(--borderRadius2xl);
+    border: 1px solid var(--borderColor);
+  }
+
+  .cta-content {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .cta-title {
+    font-family: var(--fontDisplay);
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing4) 0;
+  }
+
+  .cta-description {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: var(--neutralGray);
+    margin: 0 0 var(--spacing8) 0;
+  }
+
+  .cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing2);
+    font-family: var(--fontSans);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--neutralWhite);
+    background: var(--primaryColor);
+    text-decoration: none;
+    padding: var(--spacing4) var(--spacing8);
+    border-radius: var(--borderRadiusLg);
+    transition: all 0.3s ease;
+    box-shadow: var(--shadowLg);
+    border: 2px solid var(--primaryColor);
+  }
+
+  .cta-button:hover,
+  .cta-button:focus {
+    background: var(--primaryHover);
+    border-color: var(--primaryHover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow2xl);
+  }
+
+  .cta-button:focus {
+    outline: 2px solid var(--primaryColor);
+    outline-offset: 2px;
+  }
+
+  .cta-arrow {
+    transition: transform 0.3s ease;
+  }
+
+  .cta-button:hover .cta-arrow {
+    transform: translateX(4px);
+  }
+
+  /* Background Decoration */
+  .background-decoration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .decoration-grid {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .grid-line {
+    position: absolute;
+    background: linear-gradient(90deg, transparent, var(--primaryColor), transparent);
+    opacity: 0.1;
+    height: 2px;
+  }
+
+  .grid-line-1 {
+    top: 20%;
+    left: 0;
+    right: 0;
+    animation: slideRight 15s ease-in-out infinite;
+  }
+
+  .grid-line-2 {
+    top: 50%;
+    left: 0;
+    right: 0;
+    animation: slideLeft 20s ease-in-out infinite;
+    animation-delay: 5s;
+  }
+
+  .grid-line-3 {
+    top: 80%;
+    left: 0;
+    right: 0;
+    animation: slideRight 25s ease-in-out infinite;
+    animation-delay: 10s;
+  }
+
+  .grid-dot {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: var(--primaryColor);
+    border-radius: 50%;
+    opacity: 0.3;
+    animation: pulse 4s ease-in-out infinite;
+  }
+
+  .grid-dot-1 {
+    top: 15%;
+    left: 10%;
+    animation-delay: 0s;
+  }
+
+  .grid-dot-2 {
+    top: 45%;
+    right: 15%;
+    animation-delay: 2s;
+  }
+
+  .grid-dot-3 {
+    bottom: 25%;
+    left: 50%;
+    animation-delay: 4s;
+  }
+
+  @keyframes slideRight {
+    0%, 100% { transform: translateX(-100%); }
+    50% { transform: translateX(100%); }
+  }
+
+  @keyframes slideLeft {
+    0%, 100% { transform: translateX(100%); }
+    50% { transform: translateX(-100%); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.5); }
+  }
+
+  /* Animations */
+  [data-animate] {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease;
+  }
+
+  [data-animate].animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Mobile Optimizations */
+  @media (max-width: 640px) {
+    .process {
+      padding: var(--spacing16) 0;
+    }
+
+    .section-headline {
+      font-size: 2rem;
+    }
+
+    .cta-title {
+      font-size: 1.5rem;
+    }
+
+    .timeline-content {
+      padding: var(--spacing6);
+    }
+
+    .step-details {
+      grid-template-columns: 1fr;
+    }
+
+    .highlights-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .cards-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .decoration-grid {
+      display: none;
+    }
+  }
+
+  /* Reduced Motion */
+  @media (prefers-reduced-motion: reduce) {
+    .highlight-item,
+    .timeline-content,
+    .step-card,
+    .minimal-header,
+    .cta-button,
+    .grid-line,
+    .grid-dot {
+      animation: none;
+      transition: none;
+    }
+    
+    .highlight-item:hover,
+    .step-card:hover,
+    .minimal-header:hover,
+    .cta-button:hover {
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  // Process Animation Controller
+  class ProcessAnimations {
+    constructor() {
+      this.animatedElements = document.querySelectorAll('.process [data-animate]');
+      this.timelineItems = document.querySelectorAll('.timeline-item');
+      this.stepCards = document.querySelectorAll('.step-card');
+      this.highlightItems = document.querySelectorAll('.highlight-item');
+      
+      this.init();
+    }
+
+    init() {
+      this.setupScrollAnimations();
+      this.setupInteractiveElements();
+      this.setupProgressTracking();
+    }
+
+    setupScrollAnimations() {
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !entry.target.hasAnimated) {
+            const delay = parseInt(entry.target.dataset.delay) || 0;
+            setTimeout(() => {
+              entry.target.classList.add('animate');
+            }, delay);
+            entry.target.hasAnimated = true;
+          }
+        });
+      }, observerOptions);
+
+      this.animatedElements.forEach(el => {
+        observer.observe(el);
+      });
+    }
+
+    setupInteractiveElements() {
+      // Enhanced hover effects for timeline items
+      this.timelineItems.forEach(item => {
+        item.addEventListener('mouseenter', () => {
+          item.style.setProperty('--hover-scale', '1.02');
+        });
+
+        item.addEventListener('mouseleave', () => {
+          item.style.setProperty('--hover-scale', '1');
+        });
+      });
+
+      // Step card interactions
+      this.stepCards.forEach(card => {
+        card.addEventListener('click', () => {
+          const title = card.querySelector('.card-title')?.textContent;
+          console.log(`Process step clicked: ${title}`);
+        });
+      });
+
+      // Highlight item interactions
+      this.highlightItems.forEach(item => {
+        item.addEventListener('mouseenter', () => {
+          const icon = item.querySelector('.highlight-icon');
+          if (icon) {
+            icon.style.transform = 'scale(1.2) rotate(5deg)';
+          }
+        });
+
+        item.addEventListener('mouseleave', () => {
+          const icon = item.querySelector('.highlight-icon');
+          if (icon) {
+            icon.style.transform = 'scale(1) rotate(0deg)';
+          }
+        });
+      });
+    }
+
+    setupProgressTracking() {
+      // Track which process steps are viewed
+      const stepObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const stepElement = entry.target;
+            const stepNumber = stepElement.dataset.step || 
+                             stepElement.querySelector('.step-number, .card-number, .minimal-number')?.textContent;
+            
+            if (stepNumber && !stepElement.hasTracked) {
+              console.log(`Process step ${stepNumber} viewed`);
+              stepElement.hasTracked = true;
+            }
+          }
+        });
+      }, {
+        threshold: 0.5
+      });
+
+      // Observe timeline items, step cards, and minimal steps
+      const allSteps = [
+        ...this.timelineItems,
+        ...this.stepCards,
+        ...document.querySelectorAll('.minimal-step')
+      ];
+
+      allSteps.forEach(step => {
+        stepObserver.observe(step);
+      });
+    }
+
+    // Public method to highlight a specific step
+    highlightStep(stepNumber) {
+      const allSteps = [
+        ...this.timelineItems,
+        ...this.stepCards,
+        ...document.querySelectorAll('.minimal-step')
+      ];
+
+      allSteps.forEach(step => {
+        const number = step.querySelector('.step-number, .card-number, .minimal-number')?.textContent;
+        if (number && number.includes(stepNumber.toString())) {
+          step.style.transform = 'scale(1.05)';
+          step.style.boxShadow = '0 20px 40px rgba(14, 165, 233, 0.2)';
+          step.style.borderColor = 'var(--primaryColor)';
+          
+          setTimeout(() => {
+            step.style.transform = '';
+            step.style.boxShadow = '';
+            step.style.borderColor = '';
+          }, 2000);
+        }
+      });
+    }
+  }
+
+  // Initialize when DOM is loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    window.processAnimations = new ProcessAnimations();
+  });
+
+  // Smooth scroll to process section if hash is present
+  if (window.location.hash === '#process') {
+    document.addEventListener('DOMContentLoaded', () => {
+      const processSection = document.querySelector('.process');
+      if (processSection) {
+        processSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  }
+
+  // Performance optimization
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(() => {
+      console.log('Process animations optimized');
+    });
+  }
+</script>

@@ -1,0 +1,1760 @@
+---
+// CertificationsAndAwards.astro - Third-party validation and recognition
+import theme from '../../lib/therme';
+
+export interface Props {
+  // Content props
+  eyebrow?: string;
+  headline?: string;
+  description?: string;
+  
+  // Certifications
+  certifications?: Array<{
+    id: string;
+    name: string;
+    issuer: string;
+    description?: string;
+    logo?: string;
+    logoAlt?: string;
+    date?: string;
+    expiryDate?: string;
+    credentialId?: string;
+    verificationUrl?: string;
+    level?: 'basic' | 'intermediate' | 'advanced' | 'expert' | 'premier';
+    category: 'technology' | 'business' | 'security' | 'design' | 'marketing' | 'project-management';
+    featured?: boolean;
+  }>;
+  
+  // Awards and Recognition
+  awards?: Array<{
+    id: string;
+    title: string;
+    organization: string;
+    year: string;
+    description?: string;
+    category: 'industry' | 'client-satisfaction' | 'innovation' | 'growth' | 'leadership' | 'community';
+    rank?: string;
+    logo?: string;
+    logoAlt?: string;
+    featured?: boolean;
+  }>;
+  
+  // Industry memberships
+  memberships?: Array<{
+    id: string;
+    organization: string;
+    role?: string;
+    since: string;
+    description?: string;
+    logo?: string;
+    logoAlt?: string;
+    website?: string;
+    featured?: boolean;
+  }>;
+  
+  // Client testimonials/reviews from platforms
+  reviews?: Array<{
+    id: string;
+    platform: string;
+    rating: number;
+    reviewCount: number;
+    logo?: string;
+    logoAlt?: string;
+    url?: string;
+    featured?: boolean;
+  }>;
+  
+  // Layout variant
+  variant?: 'default' | 'grid' | 'showcase' | 'minimal';
+  
+  // Settings
+  showLogos?: boolean;
+  showDates?: boolean;
+  showVerification?: boolean;
+}
+
+const {
+  eyebrow = "Trust & Credibility",
+  headline = "Recognized Excellence in Digital Innovation",
+  description = "Our certifications, awards, and industry recognition demonstrate our commitment to maintaining the highest standards of quality and expertise.",
+  variant = "default",
+  showLogos = true,
+  showDates = true,
+  showVerification = true,
+  certifications = [
+    {
+      id: "google-premier",
+      name: "Google Ads Premier Partner",
+      issuer: "Google",
+      description: "Top-tier certification for agencies demonstrating Google Ads expertise and client growth.",
+      date: "2023",
+      level: "premier",
+      category: "marketing",
+      featured: true
+    },
+    {
+      id: "aws-certified",
+      name: "AWS Certified Solutions Architect",
+      issuer: "Amazon Web Services",
+      description: "Professional-level certification for designing distributed systems on AWS.",
+      date: "2024",
+      expiryDate: "2027",
+      level: "advanced",
+      category: "technology",
+      featured: true
+    },
+    {
+      id: "hubspot-certified",
+      name: "HubSpot Certified Partner",
+      issuer: "HubSpot",
+      description: "Certified expertise in inbound marketing and sales automation.",
+      date: "2023",
+      level: "expert",
+      category: "marketing",
+      featured: false
+    },
+    {
+      id: "shopify-plus",
+      name: "Shopify Plus Partner",
+      issuer: "Shopify",
+      description: "Elite partner status for enterprise e-commerce solutions.",
+      date: "2023",
+      level: "premier",
+      category: "technology",
+      featured: true
+    },
+    {
+      id: "pmp",
+      name: "Project Management Professional (PMP)",
+      issuer: "Project Management Institute",
+      description: "Industry-standard certification for project management excellence.",
+      date: "2022",
+      expiryDate: "2025",
+      level: "expert",
+      category: "project-management",
+      featured: false
+    },
+    {
+      id: "cissp",
+      name: "Certified Information Systems Security Professional",
+      issuer: "ISC²",
+      description: "Advanced security certification for information systems protection.",
+      date: "2023",
+      level: "expert",
+      category: "security",
+      featured: false
+    }
+  ],
+  awards = [
+    {
+      id: "best-agency-2024",
+      title: "Best Digital Agency 2024",
+      organization: "TechReview Awards",
+      year: "2024",
+      description: "Recognized as the top digital agency for innovation and client results.",
+      category: "industry",
+      rank: "1st Place",
+      featured: true
+    },
+    {
+      id: "inc-5000",
+      title: "Inc. 5000 Fastest Growing Companies",
+      organization: "Inc. Magazine",
+      year: "2024",
+      description: "Three consecutive years on the prestigious Inc. 5000 list.",
+      category: "growth",
+      rank: "Top 10%",
+      featured: true
+    },
+    {
+      id: "client-choice",
+      title: "Client Choice Award",
+      organization: "Clutch.co",
+      year: "2024",
+      description: "Top-rated agency based on client feedback and satisfaction scores.",
+      category: "client-satisfaction",
+      rank: "5.0/5.0",
+      featured: true
+    },
+    {
+      id: "innovation-award",
+      title: "Digital Innovation Excellence",
+      organization: "Web Excellence Awards",
+      year: "2023",
+      description: "Recognized for breakthrough innovation in web development and user experience.",
+      category: "innovation",
+      featured: false
+    },
+    {
+      id: "top-developer",
+      title: "Top Web Development Company",
+      organization: "GoodFirms",
+      year: "2024",
+      description: "Ranked among top web development companies globally.",
+      category: "industry",
+      rank: "Top 1%",
+      featured: false
+    },
+    {
+      id: "workplace-culture",
+      title: "Best Workplace Culture",
+      organization: "BuiltIn",
+      year: "2023",
+      description: "Recognized for exceptional remote-first workplace culture and employee satisfaction.",
+      category: "leadership",
+      featured: false
+    }
+  ],
+  memberships = [
+    {
+      id: "w3c",
+      organization: "World Wide Web Consortium (W3C)",
+      role: "Contributing Member",
+      since: "2020",
+      description: "Active participation in web standards development and accessibility initiatives.",
+      featured: true
+    },
+    {
+      id: "ux-professionals",
+      organization: "User Experience Professionals Association",
+      role: "Corporate Member",
+      since: "2019",
+      description: "Supporting the advancement of UX practices and professional development.",
+      featured: false
+    },
+    {
+      id: "digital-agency-network",
+      organization: "Digital Agency Network",
+      role: "Partner Agency",
+      since: "2021",
+      description: "Collaborative network of leading digital agencies worldwide.",
+      featured: false
+    },
+    {
+      id: "sustainable-web",
+      organization: "Sustainable Web Consortium",
+      role: "Founding Member",
+      since: "2022",
+      description: "Committed to reducing the environmental impact of digital technologies.",
+      featured: true
+    }
+  ],
+  reviews = [
+    {
+      id: "clutch",
+      platform: "Clutch.co",
+      rating: 5.0,
+      reviewCount: 47,
+      featured: true
+    },
+    {
+      id: "google",
+      platform: "Google Reviews",
+      rating: 4.9,
+      reviewCount: 89,
+      featured: true
+    },
+    {
+      id: "upwork",
+      platform: "Upwork",
+      rating: 4.95,
+      reviewCount: 156,
+      featured: false
+    },
+    {
+      id: "goodfirms",
+      platform: "GoodFirms",
+      rating: 4.8,
+      reviewCount: 23,
+      featured: false
+    }
+  ]
+} = Astro.props;
+
+// Helper function to get category colors
+function getCategoryColor(category: string): string {
+  const colors = {
+    technology: 'blue',
+    business: 'green', 
+    security: 'red',
+    design: 'purple',
+    marketing: 'orange',
+    'project-management': 'teal',
+    industry: 'blue',
+    'client-satisfaction': 'green',
+    innovation: 'purple',
+    growth: 'orange',
+    leadership: 'indigo',
+    community: 'pink'
+  };
+  return colors[category] || 'gray';
+}
+
+// Helper function to get level badge style
+function getLevelStyle(level: string): string {
+  const styles = {
+    basic: 'level-basic',
+    intermediate: 'level-intermediate', 
+    advanced: 'level-advanced',
+    expert: 'level-expert',
+    premier: 'level-premier'
+  };
+  return styles[level] || 'level-basic';
+}
+---
+
+<section class="certifications-awards" aria-labelledby="certifications-headline">
+  <div class="certifications-container">
+    
+    <!-- Section Header -->
+    <div class="section-header" data-animate="fade-up">
+      <span class="section-eyebrow">{eyebrow}</span>
+      <h2 id="certifications-headline" class="section-headline">
+        {headline}
+      </h2>
+      <p class="section-description">
+        {description}
+      </p>
+    </div>
+
+    <!-- Featured Awards Section -->
+    {awards.filter(award => award.featured).length > 0 && (
+      <div class="featured-awards-section" data-animate="fade-up" data-delay="200">
+        <div class="featured-awards-header">
+          <h3 class="subsection-title">Recent Awards & Recognition</h3>
+          <p class="subsection-description">
+            Latest industry recognition for our excellence and innovation.
+          </p>
+        </div>
+        
+        <div class="featured-awards-grid">
+          {awards.filter(award => award.featured).map((award, index) => (
+            <div 
+              class={`award-card featured category-${award.category}`}
+              data-animate="fade-up"
+              data-delay={300 + (index * 100)}
+              key={award.id}
+            >
+              <div class="award-content">
+                <div class="award-header">
+                  <div class="award-year">{award.year}</div>
+                  {award.rank && (
+                    <div class="award-rank">{award.rank}</div>
+                  )}
+                </div>
+                
+                <div class="award-details">
+                  <h4 class="award-title">{award.title}</h4>
+                  <p class="award-organization">{award.organization}</p>
+                  {award.description && (
+                    <p class="award-description">{award.description}</p>
+                  )}
+                </div>
+                
+                <div class="award-badge">
+                  <svg class="badge-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2L15.09 8.26L22 9L17 14.74L18.18 22L12 18.27L5.82 22L7 14.74L2 9L8.91 8.26L12 2Z" fill="currentColor"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- Certifications Section -->
+    <div class="certifications-section" data-animate="fade-up" data-delay="400">
+      <div class="certifications-header">
+        <h3 class="subsection-title">Professional Certifications</h3>
+        <p class="subsection-description">
+          Industry-recognized certifications that validate our technical expertise and best practices.
+        </p>
+      </div>
+      
+      <div class={`certifications-grid variant-${variant}`}>
+        {certifications.map((cert, index) => (
+          <div 
+            class={`certification-card ${cert.featured ? 'featured' : ''} category-${cert.category} ${getLevelStyle(cert.level)}`}
+            data-animate="fade-up"
+            data-delay={500 + (index * 100)}
+            key={cert.id}
+          >
+            <div class="cert-content">
+              <div class="cert-header">
+                <div class="cert-issuer">
+                  <span class="issuer-name">{cert.issuer}</span>
+                  {cert.level && (
+                    <span class={`level-badge ${getLevelStyle(cert.level)}`}>
+                      {cert.level.charAt(0).toUpperCase() + cert.level.slice(1)}
+                    </span>
+                  )}
+                </div>
+                
+                {showDates && cert.date && (
+                  <div class="cert-dates">
+                    <span class="cert-date">Earned: {cert.date}</span>
+                    {cert.expiryDate && (
+                      <span class="expiry-date">Expires: {cert.expiryDate}</span>
+                    )}
+                  </div>
+                )}
+              </div>
+              
+              <div class="cert-details">
+                <h4 class="cert-name">{cert.name}</h4>
+                {cert.description && (
+                  <p class="cert-description">{cert.description}</p>
+                )}
+              </div>
+              
+              <div class="cert-footer">
+                <div class={`category-tag category-${getCategoryColor(cert.category)}`}>
+                  {cert.category.replace('-', ' ')}
+                </div>
+                
+                {showVerification && cert.verificationUrl && (
+                  <a href={cert.verificationUrl} class="verify-link" target="_blank" rel="noopener noreferrer">
+                    <svg class="verify-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M8 0L9.798 5.292L16 6.062L11.494 10.708L12.944 16L8 13.292L3.056 16L4.506 10.708L0 6.062L6.202 5.292L8 0Z" fill="currentColor"/>
+                    </svg>
+                    Verify
+                  </a>
+                )}
+              </div>
+            </div>
+            
+            {cert.featured && (
+              <div class="featured-indicator">
+                <span>Featured</span>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Reviews & Ratings Section -->
+    {reviews && reviews.length > 0 && (
+      <div class="reviews-section" data-animate="fade-up" data-delay="600">
+        <div class="reviews-header">
+          <h3 class="subsection-title">Client Reviews & Ratings</h3>
+          <p class="subsection-description">
+            Consistently high ratings across all major review platforms.
+          </p>
+        </div>
+        
+        <div class="reviews-grid">
+          {reviews.map((review, index) => (
+            <div 
+              class={`review-card ${review.featured ? 'featured' : ''}`}
+              data-animate="fade-up"
+              data-delay={700 + (index * 100)}
+              key={review.id}
+            >
+              <div class="review-content">
+                <div class="review-header">
+                  <h4 class="platform-name">{review.platform}</h4>
+                  <div class="rating-display">
+                    <div class="stars">
+                      {Array.from({length: 5}, (_, i) => (
+                        <svg 
+                          key={i}
+                          class={`star ${i < Math.floor(review.rating) ? 'filled' : ''} ${i < review.rating && i >= Math.floor(review.rating) ? 'half' : ''}`}
+                          width="20" height="20" viewBox="0 0 20 20" fill="none"
+                        >
+                          <path d="M10 0L12.245 6.91L20 7.639L14.27 13.18L15.89 21L10 17.09L4.11 21L5.73 13.18L0 7.639L7.755 6.91L10 0Z" fill="currentColor"/>
+                        </svg>
+                      ))}
+                    </div>
+                    <span class="rating-number">{review.rating}</span>
+                  </div>
+                </div>
+                
+                <div class="review-stats">
+                  <span class="review-count">{review.reviewCount} reviews</span>
+                  {review.url && (
+                    <a href={review.url} class="view-reviews" target="_blank" rel="noopener noreferrer">
+                      View Reviews
+                      <svg class="external-link" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                        <path d="M11 3L3 11M11 3H5M11 3V9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- Industry Memberships -->
+    {memberships && memberships.length > 0 && (
+      <div class="memberships-section" data-animate="fade-up" data-delay="800">
+        <div class="memberships-header">
+          <h3 class="subsection-title">Industry Memberships & Partnerships</h3>
+          <p class="subsection-description">
+            Active participation in leading industry organizations and initiatives.
+          </p>
+        </div>
+        
+        <div class="memberships-grid">
+          {memberships.map((membership, index) => (
+            <div 
+              class={`membership-card ${membership.featured ? 'featured' : ''}`}
+              data-animate="fade-up"
+              data-delay={900 + (index * 100)}
+              key={membership.id}
+            >
+              <div class="membership-content">
+                <div class="membership-header">
+                  <h4 class="organization-name">{membership.organization}</h4>
+                  {membership.role && (
+                    <span class="member-role">{membership.role}</span>
+                  )}
+                </div>
+                
+                <div class="membership-details">
+                  <div class="member-since">Member since {membership.since}</div>
+                  {membership.description && (
+                    <p class="membership-description">{membership.description}</p>
+                  )}
+                </div>
+                
+                {membership.website && (
+                  <div class="membership-footer">
+                    <a href={membership.website} class="organization-link" target="_blank" rel="noopener noreferrer">
+                      Visit Organization
+                      <svg class="external-link" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                        <path d="M11 3L3 11M11 3H5M11 3V9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </a>
+                  </div>
+                )}
+              </div>
+              
+              {membership.featured && (
+                <div class="membership-featured-badge">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M8 0L9.798 5.292L16 6.062L11.494 10.708L12.944 16L8 13.292L3.056 16L4.506 10.708L0 6.062L6.202 5.292L8 0Z" fill="currentColor"/>
+                  </svg>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- All Awards Section -->
+    {awards.filter(award => !award.featured).length > 0 && (
+      <div class="all-awards-section" data-animate="fade-up" data-delay="1000">
+        <div class="all-awards-header">
+          <h3 class="subsection-title">Additional Recognition</h3>
+          <p class="subsection-description">
+            Our complete history of industry awards and achievements.
+          </p>
+        </div>
+        
+        <div class="awards-list">
+          {awards.filter(award => !award.featured).map((award, index) => (
+            <div 
+              class={`award-item category-${award.category}`}
+              data-animate="fade-up"
+              data-delay={1100 + (index * 50)}
+              key={award.id}
+            >
+              <div class="award-item-content">
+                <div class="award-item-header">
+                  <h4 class="award-item-title">{award.title}</h4>
+                  <div class="award-item-meta">
+                    <span class="award-item-org">{award.organization}</span>
+                    <span class="award-item-year">{award.year}</span>
+                    {award.rank && (
+                      <span class="award-item-rank">{award.rank}</span>
+                    )}
+                  </div>
+                </div>
+                
+                {award.description && (
+                  <p class="award-item-description">{award.description}</p>
+                )}
+              </div>
+              
+              <div class="award-item-icon">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M10 0L12.245 6.91L20 7.639L14.27 13.18L15.89 21L10 17.09L4.11 21L5.73 13.18L0 7.639L7.755 6.91L10 0Z" fill="currentColor"/>
+                </svg>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- Call to Action -->
+    <div class="certifications-cta" data-animate="fade-up" data-delay="1200">
+      <div class="cta-content">
+        <h3 class="cta-title">Work with a Certified Team</h3>
+        <p class="cta-description">
+          Trust your project to industry-certified professionals with proven expertise and recognition.
+        </p>
+        <div class="cta-actions">
+          <a href="/contact" class="cta-primary">
+            Start Your Project
+            <svg class="cta-arrow" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M4.16667 10H15.8333M15.8333 10L10.8333 5M15.8333 10L10.8333 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+          <a href="/portfolio" class="cta-secondary">
+            View Our Work
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Background Decoration -->
+  <div class="certifications-decoration" aria-hidden="true">
+    <div class="decoration-badges">
+      <div class="floating-badge badge-1">✓</div>
+      <div class="floating-badge badge-2">⭐</div>
+      <div class="floating-badge badge-3">🏆</div>
+      <div class="floating-badge badge-4">🎯</div>
+    </div>
+  </div>
+</section>
+
+<style define:vars={{
+  primaryColor: theme.colors.primary[500],
+  primaryHover: theme.colors.primary[600],
+  primaryLight: theme.colors.primary[100],
+  primaryDark: theme.colors.primary[700],
+  secondaryColor: theme.colors.secondary[500],
+  successColor: theme.colors.success[500],
+  warningColor: theme.colors.warning[500],
+  errorColor: theme.colors.error[500],
+  neutralWhite: theme.colors.neutral[50],
+  neutralGray: theme.colors.neutral[500],
+  neutralDark: theme.colors.neutral[900],
+  neutralLight: theme.colors.neutral[100],
+  borderColor: theme.colors.border,
+  fontSans: theme.typography.fontFamily.sans.join(', '),
+  fontDisplay: theme.typography.fontFamily.display.join(', '),
+  spacing2: theme.spacing[2],
+  spacing3: theme.spacing[3],
+  spacing4: theme.spacing[4],
+  spacing6: theme.spacing[6],
+  spacing8: theme.spacing[8],
+  spacing12: theme.spacing[12],
+  spacing16: theme.spacing[16],
+  spacing20: theme.spacing[20],
+  spacing24: theme.spacing[24],
+  borderRadiusLg: theme.borderRadius.lg,
+  borderRadius2xl: theme.borderRadius['2xl'],
+  shadowMd: theme.boxShadow.md,
+  shadowLg: theme.boxShadow.lg,
+  shadow2xl: theme.boxShadow['2xl']
+}}>
+  .certifications-awards {
+    position: relative;
+    padding: var(--spacing24) 0;
+    background: linear-gradient(135deg, #fafafa 0%, #ffffff 50%, #f8fafc 100%);
+    overflow: hidden;
+  }
+
+  .certifications-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 var(--spacing4);
+    position: relative;
+    z-index: 10;
+  }
+
+  @media (min-width: 768px) {
+    .certifications-container {
+      padding: 0 var(--spacing6);
+    }
+  }
+
+  /* Section Header */
+  .section-header {
+    text-align: center;
+    margin-bottom: var(--spacing20);
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .section-eyebrow {
+    display: inline-block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primaryColor);
+    background: var(--primaryLight);
+    padding: var(--spacing2) var(--spacing4);
+    border-radius: var(--borderRadiusLg);
+    margin-bottom: var(--spacing6);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .section-headline {
+    font-family: var(--fontDisplay);
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing6) 0;
+  }
+
+  @media (min-width: 768px) {
+    .section-headline {
+      font-size: 3rem;
+    }
+  }
+
+  .section-description {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: var(--neutralGray);
+    margin: 0;
+  }
+
+  /* Subsection Headers */
+  .subsection-title {
+    font-family: var(--fontDisplay);
+    font-size: 1.875rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing4) 0;
+    text-align: center;
+  }
+
+  .subsection-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--neutralGray);
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto var(--spacing12) auto;
+  }
+
+  /* Featured Awards Section */
+  .featured-awards-section {
+    margin-bottom: var(--spacing24);
+  }
+
+  .featured-awards-header {
+    margin-bottom: var(--spacing16);
+  }
+
+  .featured-awards-grid {
+    display: grid;
+    gap: var(--spacing8);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 768px) {
+    .featured-awards-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .featured-awards-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .award-card {
+    background: var(--neutralWhite);
+    border: 1px solid var(--borderColor);
+    border-radius: var(--borderRadius2xl);
+    padding: var(--spacing8);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .award-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow2xl);
+    border-color: var(--warningColor);
+  }
+
+  .award-card.featured {
+    border-color: var(--warningColor);
+    background: linear-gradient(135deg, var(--neutralWhite) 0%, #fffbeb 100%);
+  }
+
+  .award-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing4);
+    position: relative;
+    z-index: 2;
+  }
+
+  .award-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .award-year {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--warningColor);
+    background: #fffbeb;
+    padding: var(--spacing2) var(--spacing3);
+    border-radius: var(--borderRadiusLg);
+  }
+
+  .award-rank {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--neutralWhite);
+    background: var(--warningColor);
+    padding: var(--spacing2) var(--spacing3);
+    border-radius: var(--borderRadiusLg);
+  }
+
+  .award-details {
+    flex: 1;
+  }
+
+  .award-title {
+    font-family: var(--fontDisplay);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing2) 0;
+    line-height: 1.3;
+  }
+
+  .award-organization {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--primaryColor);
+    margin: 0 0 var(--spacing3) 0;
+  }
+
+  .award-description {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--neutralGray);
+    margin: 0;
+  }
+
+  .award-badge {
+    position: absolute;
+    top: var(--spacing4);
+    right: var(--spacing4);
+    color: var(--warningColor);
+    z-index: 3;
+  }
+
+  /* Certifications Section */
+  .certifications-section {
+    margin-bottom: var(--spacing24);
+  }
+
+  .certifications-header {
+    margin-bottom: var(--spacing16);
+  }
+
+  .certifications-grid {
+    display: grid;
+    gap: var(--spacing6);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .certifications-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .certifications-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .certifications-grid.variant-minimal {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+
+  .certifications-grid.variant-showcase {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  .certification-card {
+    background: var(--neutralWhite);
+    border: 1px solid var(--borderColor);
+    border-radius: var(--borderRadius2xl);
+    padding: var(--spacing6);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .certification-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadowLg);
+    border-color: var(--primaryColor);
+  }
+
+  .certification-card.featured {
+    border-color: var(--primaryColor);
+    background: linear-gradient(135deg, var(--neutralWhite) 0%, var(--primaryLight) 100%);
+  }
+
+  .cert-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing4);
+    position: relative;
+    z-index: 2;
+  }
+
+  .cert-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: var(--spacing3);
+  }
+
+  .cert-issuer {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing3);
+    flex-wrap: wrap;
+  }
+
+  .issuer-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primaryColor);
+    background: var(--primaryLight);
+    padding: var(--spacing2) var(--spacing3);
+    border-radius: var(--borderRadiusLg);
+  }
+
+  .level-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: var(--spacing2) var(--spacing3);
+    border-radius: var(--borderRadiusLg);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .level-badge.level-basic {
+    background: #e5e7eb;
+    color: #374151;
+  }
+
+  .level-badge.level-intermediate {
+    background: #dbeafe;
+    color: #1d4ed8;
+  }
+
+  .level-badge.level-advanced {
+    background: #dcfce7;
+    color: #16a34a;
+  }
+
+  .level-badge.level-expert {
+    background: #fef3c7;
+    color: #d97706;
+  }
+
+  .level-badge.level-premier {
+    background: #f3e8ff;
+    color: #7c3aed;
+  }
+
+  .cert-dates {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-size: 0.75rem;
+    color: var(--neutralGray);
+  }
+
+  .cert-date {
+    margin-bottom: var(--spacing2);
+  }
+
+  .expiry-date {
+    color: var(--warningColor);
+    font-weight: 500;
+  }
+
+  .cert-details {
+    flex: 1;
+  }
+
+  .cert-name {
+    font-family: var(--fontDisplay);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing3) 0;
+    line-height: 1.3;
+  }
+
+  .cert-description {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--neutralGray);
+    margin: 0;
+  }
+
+  .cert-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing3);
+  }
+
+  .category-tag {
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: var(--spacing2) var(--spacing3);
+    border-radius: var(--borderRadiusLg);
+    text-transform: capitalize;
+  }
+
+  .category-tag.category-blue {
+    background: #dbeafe;
+    color: #1d4ed8;
+  }
+
+  .category-tag.category-green {
+    background: #dcfce7;
+    color: #16a34a;
+  }
+
+  .category-tag.category-red {
+    background: #fee2e2;
+    color: #dc2626;
+  }
+
+  .category-tag.category-purple {
+    background: #f3e8ff;
+    color: #7c3aed;
+  }
+
+  .category-tag.category-orange {
+    background: #fed7aa;
+    color: #ea580c;
+  }
+
+  .category-tag.category-teal {
+    background: #ccfbf1;
+    color: #0f766e;
+  }
+
+  .verify-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing2);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--primaryColor);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .verify-link:hover {
+    color: var(--primaryHover);
+  }
+
+  .verify-icon {
+    color: var(--successColor);
+  }
+
+  .featured-indicator {
+    position: absolute;
+    top: var(--spacing3);
+    right: var(--spacing3);
+    background: var(--primaryColor);
+    color: var(--neutralWhite);
+    padding: var(--spacing2) var(--spacing3);
+    border-radius: var(--borderRadiusLg);
+    font-size: 0.75rem;
+    font-weight: 600;
+    z-index: 3;
+  }
+
+  /* Reviews Section */
+  .reviews-section {
+    margin-bottom: var(--spacing24);
+  }
+
+  .reviews-header {
+    margin-bottom: var(--spacing16);
+  }
+
+  .reviews-grid {
+    display: grid;
+    gap: var(--spacing6);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .reviews-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .reviews-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .review-card {
+    background: var(--neutralWhite);
+    border: 1px solid var(--borderColor);
+    border-radius: var(--borderRadius2xl);
+    padding: var(--spacing6);
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+
+  .review-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadowLg);
+    border-color: var(--warningColor);
+  }
+
+  .review-card.featured {
+    border-color: var(--warningColor);
+    background: linear-gradient(135deg, var(--neutralWhite) 0%, #fffbeb 100%);
+  }
+
+  .review-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing4);
+  }
+
+  .review-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing3);
+  }
+
+  .platform-name {
+    font-family: var(--fontDisplay);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0;
+  }
+
+  .rating-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing2);
+  }
+
+  .stars {
+    display: flex;
+    gap: 2px;
+  }
+
+  .star {
+    color: #e5e7eb;
+    transition: color 0.3s ease;
+  }
+
+  .star.filled {
+    color: var(--warningColor);
+  }
+
+  .star.half {
+    color: var(--warningColor);
+  }
+
+  .rating-number {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+  }
+
+  .review-stats {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing2);
+    align-items: center;
+  }
+
+  .review-count {
+    font-size: 0.875rem;
+    color: var(--neutralGray);
+  }
+
+  .view-reviews {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing2);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--primaryColor);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .view-reviews:hover {
+    color: var(--primaryHover);
+  }
+
+  .external-link {
+    transition: transform 0.3s ease;
+  }
+
+  .view-reviews:hover .external-link {
+    transform: translate(2px, -2px);
+  }
+
+  /* Memberships Section */
+  .memberships-section {
+    margin-bottom: var(--spacing24);
+  }
+
+  .memberships-header {
+    margin-bottom: var(--spacing16);
+  }
+
+  .memberships-grid {
+    display: grid;
+    gap: var(--spacing6);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .memberships-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .membership-card {
+    background: var(--neutralWhite);
+    border: 1px solid var(--borderColor);
+    border-radius: var(--borderRadius2xl);
+    padding: var(--spacing6);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .membership-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadowLg);
+    border-color: var(--secondaryColor);
+  }
+
+  .membership-card.featured {
+    border-color: var(--secondaryColor);
+    background: linear-gradient(135deg, var(--neutralWhite) 0%, #f0f9ff 100%);
+  }
+
+  .membership-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing4);
+    position: relative;
+    z-index: 2;
+  }
+
+  .membership-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing2);
+  }
+
+  .organization-name {
+    font-family: var(--fontDisplay);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .member-role {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--secondaryColor);
+    background: #f0f9ff;
+    padding: var(--spacing2) var(--spacing3);
+    border-radius: var(--borderRadiusLg);
+    display: inline-block;
+    width: fit-content;
+  }
+
+  .membership-details {
+    flex: 1;
+  }
+
+  .member-since {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--neutralGray);
+    margin-bottom: var(--spacing3);
+  }
+
+  .membership-description {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--neutralGray);
+    margin: 0;
+  }
+
+  .membership-footer {
+    margin-top: var(--spacing3);
+  }
+
+  .organization-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing2);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--primaryColor);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .organization-link:hover {
+    color: var(--primaryHover);
+  }
+
+  .membership-featured-badge {
+    position: absolute;
+    top: var(--spacing3);
+    right: var(--spacing3);
+    color: var(--secondaryColor);
+    z-index: 3;
+  }
+
+  /* All Awards Section */
+  .all-awards-section {
+    margin-bottom: var(--spacing24);
+  }
+
+  .all-awards-header {
+    margin-bottom: var(--spacing16);
+  }
+
+  .awards-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing4);
+  }
+
+  .award-item {
+    background: var(--neutralWhite);
+    border: 1px solid var(--borderColor);
+    border-radius: var(--borderRadiusLg);
+    padding: var(--spacing6);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing4);
+  }
+
+  .award-item:hover {
+    box-shadow: var(--shadowMd);
+    border-color: var(--warningColor);
+  }
+
+  .award-item-content {
+    flex: 1;
+  }
+
+  .award-item-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing2);
+    margin-bottom: var(--spacing3);
+  }
+
+  @media (min-width: 768px) {
+    .award-item-header {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+  }
+
+  .award-item-title {
+    font-family: var(--fontDisplay);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .award-item-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing3);
+    align-items: center;
+  }
+
+  .award-item-org {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--primaryColor);
+  }
+
+  .award-item-year {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--neutralGray);
+  }
+
+  .award-item-rank {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--neutralWhite);
+    background: var(--warningColor);
+    padding: var(--spacing2) var(--spacing3);
+    border-radius: var(--borderRadiusLg);
+  }
+
+  .award-item-description {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--neutralGray);
+    margin: 0;
+  }
+
+  .award-item-icon {
+    color: var(--warningColor);
+    flex-shrink: 0;
+  }
+
+  /* Call to Action */
+  .certifications-cta {
+    text-align: center;
+    background: linear-gradient(135deg, var(--primaryColor) 0%, var(--primaryHover) 100%);
+    color: var(--neutralWhite);
+    border-radius: var(--borderRadius2xl);
+    padding: var(--spacing16);
+    margin-top: var(--spacing20);
+  }
+
+  .cta-content {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .cta-title {
+    font-family: var(--fontDisplay);
+    font-size: 1.875rem;
+    font-weight: 600;
+    margin: 0 0 var(--spacing4) 0;
+    line-height: 1.3;
+  }
+
+  @media (min-width: 768px) {
+    .cta-title {
+      font-size: 2.25rem;
+    }
+  }
+
+  .cta-description {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    margin: 0 0 var(--spacing8) 0;
+    opacity: 0.9;
+  }
+
+  .cta-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing4);
+    align-items: center;
+  }
+
+  @media (min-width: 640px) {
+    .cta-actions {
+      flex-direction: row;
+      justify-content: center;
+    }
+  }
+
+  .cta-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing2);
+    background: var(--neutralWhite);
+    color: var(--primaryColor);
+    padding: var(--spacing4) var(--spacing8);
+    border-radius: var(--borderRadiusLg);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+  }
+
+  .cta-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadowLg);
+    background: var(--neutralLight);
+  }
+
+  .cta-arrow {
+    transition: transform 0.3s ease;
+  }
+
+  .cta-primary:hover .cta-arrow {
+    transform: translateX(4px);
+  }
+
+  .cta-secondary {
+    color: var(--neutralWhite);
+    padding: var(--spacing4) var(--spacing8);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--borderRadiusLg);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+  }
+
+  .cta-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+
+  /* Background Decoration */
+  .certifications-decoration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .decoration-badges {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .floating-badge {
+    position: absolute;
+    font-size: 3rem;
+    opacity: 0.1;
+    color: var(--primaryColor);
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .badge-1 {
+    top: 15%;
+    left: 5%;
+    animation-delay: 0s;
+  }
+
+  .badge-2 {
+    top: 60%;
+    right: 10%;
+    animation-delay: 1.5s;
+    color: var(--warningColor);
+  }
+
+  .badge-3 {
+    bottom: 25%;
+    left: 15%;
+    animation-delay: 3s;
+    color: var(--warningColor);
+  }
+
+  .badge-4 {
+    top: 35%;
+    right: 20%;
+    animation-delay: 4.5s;
+    color: var(--secondaryColor);
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-20px) rotate(10deg);
+    }
+  }
+
+  /* Animation utilities */
+  [data-animate] {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease;
+  }
+
+  [data-animate].animate-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .certifications-awards {
+      padding: var(--spacing16) 0;
+    }
+
+    .section-headline {
+      font-size: 2rem;
+    }
+
+    .subsection-title {
+      font-size: 1.5rem;
+    }
+
+    .cert-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .cert-dates {
+      align-items: flex-start;
+    }
+
+    .award-item {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .award-item-header {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .certifications-cta {
+      padding: var(--spacing12);
+    }
+
+    .cta-title {
+      font-size: 1.5rem;
+    }
+  }
+
+  /* Focus states for accessibility */
+  .cta-primary:focus,
+  .cta-secondary:focus,
+  .verify-link:focus,
+  .view-reviews:focus,
+  .organization-link:focus {
+    outline: 2px solid var(--neutralWhite);
+    outline-offset: 2px;
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .floating-badge {
+      animation: none;
+    }
+
+    .award-card:hover,
+    .certification-card:hover,
+    .review-card:hover,
+    .membership-card:hover,
+    .award-item:hover,
+    .cta-primary:hover {
+      transform: none;
+    }
+
+    [data-animate] {
+      transition: opacity 0.3s ease;
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    .certifications-decoration,
+    .cta-actions {
+      display: none;
+    }
+
+    .certifications-awards {
+      background: white;
+    }
+
+    .award-card,
+    .certification-card,
+    .review-card,
+    .membership-card,
+    .award-item {
+      border: 1px solid #ccc;
+      box-shadow: none;
+      break-inside: avoid;
+    }
+  }
+</style>
+
+<script>
+  // Animation on scroll
+  document.addEventListener('DOMContentLoaded', function() {
+    const animatedElements = document.querySelectorAll('[data-animate]');
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const delay = entry.target.getAttribute('data-delay') || 0;
+          setTimeout(() => {
+            entry.target.classList.add('animate-in');
+          }, parseInt(delay));
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    });
+
+    animatedElements.forEach(el => observer.observe(el));
+  });
+
+  // Category color mapping for dynamic styling
+  const categoryColors = {
+    technology: '#3b82f6',
+    business: '#10b981', 
+    security: '#ef4444',
+    design: '#8b5cf6',
+    marketing: '#f59e0b',
+    'project-management': '#06b6d4',
+    industry: '#3b82f6',
+    'client-satisfaction': '#10b981',
+    innovation: '#8b5cf6',
+    growth: '#f59e0b',
+    leadership: '#6366f1',
+    community: '#ec4899'
+  };
+
+  // Level hierarchy for sorting
+  const levelHierarchy = {
+    'basic': 1,
+    'intermediate': 2,
+    'advanced': 3,
+    'expert': 4,
+    'premier': 5
+  };
+</script>

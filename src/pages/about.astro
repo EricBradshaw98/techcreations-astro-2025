@@ -1,0 +1,97 @@
+---
+import Layout from "../layouts/Layout.astro";
+import AboutHero from "../components/about/AboutHero.astro";
+import AboutStory from "../components/about/AboutStory.astro";
+import AboutOurValues from "../components/about/AboutOurValues.astro";
+import AboutCompanyStats from "../components/about/AboutCompanyStats.astro";
+import AboutCertifications from "../components/about/AboutCertifications.astro";
+import AboutCTA from "../components/about/AboutCTA.astro";
+---
+
+<Layout title="About Us - Your Agency"
+  description="Learn more about your future strategic partner."
+  type="website">
+<AboutHero 
+  variant="split"
+  headline="We're More Than Just Developers"
+  subheadline="We're Strategic Partners in Your Success"
+  heroImage="/about/team-photo.jpg"
+  founded="2019"
+  location="Toronto, Canada"
+/>
+<AboutStory 
+  variant="narrative"
+  headline="From Idea to Impact"
+  storyParagraphs={[
+    "It started with a simple observation...",
+    "We founded our agency with a different philosophy...",
+    // ... more story paragraphs
+  ]}
+  mission={{
+    title: "Our Mission",
+    statement: "To empower businesses with digital solutions that drive real, measurable growth.",
+    description: "We believe technology should serve business goals, not the other way around."
+  }}
+/>
+<AboutOurValues   eyebrow="Our Philosophy"
+  headline="Partnership Over Transactions"
+  description="We don't just deliver projects—we build lasting relationships that drive continuous growth."
+  values={[
+    {
+      id: "strategic-thinking",
+      title: "Strategic Thinking",
+      description: "Every decision is made with your long-term business goals in mind.",
+      icon: "🧠",
+      principles: [
+        "Business-first approach to technology",
+        "ROI-focused recommendations",
+        "Scalability planning",
+        "Market positioning awareness"
+      ],
+      featured: true
+    },
+    {
+      id: "radical-transparency",
+      title: "Radical Transparency",
+      description: "Complete honesty in communication, pricing, and project progress.",
+      icon: "💎",
+      principles: [
+        "No hidden fees or surprises",
+        "Real-time project visibility",
+        "Honest timeline estimates",
+        "Direct feedback loops"
+      ],
+      featured: true
+    }
+  ]}
+  culture={{
+    title: "How We Work",
+    description: "The principles that guide our daily operations and client relationships.",
+    traits: [
+      {
+        trait: "Remote-First",
+        description: "Global talent, local dedication to your success",
+        icon: "🌐"
+      },
+      {
+        trait: "Always Learning",
+        description: "Staying ahead of trends to benefit our clients",
+        icon: "📈"
+      },
+      {
+        trait: "Results Obsessed",
+        description: "We measure success by your business growth",
+        icon: "🎯"
+      },
+      {
+        trait: "Human-Centered",
+        description: "Technology serves people, not the other way around",
+        icon: "❤️"
+      }
+    ]
+  }}/>
+  <AboutCompanyStats/>
+  <AboutCertifications/>
+  <AboutCTA/>
+
+</Layout>

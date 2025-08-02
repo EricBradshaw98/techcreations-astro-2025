@@ -5,12 +5,17 @@ import Layout from '../layouts/Layout.astro';
 import ServicesOverview from '../components/home/ServicesOverview.astro';
 import WhyChooseUs from '../components/home/WhyChooseUs.astro';
 import CaseStudies from '../components/home/CaseStudies.astro';
+import Testimonials from '../components/home/Testimonials.astro';
+import HowWeWork from '../components/home/HowWeWork.astro';
+import FAQ from '../components/home/FAQ.astro';
+import FinalCTA from '../components/home/FinalCTA.astro';
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
-<Layout>
+<Layout  title="Home - Your Agency"
+  description="We create digital solutions that drive results">
 
   <Hero/>
   <ServicesOverview/>
@@ -20,5 +25,25 @@ import CaseStudies from '../components/home/CaseStudies.astro';
     maxCases={4}
     showCta={true}
     ctaHref="/portfolio"
+  />
+ <Testimonials 
+    variant="carousel"
+    showRatings={true}
+    showLogos={true}
+    autoplay={true}
+  />
+  <HowWeWork variant="minimal"
+    showTimeline={true}
+    showCta={true}/>
+     <FAQ 
+    variant="accordion"
+    showCta={true}
+    maxFaqs={12}
+  />
+ <FinalCTA 
+    variant="centered"
+    showGuarantee={true}
+    showTestimonial={true}
+    showStats={true}
   />
 </Layout>

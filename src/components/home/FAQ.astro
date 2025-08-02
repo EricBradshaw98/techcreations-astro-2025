@@ -1,0 +1,1410 @@
+---
+// FAQ.astro - Frequently Asked Questions section
+import theme from '../../lib/therme';
+
+export interface Props {
+  // Content props
+  eyebrow?: string;
+  headline?: string;
+  description?: string;
+  ctaText?: string;
+  ctaHref?: string;
+  
+  // Layout props
+  variant?: 'accordion' | 'grid' | 'tabbed';
+  showCta?: boolean;
+  maxFaqs?: number;
+  
+  // FAQ categories and questions
+  categories?: Array<{
+    id: string;
+    title: string;
+    icon: string;
+    faqs: Array<{
+      id: string;
+      question: string;
+      answer: string;
+      featured?: boolean;
+    }>;
+  }>;
+  
+  // Contact info for additional questions
+  contactInfo?: {
+    title: string;
+    description: string;
+    email: string;
+    phone?: string;
+    calendlyUrl?: string;
+  };
+}
+
+const {
+  eyebrow = "FAQ",
+  headline = "Questions? We Have Answers",
+  description = "Get quick answers to the most common questions about our services, process, and pricing. Can't find what you're looking for? We're here to help.",
+  ctaText = "Schedule a Call",
+  ctaHref = "/contact",
+  variant = "accordion",
+  showCta = true,
+  maxFaqs = 12,
+  categories = [
+    {
+      id: "general",
+      title: "General Questions",
+      icon: "💬",
+      faqs: [
+        {
+          id: "what-services",
+          question: "What services do you offer?",
+          answer: "We provide comprehensive digital solutions including web development, mobile app development, brand strategy & design, digital marketing, cloud solutions, and ongoing support & maintenance. Our team specializes in creating custom solutions tailored to your specific business needs and goals.",
+          featured: true
+        },
+        {
+          id: "industries-serve",
+          question: "What industries do you work with?",
+          answer: "We work with businesses across various industries including technology, healthcare, finance, e-commerce, education, and professional services. Our diverse experience allows us to understand unique industry challenges and regulatory requirements, ensuring we deliver solutions that meet your specific sector needs.",
+          featured: false
+        },
+        {
+          id: "company-size",
+          question: "Do you work with small businesses or just large enterprises?",
+          answer: "We work with businesses of all sizes, from startups and small businesses to large enterprises. Our scalable approach and flexible engagement models allow us to provide value regardless of your company size. We believe every business deserves access to high-quality digital solutions.",
+          featured: false
+        }
+      ]
+    },
+    {
+      id: "process",
+      title: "Process & Timeline",
+      icon: "⏱️",
+      faqs: [
+        {
+          id: "project-timeline",
+          question: "How long does a typical project take?",
+          answer: "Project timelines vary based on scope and complexity. A simple website typically takes 4-6 weeks, while complex web applications or mobile apps can take 12-20 weeks. During our discovery phase, we'll provide a detailed timeline with key milestones so you know exactly what to expect.",
+          featured: true
+        },
+        {
+          id: "project-management",
+          question: "How do you manage projects and keep me updated?",
+          answer: "We use agile project management with weekly updates, shared dashboards, and regular check-ins. You'll have direct access to your project manager and can track progress in real-time through our client portal. We believe in complete transparency throughout the entire process.",
+          featured: false
+        },
+        {
+          id: "changes-during-project",
+          question: "Can I make changes during the project?",
+          answer: "Absolutely! Our agile approach is designed to accommodate changes and feedback. We build in regular review points where you can request modifications. While major scope changes may affect timeline and budget, we'll always discuss these impacts with you before proceeding.",
+          featured: false
+        },
+        {
+          id: "testing-qa",
+          question: "How do you ensure quality and test everything?",
+          answer: "Quality is paramount in our process. We conduct thorough testing at every stage including unit testing, integration testing, user acceptance testing, and performance testing. We also perform cross-browser and device compatibility testing to ensure your solution works perfectly for all users.",
+          featured: false
+        }
+      ]
+    },
+    {
+      id: "pricing",
+      title: "Pricing & Investment",
+      icon: "💰",
+      faqs: [
+        {
+          id: "project-cost",
+          question: "How much do your services cost?",
+          answer: "Our pricing depends on project scope, complexity, and timeline. Simple websites start around $15,000, while complex applications can range from $50,000 to $200,000+. We provide detailed, transparent quotes after understanding your specific requirements during our free consultation.",
+          featured: true
+        },
+        {
+          id: "payment-terms",
+          question: "What are your payment terms?",
+          answer: "We typically structure payments in milestones aligned with project phases: 30% to start, 40% at key milestones, and 30% upon completion. For larger projects, we can discuss custom payment schedules. We accept bank transfers, checks, and major credit cards for your convenience.",
+          featured: false
+        },
+        {
+          id: "additional-costs",
+          question: "Are there any additional costs I should know about?",
+          answer: "Our quotes include all development costs. Additional expenses might include third-party services (hosting, domains, premium plugins), stock photography, or ongoing maintenance plans. We'll discuss all potential costs upfront so there are never any surprises.",
+          featured: false
+        },
+        {
+          id: "roi-guarantee",
+          question: "Do you guarantee ROI on your projects?",
+          answer: "While we can't guarantee specific financial returns (as they depend on many factors beyond our control), we do guarantee that our solutions will be built to industry best practices and designed to meet your stated objectives. Our track record shows clients typically see significant improvements in key metrics.",
+          featured: false
+        }
+      ]
+    },
+    {
+      id: "technical",
+      title: "Technical Questions",
+      icon: "⚙️",
+      faqs: [
+        {
+          id: "technologies-used",
+          question: "What technologies do you use?",
+          answer: "We use modern, proven technologies including React, Next.js, Node.js, Python, AWS, and more. We select the best technology stack for each project based on your requirements, scalability needs, and long-term goals. We always prioritize performance, security, and maintainability.",
+          featured: false
+        },
+        {
+          id: "mobile-responsive",
+          question: "Will my website work on mobile devices?",
+          answer: "Absolutely! All our websites are fully responsive and optimized for mobile devices. With mobile traffic accounting for over 50% of web usage, we design mobile-first to ensure your site looks and performs perfectly on all screen sizes and devices.",
+          featured: false
+        },
+        {
+          id: "seo-included",
+          question: "Is SEO included in your web development?",
+          answer: "Yes, we include basic SEO optimization in all web projects including proper site structure, meta tags, fast loading speeds, and mobile optimization. For comprehensive SEO strategy and ongoing optimization, we offer dedicated digital marketing services to help you rank higher and drive more traffic.",
+          featured: false
+        },
+        {
+          id: "website-security",
+          question: "How do you ensure my website is secure?",
+          answer: "Security is built into everything we do. We implement SSL certificates, secure hosting, regular security updates, secure coding practices, and vulnerability testing. For e-commerce and applications handling sensitive data, we add additional security layers and compliance measures.",
+          featured: false
+        }
+      ]
+    },
+    {
+      id: "support",
+      title: "Support & Maintenance",
+      icon: "🛠️",
+      faqs: [
+        {
+          id: "ongoing-support",
+          question: "Do you provide ongoing support after launch?",
+          answer: "Yes! We offer comprehensive support and maintenance plans including security updates, performance monitoring, content updates, and technical support. Our support plans start at $500/month and can be customized based on your needs and the complexity of your solution.",
+          featured: true
+        },
+        {
+          id: "emergency-support",
+          question: "What if something breaks or goes wrong?",
+          answer: "All our projects include a 30-day warranty period with free bug fixes. For ongoing peace of mind, our maintenance plans include 24/7 monitoring and emergency support. We typically respond to critical issues within 2 hours and resolve them quickly to minimize any downtime.",
+          featured: false
+        },
+        {
+          id: "content-updates",
+          question: "Can I update content myself, or do I need to contact you?",
+          answer: "We build all websites with user-friendly content management systems that allow you to easily update text, images, and basic content yourself. We provide training and documentation to get you comfortable. For complex updates or design changes, our team is always available to help.",
+          featured: false
+        },
+        {
+          id: "hosting-included",
+          question: "Do you provide hosting services?",
+          answer: "We can manage hosting for you through our preferred partners, or you can choose your own hosting provider. We'll handle all setup and configuration regardless of the hosting choice. Our managed hosting plans start at $100/month and include security, backups, and performance optimization.",
+          featured: false
+        }
+      ]
+    }
+  ],
+  contactInfo = {
+    title: "Still have questions?",
+    description: "Can't find the answer you're looking for? Our team is here to help you make the right decision for your business.",
+    email: "hello@youragency.com",
+    phone: "+1 (555) 123-4567",
+    calendlyUrl: "https://calendly.com/youragency/consultation"
+  }
+} = Astro.props;
+
+// Flatten all FAQs for accordion variant
+const allFaqs = categories.flatMap(category => 
+  category.faqs.map(faq => ({ ...faq, category: category.title, categoryIcon: category.icon }))
+).slice(0, maxFaqs);
+
+// Sort to show featured FAQs first
+const sortedFaqs = allFaqs.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+---
+
+<section class="faq" aria-labelledby="faq-headline">
+  <div class="faq-container">
+    
+    <!-- Section Header -->
+    <div class="section-header" data-animate="fade-up">
+      <span class="section-eyebrow">{eyebrow}</span>
+      <h2 id="faq-headline" class="section-headline">
+        {headline}
+      </h2>
+      <p class="section-description">
+        {description}
+      </p>
+    </div>
+
+    <!-- FAQ Content -->
+    <div class={`faq-content variant-${variant}`} data-animate="fade-up" data-delay="200">
+      
+      {/* Accordion Variant */}
+      {variant === 'accordion' && (
+        <div class="accordion-container">
+          <div class="accordion-wrapper">
+            {sortedFaqs.map((faq, index) => (
+              <div 
+                class={`accordion-item ${faq.featured ? 'featured' : ''}`}
+                data-animate="fade-up"
+                data-delay={250 + (index * 50)}
+                key={faq.id}
+              >
+                <button 
+                  class="accordion-trigger"
+                  aria-expanded="false"
+                  aria-controls={`accordion-content-${faq.id}`}
+                  data-accordion-trigger
+                >
+                  <div class="trigger-content">
+                    <span class="category-icon" role="img" aria-hidden="true">
+                      {faq.categoryIcon}
+                    </span>
+                    <span class="question-text">{faq.question}</span>
+                    {faq.featured && (
+                      <span class="featured-badge">Popular</span>
+                    )}
+                  </div>
+                  <svg class="accordion-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+                
+                <div 
+                  class="accordion-content"
+                  id={`accordion-content-${faq.id}`}
+                  aria-hidden="true"
+                  data-accordion-content
+                >
+                  <div class="content-wrapper">
+                    <p class="answer-text">{faq.answer}</p>
+                    <div class="content-meta">
+                      <span class="category-label">{faq.category}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Grid Variant */}
+      {variant === 'grid' && (
+        <div class="grid-container">
+          {categories.map((category, categoryIndex) => (
+            <div 
+              class="category-section"
+              data-animate="fade-up"
+              data-delay={200 + (categoryIndex * 100)}
+              key={category.id}
+            >
+              <div class="category-header">
+                <div class="category-icon">
+                  <span role="img" aria-hidden="true">{category.icon}</span>
+                </div>
+                <h3 class="category-title">{category.title}</h3>
+              </div>
+              
+              <div class="category-faqs">
+                {category.faqs.map((faq, faqIndex) => (
+                  <div 
+                    class={`faq-card ${faq.featured ? 'featured' : ''}`}
+                    data-animate="fade-up"
+                    data-delay={300 + (categoryIndex * 100) + (faqIndex * 50)}
+                    key={faq.id}
+                  >
+                    <div class="card-header">
+                      <h4 class="card-question">{faq.question}</h4>
+                      {faq.featured && (
+                        <span class="featured-badge">Popular</span>
+                      )}
+                    </div>
+                    <p class="card-answer">{faq.answer}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Tabbed Variant */}
+      {variant === 'tabbed' && (
+        <div class="tabbed-container">
+          <!-- Tab Navigation -->
+          <div class="tab-nav" role="tablist" aria-label="FAQ Categories">
+            {categories.map((category, index) => (
+              <button 
+                class={`tab-button ${index === 0 ? 'active' : ''}`}
+                role="tab"
+                aria-selected={index === 0 ? 'true' : 'false'}
+                aria-controls={`tab-panel-${category.id}`}
+                id={`tab-${category.id}`}
+                data-tab-button={category.id}
+                key={category.id}
+              >
+                <span class="tab-icon" role="img" aria-hidden="true">{category.icon}</span>
+                <span class="tab-text">{category.title}</span>
+                <span class="tab-count">({category.faqs.length})</span>
+              </button>
+            ))}
+          </div>
+          
+          <!-- Tab Panels -->
+          <div class="tab-panels">
+            {categories.map((category, index) => (
+              <div 
+                class={`tab-panel ${index === 0 ? 'active' : ''}`}
+                role="tabpanel"
+                aria-labelledby={`tab-${category.id}`}
+                id={`tab-panel-${category.id}`}
+                data-tab-panel={category.id}
+                key={category.id}
+              >
+                <div class="panel-content">
+                  {category.faqs.map((faq, faqIndex) => (
+                    <div 
+                      class={`panel-faq ${faq.featured ? 'featured' : ''}`}
+                      key={faq.id}
+                    >
+                      <div class="panel-question">
+                        <h4>{faq.question}</h4>
+                        {faq.featured && (
+                          <span class="featured-badge">Popular</span>
+                        )}
+                      </div>
+                      <p class="panel-answer">{faq.answer}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+
+    <!-- Contact Section -->
+    <div class="faq-contact" data-animate="fade-up" data-delay="600">
+      <div class="contact-content">
+        <h3 class="contact-title">{contactInfo.title}</h3>
+        <p class="contact-description">{contactInfo.description}</p>
+        
+        <div class="contact-methods">
+          <a href={`mailto:${contactInfo.email}`} class="contact-method email">
+            <div class="method-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="L22 6L12 13L2 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="method-content">
+              <span class="method-label">Email us</span>
+              <span class="method-value">{contactInfo.email}</span>
+            </div>
+          </a>
+          
+          {contactInfo.phone && (
+            <a href={`tel:${contactInfo.phone}`} class="contact-method phone">
+              <div class="method-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M22 16.92V19.92C22 20.52 21.52 21 20.92 21C10.4 21 2 12.6 2 2.08C2 1.48 2.48 1 3.08 1H6.08C6.68 1 7.16 1.48 7.16 2.08C7.16 3.68 7.44 5.24 7.96 6.68C8.12 7.08 8 7.52 7.68 7.84L6.84 8.68C8.24 11.84 10.16 13.76 13.32 15.16L14.16 14.32C14.48 14 14.92 13.88 15.32 14.04C16.76 14.56 18.32 14.84 19.92 14.84C20.52 14.84 21 15.32 21 15.92V18.92C21 19.52 20.52 20 19.92 20H19.92Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="method-content">
+                <span class="method-label">Call us</span>
+                <span class="method-value">{contactInfo.phone}</span>
+              </div>
+            </a>
+          )}
+        </div>
+        
+        {showCta && (
+          <a href={ctaHref} class="contact-cta">
+            {ctaText}
+            <svg class="cta-arrow" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M4.16667 10H15.8333M15.8333 10L10.8333 5M15.8333 10L10.8333 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        )}
+      </div>
+    </div>
+  </div>
+
+  <!-- Background Decoration -->
+  <div class="background-decoration" aria-hidden="true">
+    <div class="decoration-pattern">
+      <div class="pattern-circle circle-1"></div>
+      <div class="pattern-circle circle-2"></div>
+      <div class="pattern-square square-1"></div>
+      <div class="pattern-square square-2"></div>
+    </div>
+  </div>
+</section>
+
+<style define:vars={{
+  primaryColor: theme.colors.primary[500],
+  primaryHover: theme.colors.primary[600],
+  primaryLight: theme.colors.primary[100],
+  secondaryColor: theme.colors.secondary[500],
+  neutralWhite: theme.colors.neutral[50],
+  neutralGray: theme.colors.neutral[500],
+  neutralDark: theme.colors.neutral[900],
+  neutralLight: theme.colors.neutral[100],
+  borderColor: theme.colors.border,
+  fontSans: theme.typography.fontFamily.sans.join(', '),
+  fontDisplay: theme.typography.fontFamily.display.join(', '),
+  spacing4: theme.spacing[4],
+  spacing6: theme.spacing[6],
+  spacing8: theme.spacing[8],
+  spacing12: theme.spacing[12],
+  spacing16: theme.spacing[16],
+  spacing20: theme.spacing[20],
+  spacing24: theme.spacing[24],
+  spacing32: theme.spacing[32],
+  borderRadiusLg: theme.borderRadius.lg,
+  borderRadius2xl: theme.borderRadius['2xl'],
+  shadowMd: theme.boxShadow.md,
+  shadowLg: theme.boxShadow.lg,
+  shadow2xl: theme.boxShadow['2xl']
+}}>
+  .faq {
+    position: relative;
+    padding: var(--spacing24) 0;
+    background: var(--neutralWhite);
+    overflow: hidden;
+  }
+
+  .faq-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 var(--spacing4);
+    position: relative;
+    z-index: 10;
+  }
+
+  @media (min-width: 768px) {
+    .faq-container {
+      padding: 0 var(--spacing6);
+    }
+  }
+
+  /* Section Header */
+  .section-header {
+    text-align: center;
+    margin-bottom: var(--spacing20);
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .section-eyebrow {
+    display: inline-block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primaryColor);
+    background: var(--primaryLight);
+    padding: var(--spacing2) var(--spacing4);
+    border-radius: var(--borderRadiusLg);
+    margin-bottom: var(--spacing6);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .section-headline {
+    font-family: var(--fontDisplay);
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing6) 0;
+  }
+
+  @media (min-width: 768px) {
+    .section-headline {
+      font-size: 3rem;
+    }
+  }
+
+  .section-description {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: var(--neutralGray);
+    margin: 0;
+  }
+
+  /* Accordion Variant */
+  .accordion-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .accordion-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing4);
+  }
+
+  .accordion-item {
+    background: var(--neutralWhite);
+    border: 1px solid var(--borderColor);
+    border-radius: var(--borderRadiusLg);
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .accordion-item:hover {
+    border-color: var(--primaryColor);
+    box-shadow: var(--shadowMd);
+  }
+
+  .accordion-item.featured {
+    border-color: var(--primaryColor);
+    background: linear-gradient(135deg, var(--neutralWhite) 0%, var(--primaryLight) 100%);
+  }
+
+  .accordion-trigger {
+    width: 100%;
+    padding: var(--spacing6);
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing4);
+    transition: all 0.3s ease;
+  }
+
+  .accordion-trigger:hover {
+    background: rgba(14, 165, 233, 0.05);
+  }
+
+  .accordion-trigger:focus {
+    outline: 2px solid var(--primaryColor);
+    outline-offset: 2px;
+  }
+
+  .accordion-trigger[aria-expanded="true"] {
+    background: rgba(14, 165, 233, 0.05);
+  }
+
+  .accordion-trigger[aria-expanded="true"] .accordion-icon {
+    transform: rotate(180deg);
+  }
+
+  .trigger-content {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing4);
+    flex: 1;
+  }
+
+  .category-icon {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  .question-text {
+    font-family: var(--fontDisplay);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    line-height: 1.4;
+  }
+
+  .featured-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--neutralWhite);
+    background: var(--primaryColor);
+    padding: 2px var(--spacing2);
+    border-radius: var(--borderRadiusLg);
+    margin-left: auto;
+  }
+
+  .accordion-icon {
+    color: var(--neutralGray);
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .accordion-content {
+    overflow: hidden;
+    height: 0;
+    transition: all 0.3s ease;
+  }
+
+  .accordion-content[aria-hidden="false"] {
+    height: auto;
+    padding-bottom: var(--spacing6);
+  }
+
+  .content-wrapper {
+    padding: 0 var(--spacing6);
+  }
+
+  .answer-text {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--neutralGray);
+    margin: 0 0 var(--spacing4) 0;
+  }
+
+  .content-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing4);
+  }
+
+  .category-label {
+    font-size: 0.875rem;
+    color: var(--primaryColor);
+    background: var(--primaryLight);
+    padding: 2px var(--spacing3);
+    border-radius: var(--borderRadiusLg);
+    font-weight: 500;
+  }
+
+  /* Grid Variant */
+  .grid-container {
+    display: grid;
+    gap: var(--spacing12);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 768px) {
+    .grid-container {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .category-section {
+    background: var(--neutralWhite);
+    border-radius: var(--borderRadius2xl);
+    padding: var(--spacing8);
+    border: 1px solid var(--borderColor);
+    box-shadow: var(--shadowMd);
+  }
+
+  .category-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing4);
+    margin-bottom: var(--spacing6);
+    padding-bottom: var(--spacing4);
+    border-bottom: 1px solid var(--borderColor);
+  }
+
+  .category-header .category-icon {
+    font-size: 1.5rem;
+    background: var(--primaryLight);
+    padding: var(--spacing3);
+    border-radius: var(--borderRadiusLg);
+  }
+
+  .category-title {
+    font-family: var(--fontDisplay);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0;
+  }
+
+  .category-faqs {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing6);
+  }
+
+  .faq-card {
+    padding: var(--spacing4);
+    background: var(--neutralLight);
+    border-radius: var(--borderRadiusLg);
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+  }
+
+  .faq-card:hover {
+    background: var(--neutralWhite);
+    border-color: var(--primaryColor);
+    transform: translateY(-2px);
+  }
+
+  .faq-card.featured {
+    background: var(--primaryLight);
+    border-color: var(--primaryColor);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--spacing4);
+    margin-bottom: var(--spacing3);
+  }
+
+  .card-question {
+    font-family: var(--fontDisplay);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .card-answer {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--neutralGray);
+    margin: 0;
+  }
+
+  /* Tabbed Variant */
+  .tabbed-container {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .tab-nav {
+    display: flex;
+    gap: var(--spacing2);
+    margin-bottom: var(--spacing8);
+    padding: var(--spacing2);
+    background: var(--neutralLight);
+    border-radius: var(--borderRadiusLg);
+    overflow-x: auto;
+  }
+
+  .tab-button {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing2);
+    padding: var(--spacing3) var(--spacing4);
+    background: none;
+    border: none;
+    border-radius: var(--borderRadiusLg);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    font-family: var(--fontSans);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--neutralGray);
+  }
+
+  .tab-button:hover,
+  .tab-button.active {
+    background: var(--neutralWhite);
+    color: var(--neutralDark);
+    box-shadow: var(--shadowMd);
+  }
+
+  .tab-button.active {
+    color: var(--primaryColor);
+    font-weight: 600;
+  }
+
+  .tab-button:focus {
+    outline: 2px solid var(--primaryColor);
+    outline-offset: 2px;
+  }
+
+  .tab-icon {
+    font-size: 1rem;
+  }
+
+  .tab-text {
+    flex: 1;
+  }
+
+  .tab-count {
+    font-size: 0.75rem;
+    color: var(--neutralGray);
+    background: var(--neutralLight);
+    padding: 2px var(--spacing2);
+    border-radius: var(--borderRadiusLg);
+  }
+
+  .tab-button.active .tab-count {
+    background: var(--primaryLight);
+    color: var(--primaryColor);
+  }
+
+  .tab-panels {
+    position: relative;
+    min-height: 400px;
+  }
+
+  .tab-panel {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .tab-panel.active {
+    display: block;
+    opacity: 1;
+  }
+
+  .panel-content {
+    background: var(--neutralWhite);
+    border-radius: var(--borderRadius2xl);
+    padding: var(--spacing8);
+    border: 1px solid var(--borderColor);
+    box-shadow: var(--shadowMd);
+  }
+
+  .panel-faq {
+    padding: var(--spacing6);
+    border-bottom: 1px solid var(--borderColor);
+    transition: all 0.3s ease;
+  }
+
+  .panel-faq:last-child {
+    border-bottom: none;
+  }
+
+  .panel-faq:hover {
+    background: var(--neutralLight);
+    border-radius: var(--borderRadiusLg);
+  }
+
+  .panel-faq.featured {
+    background: var(--primaryLight);
+    border-radius: var(--borderRadiusLg);
+    border-bottom-color: var(--primaryColor);
+  }
+
+  .panel-question {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--spacing4);
+    margin-bottom: var(--spacing3);
+  }
+
+  .panel-question h4 {
+    font-family: var(--fontDisplay);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .panel-answer {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--neutralGray);
+    margin: 0;
+  }
+
+  /* Contact Section */
+  .faq-contact {
+    margin-top: var(--spacing20);
+    padding: var(--spacing12);
+    background: linear-gradient(135deg, var(--neutralLight) 0%, var(--neutralWhite) 100%);
+    border-radius: var(--borderRadius2xl);
+    border: 1px solid var(--borderColor);
+    text-align: center;
+  }
+
+  .contact-content {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .contact-title {
+    font-family: var(--fontDisplay);
+    font-size: 1.875rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing4) 0;
+  }
+
+  .contact-description {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: var(--neutralGray);
+    margin: 0 0 var(--spacing8) 0;
+  }
+
+  .contact-methods {
+    display: flex;
+    gap: var(--spacing6);
+    justify-content: center;
+    margin-bottom: var(--spacing8);
+    flex-wrap: wrap;
+  }
+
+  .contact-method {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing3);
+    padding: var(--spacing4) var(--spacing6);
+    background: var(--neutralWhite);
+    border: 1px solid var(--borderColor);
+    border-radius: var(--borderRadiusLg);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    min-width: 200px;
+  }
+
+  .contact-method:hover,
+  .contact-method:focus {
+    border-color: var(--primaryColor);
+    transform: translateY(-2px);
+    box-shadow: var(--shadowMd);
+  }
+
+  .contact-method:focus {
+    outline: 2px solid var(--primaryColor);
+    outline-offset: 2px;
+  }
+
+  .method-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: var(--primaryLight);
+    color: var(--primaryColor);
+    border-radius: var(--borderRadiusLg);
+    flex-shrink: 0;
+  }
+
+  .method-content {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+  }
+
+  .method-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin-bottom: 2px;
+  }
+
+  .method-value {
+    font-size: 0.9375rem;
+    color: var(--primaryColor);
+    font-weight: 500;
+  }
+
+  .contact-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing2);
+    font-family: var(--fontSans);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--neutralWhite);
+    background: var(--primaryColor);
+    text-decoration: none;
+    padding: var(--spacing4) var(--spacing8);
+    border-radius: var(--borderRadiusLg);
+    transition: all 0.3s ease;
+    box-shadow: var(--shadowLg);
+    border: 2px solid var(--primaryColor);
+  }
+
+  .contact-cta:hover,
+  .contact-cta:focus {
+    background: var(--primaryHover);
+    border-color: var(--primaryHover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow2xl);
+  }
+
+  .contact-cta:focus {
+    outline: 2px solid var(--primaryColor);
+    outline-offset: 2px;
+  }
+
+  .cta-arrow {
+    transition: transform 0.3s ease;
+  }
+
+  .contact-cta:hover .cta-arrow {
+    transform: translateX(4px);
+  }
+
+  /* Background Decoration */
+  .background-decoration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .decoration-pattern {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .pattern-circle,
+  .pattern-square {
+    position: absolute;
+    opacity: 0.05;
+    animation: float 12s ease-in-out infinite;
+  }
+
+  .pattern-circle {
+    border-radius: 50%;
+    background: linear-gradient(45deg, var(--primaryColor), var(--secondaryColor));
+  }
+
+  .pattern-square {
+    background: linear-gradient(45deg, var(--secondaryColor), var(--primaryColor));
+  }
+
+  .circle-1 {
+    width: 120px;
+    height: 120px;
+    top: 10%;
+    left: 5%;
+    animation-delay: 0s;
+  }
+
+  .circle-2 {
+    width: 80px;
+    height: 80px;
+    bottom: 20%;
+    right: 10%;
+    animation-delay: 4s;
+  }
+
+  .square-1 {
+    width: 60px;
+    height: 60px;
+    top: 50%;
+    left: 80%;
+    animation-delay: 2s;
+    transform: rotate(45deg);
+  }
+
+  .square-2 {
+    width: 40px;
+    height: 40px;
+    top: 80%;
+    left: 20%;
+    animation-delay: 6s;
+    transform: rotate(45deg);
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(180deg); }
+  }
+
+  /* Animations */
+  [data-animate] {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease;
+  }
+
+  [data-animate].animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Mobile Optimizations */
+  @media (max-width: 640px) {
+    .faq {
+      padding: var(--spacing16) 0;
+    }
+
+    .section-headline {
+      font-size: 2rem;
+    }
+
+    .contact-title {
+      font-size: 1.5rem;
+    }
+
+    .accordion-trigger {
+      padding: var(--spacing4);
+    }
+
+    .question-text {
+      font-size: 1rem;
+    }
+
+    .tab-nav {
+      flex-direction: column;
+      gap: var(--spacing2);
+    }
+
+    .tab-button {
+      justify-content: center;
+    }
+
+    .contact-methods {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .contact-method {
+      min-width: auto;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .grid-container {
+      grid-template-columns: 1fr;
+    }
+
+    .decoration-pattern {
+      display: none;
+    }
+  }
+
+  /* Reduced Motion */
+  @media (prefers-reduced-motion: reduce) {
+    .accordion-item,
+    .faq-card,
+    .contact-method,
+    .contact-cta,
+    .pattern-circle,
+    .pattern-square,
+    .accordion-icon {
+      animation: none;
+      transition: none;
+    }
+    
+    .accordion-item:hover,
+    .faq-card:hover,
+    .contact-method:hover,
+    .contact-cta:hover {
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  // FAQ Animation and Interaction Controller
+  class FAQManager {
+    constructor() {
+      this.animatedElements = document.querySelectorAll('.faq [data-animate]');
+      this.accordionTriggers = document.querySelectorAll('[data-accordion-trigger]');
+      this.accordionContents = document.querySelectorAll('[data-accordion-content]');
+      this.tabButtons = document.querySelectorAll('[data-tab-button]');
+      this.tabPanels = document.querySelectorAll('[data-tab-panel]');
+      
+      this.init();
+    }
+
+    init() {
+      this.setupScrollAnimations();
+      this.setupAccordion();
+      this.setupTabs();
+      this.setupSearchFunctionality();
+    }
+
+    setupScrollAnimations() {
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !entry.target.hasAnimated) {
+            const delay = parseInt(entry.target.dataset.delay) || 0;
+            setTimeout(() => {
+              entry.target.classList.add('animate');
+            }, delay);
+            entry.target.hasAnimated = true;
+          }
+        });
+      }, observerOptions);
+
+      this.animatedElements.forEach(el => {
+        observer.observe(el);
+      });
+    }
+
+    setupAccordion() {
+      this.accordionTriggers.forEach(trigger => {
+        trigger.addEventListener('click', () => {
+          const content = document.getElementById(trigger.getAttribute('aria-controls'));
+          const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
+
+          // Close all other accordions (optional - remove for multiple open)
+          this.accordionTriggers.forEach(otherTrigger => {
+            if (otherTrigger !== trigger) {
+              const otherContent = document.getElementById(otherTrigger.getAttribute('aria-controls'));
+              otherTrigger.setAttribute('aria-expanded', 'false');
+              otherContent.setAttribute('aria-hidden', 'true');
+              otherContent.style.height = '0';
+            }
+          });
+
+          // Toggle current accordion
+          if (isExpanded) {
+            trigger.setAttribute('aria-expanded', 'false');
+            content.setAttribute('aria-hidden', 'true');
+            content.style.height = '0';
+          } else {
+            trigger.setAttribute('aria-expanded', 'true');
+            content.setAttribute('aria-hidden', 'false');
+            
+            // Calculate and set height
+            const wrapper = content.querySelector('.content-wrapper');
+            const height = wrapper.scrollHeight;
+            content.style.height = height + 'px';
+
+            // Track FAQ view
+            const question = trigger.querySelector('.question-text')?.textContent;
+            console.log(`FAQ opened: ${question}`);
+          }
+        });
+
+        // Keyboard navigation
+        trigger.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            trigger.click();
+          }
+        });
+      });
+    }
+
+    setupTabs() {
+      this.tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const targetId = button.dataset.tabButton;
+          const targetPanel = document.querySelector(`[data-tab-panel="${targetId}"]`);
+
+          // Update buttons
+          this.tabButtons.forEach(btn => {
+            btn.classList.remove('active');
+            btn.setAttribute('aria-selected', 'false');
+          });
+          button.classList.add('active');
+          button.setAttribute('aria-selected', 'true');
+
+          // Update panels
+          this.tabPanels.forEach(panel => {
+            panel.classList.remove('active');
+          });
+          targetPanel.classList.add('active');
+
+          // Track tab view
+          const categoryName = button.querySelector('.tab-text')?.textContent;
+          console.log(`FAQ category viewed: ${categoryName}`);
+        });
+
+        // Keyboard navigation for tabs
+        button.addEventListener('keydown', (e) => {
+          let nextButton = null;
+          const currentIndex = Array.from(this.tabButtons).indexOf(button);
+
+          if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+            e.preventDefault();
+            nextButton = this.tabButtons[currentIndex + 1] || this.tabButtons[0];
+          } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            nextButton = this.tabButtons[currentIndex - 1] || this.tabButtons[this.tabButtons.length - 1];
+          } else if (e.key === 'Home') {
+            e.preventDefault();
+            nextButton = this.tabButtons[0];
+          } else if (e.key === 'End') {
+            e.preventDefault();
+            nextButton = this.tabButtons[this.tabButtons.length - 1];
+          }
+
+          if (nextButton) {
+            nextButton.focus();
+            nextButton.click();
+          }
+        });
+      });
+    }
+
+    setupSearchFunctionality() {
+      // Add search functionality if needed
+      const searchInput = document.querySelector('[data-faq-search]');
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          const query = e.target.value.toLowerCase();
+          this.filterFAQs(query);
+        });
+      }
+    }
+
+    filterFAQs(query) {
+      // Filter accordion items
+      const accordionItems = document.querySelectorAll('.accordion-item');
+      accordionItems.forEach(item => {
+        const question = item.querySelector('.question-text')?.textContent.toLowerCase() || '';
+        const answer = item.querySelector('.answer-text')?.textContent.toLowerCase() || '';
+        
+        if (question.includes(query) || answer.includes(query)) {
+          item.style.display = 'block';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+
+      // Filter grid cards
+      const faqCards = document.querySelectorAll('.faq-card');
+      faqCards.forEach(card => {
+        const question = card.querySelector('.card-question')?.textContent.toLowerCase() || '';
+        const answer = card.querySelector('.card-answer')?.textContent.toLowerCase() || '';
+        
+        if (question.includes(query) || answer.includes(query)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Public method to open specific FAQ
+    openFAQ(faqId) {
+      const trigger = document.querySelector(`[aria-controls="accordion-content-${faqId}"]`);
+      if (trigger) {
+        trigger.click();
+        trigger.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    // Public method to switch to specific tab
+    switchToTab(categoryId) {
+      const button = document.querySelector(`[data-tab-button="${categoryId}"]`);
+      if (button) {
+        button.click();
+      }
+    }
+  }
+
+  // Initialize when DOM is loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    window.faqManager = new FAQManager();
+  });
+
+  // Handle URL hash for direct FAQ access
+  if (window.location.hash.startsWith('#faq-')) {
+    document.addEventListener('DOMContentLoaded', () => {
+      const faqId = window.location.hash.replace('#faq-', '');
+      setTimeout(() => {
+        if (window.faqManager) {
+          window.faqManager.openFAQ(faqId);
+        }
+      }, 500);
+    });
+  }
+
+  // Performance optimization
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(() => {
+      console.log('FAQ animations optimized');
+    });
+  }
+</script>

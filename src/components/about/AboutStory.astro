@@ -1,0 +1,1218 @@
+---
+// OurStory.astro - Company story and mission section
+import theme from '../../lib/therme';
+
+export interface Props {
+  // Content props
+  eyebrow?: string;
+  headline?: string;
+  description?: string;
+  
+  // Story content
+  storyParagraphs?: string[];
+  
+  // Mission/Vision
+  mission?: {
+    title: string;
+    statement: string;
+    description: string;
+  };
+  
+  vision?: {
+    title: string;
+    statement: string;
+    description: string;
+  };
+  
+  // Visual elements
+  storyImage?: string;
+  storyImageAlt?: string;
+  founderImage?: string;
+  founderImageAlt?: string;
+  
+  // Timeline/milestones
+  keyMilestones?: Array<{
+    year: string;
+    title: string;
+    description: string;
+    icon?: string;
+  }>;
+  
+  // Founder quote
+  founderQuote?: {
+    quote: string;
+    author: string;
+    title: string;
+    image?: string;
+  };
+  
+  // Layout variant
+  variant?: 'timeline' | 'split' | 'narrative';
+}
+
+const {
+  eyebrow = "Our Story",
+  headline = "From Idea to Impact",
+  description = "Every great company starts with a simple idea. Ours was to bridge the gap between cutting-edge technology and real business results.",
+  storyParagraphs = [
+    "It started in 2019 with a simple observation: too many businesses were struggling with digital solutions that looked impressive but didn't deliver measurable results. As developers and strategists, we saw companies investing heavily in websites and applications that failed to drive growth or improve their bottom line.",
+    "We founded our agency with a different philosophy—one that puts business outcomes first and technology second. Instead of chasing the latest trends, we focus on understanding each client's unique challenges and crafting solutions that directly address their goals.",
+    "Today, we're proud to have helped over 150 businesses transform their digital presence. From innovative startups to established enterprises, we've learned that success isn't about using the most complex technology—it's about using the right technology to solve real problems.",
+    "Our team has grown, our expertise has deepened, but our core mission remains unchanged: creating digital experiences that don't just impress visitors, but drive real, measurable business growth for our clients."
+  ],
+  mission = {
+    title: "Our Mission",
+    statement: "To empower businesses with digital solutions that drive real, measurable growth.",
+    description: "We believe technology should serve business goals, not the other way around. Every project we take on is guided by this principle."
+  },
+  vision = {
+    title: "Our Vision", 
+    statement: "To be the most trusted digital partner for businesses seeking transformational growth.",
+    description: "We envision a future where every business, regardless of size, has access to enterprise-level digital solutions that drive success."
+  },
+  storyImage = "/about/story-image.jpg",
+  storyImageAlt = "Our team working together in our office",
+  founderImage = "/about/founder.jpg", 
+  founderImageAlt = "Company founder",
+  variant = "narrative",
+  keyMilestones = [
+    {
+      year: "2019",
+      title: "Founded",
+      description: "Started with a vision to create results-driven digital solutions",
+      icon: "🚀"
+    },
+    {
+      year: "2020",
+      title: "First Major Client",
+      description: "Delivered our first enterprise-level project, setting the standard for excellence",
+      icon: "🎯"
+    },
+    {
+      year: "2021", 
+      title: "Team Expansion",
+      description: "Grew to 8 specialists, adding expertise in UX design and digital marketing",
+      icon: "👥"
+    },
+    {
+      year: "2022",
+      title: "100 Projects",
+      description: "Reached the milestone of 100 successful project deliveries",
+      icon: "💯"
+    },
+    {
+      year: "2023",
+      title: "Award Recognition",
+      description: "Recognized as 'Best Digital Agency' by Toronto Business Awards",
+      icon: "🏆"
+    },
+    {
+      year: "2024",
+      title: "International Expansion",
+      description: "Expanded services to serve clients across North America",
+      icon: "🌍"
+    }
+  ],
+  founderQuote = {
+    quote: "We started this company because we believed businesses deserved digital partners who truly understood their challenges. Every day, we work to prove that technology can be both innovative and practical.",
+    author: "Sarah Johnson",
+    title: "CEO & Founder",
+    image: "/about/sarah-founder.jpg"
+  }
+} = Astro.props;
+---
+
+<section class="our-story" aria-labelledby="story-headline">
+  <div class="story-container">
+    
+    <!-- Section Header -->
+    <div class="section-header" data-animate="fade-up">
+      <span class="section-eyebrow">{eyebrow}</span>
+      <h2 id="story-headline" class="section-headline">
+        {headline}
+      </h2>
+      <p class="section-description">
+        {description}
+      </p>
+    </div>
+
+    <!-- Story Content -->
+    <div class={`story-content variant-${variant}`}>
+      
+      {/* Narrative Variant */}
+      {variant === 'narrative' && (
+        <div class="narrative-layout">
+          <!-- Story Text -->
+          <div class="story-text" data-animate="fade-up" data-delay="200">
+            {storyParagraphs.map((paragraph, index) => (
+              <p class="story-paragraph" key={index}>
+                {paragraph}
+              </p>
+            ))}
+          </div>
+          
+          <!-- Story Image -->
+          <div class="story-visual" data-animate="fade-left" data-delay="400">
+            <div class="story-image-container">
+              <img 
+                src={storyImage}
+                alt={storyImageAlt}
+                class="story-image"
+                width="600"
+                height="400"
+                loading="lazy"
+              />
+              
+              <!-- Image Overlay Info -->
+              <div class="image-overlay">
+                <div class="overlay-content">
+                  <div class="overlay-stat">
+                    <span class="overlay-number">150+</span>
+                    <span class="overlay-label">Projects Delivered</span>
+                  </div>
+                  <div class="overlay-stat">
+                    <span class="overlay-number">5+</span>
+                    <span class="overlay-label">Years Experience</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Split Variant */}
+      {variant === 'split' && (
+        <div class="split-layout">
+          <div class="split-left" data-animate="fade-right" data-delay="200">
+            <div class="story-image-container">
+              <img 
+                src={storyImage}
+                alt={storyImageAlt}
+                class="story-image"
+                width="500"
+                height="400"
+                loading="lazy"
+              />
+            </div>
+          </div>
+          
+          <div class="split-right" data-animate="fade-left" data-delay="300">
+            {storyParagraphs.map((paragraph, index) => (
+              <p class="story-paragraph" key={index}>
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Timeline Variant */}
+      {variant === 'timeline' && (
+        <div class="timeline-layout">
+          <!-- Story Introduction -->
+          <div class="timeline-intro" data-animate="fade-up" data-delay="200">
+            <p class="intro-text">{storyParagraphs[0]}</p>
+          </div>
+          
+          <!-- Milestones Timeline -->
+          <div class="milestones-timeline" data-animate="fade-up" data-delay="400">
+            <div class="timeline-line"></div>
+            
+            {keyMilestones.map((milestone, index) => (
+              <div 
+                class={`milestone-item ${index % 2 === 0 ? 'left' : 'right'}`}
+                data-animate="fade-up"
+                data-delay={500 + (index * 100)}
+                key={milestone.year}
+              >
+                <div class="milestone-marker">
+                  <div class="marker-icon">
+                    {milestone.icon && <span role="img" aria-hidden="true">{milestone.icon}</span>}
+                  </div>
+                  <div class="marker-year">{milestone.year}</div>
+                </div>
+                
+                <div class="milestone-content">
+                  <h3 class="milestone-title">{milestone.title}</h3>
+                  <p class="milestone-description">{milestone.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+
+    <!-- Mission & Vision -->
+    <div class="mission-vision" data-animate="fade-up" data-delay="600">
+      <div class="mission-vision-grid">
+        <div class="mission-card">
+          <div class="card-header">
+            <div class="card-icon">🎯</div>
+            <h3 class="card-title">{mission.title}</h3>
+          </div>
+          <blockquote class="card-statement">
+            "{mission.statement}"
+          </blockquote>
+          <p class="card-description">{mission.description}</p>
+        </div>
+        
+        <div class="vision-card">
+          <div class="card-header">
+            <div class="card-icon">🔮</div>
+            <h3 class="card-title">{vision.title}</h3>
+          </div>
+          <blockquote class="card-statement">
+            "{vision.statement}"
+          </blockquote>
+          <p class="card-description">{vision.description}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Founder Quote -->
+    {founderQuote && (
+      <div class="founder-quote" data-animate="fade-up" data-delay="800">
+        <div class="quote-content">
+          <div class="quote-icon">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+              <path d="M12 21C12 17.686 14.686 15 18 15C21.314 15 24 17.686 24 21C24 24.314 21.314 27 18 27H15V33H12V21ZM36 21C36 17.686 38.686 15 42 15C45.314 15 48 17.686 48 21C48 24.314 45.314 27 42 27H39V33H36V21Z" fill="currentColor"/>
+            </svg>
+          </div>
+          
+          <blockquote class="founder-statement">
+            "{founderQuote.quote}"
+          </blockquote>
+          
+          <div class="quote-author">
+            {founderQuote.image && (
+              <img 
+                src={founderQuote.image}
+                alt={founderQuote.author}
+                class="author-image"
+                width="60"
+                height="60"
+                loading="lazy"
+              />
+            )}
+            <div class="author-info">
+              <div class="author-name">{founderQuote.author}</div>
+              <div class="author-title">{founderQuote.title}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+
+    <!-- Call to Action -->
+    <div class="story-cta" data-animate="fade-up" data-delay="1000">
+      <div class="cta-content">
+        <h3 class="cta-title">Ready to Be Part of Our Story?</h3>
+        <p class="cta-description">
+          Let's write the next chapter together. Discover how we can help transform your business.
+        </p>
+        <div class="cta-actions">
+          <a href="/contact" class="cta-primary">
+            Start Your Project
+            <svg class="cta-arrow" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M4.16667 10H15.8333M15.8333 10L10.8333 5M15.8333 10L10.8333 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+          <a href="/portfolio" class="cta-secondary">
+            View Our Work
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Background Decoration -->
+  <div class="story-decoration" aria-hidden="true">
+    <div class="decoration-elements">
+      <div class="deco-line line-1"></div>
+      <div class="deco-line line-2"></div>
+      <div class="deco-dot dot-1"></div>
+      <div class="deco-dot dot-2"></div>
+      <div class="deco-dot dot-3"></div>
+    </div>
+  </div>
+</section>
+
+<style define:vars={{
+  primaryColor: theme.colors.primary[500],
+  primaryHover: theme.colors.primary[600],
+  primaryLight: theme.colors.primary[100],
+  secondaryColor: theme.colors.secondary[500],
+  neutralWhite: theme.colors.neutral[50],
+  neutralGray: theme.colors.neutral[500],
+  neutralDark: theme.colors.neutral[900],
+  neutralLight: theme.colors.neutral[100],
+  borderColor: theme.colors.border,
+  fontSans: theme.typography.fontFamily.sans.join(', '),
+  fontDisplay: theme.typography.fontFamily.display.join(', '),
+  spacing4: theme.spacing[4],
+  spacing6: theme.spacing[6],
+  spacing8: theme.spacing[8],
+  spacing12: theme.spacing[12],
+  spacing16: theme.spacing[16],
+  spacing20: theme.spacing[20],
+  spacing24: theme.spacing[24],
+  spacing32: theme.spacing[32],
+  borderRadiusLg: theme.borderRadius.lg,
+  borderRadius2xl: theme.borderRadius['2xl'],
+  shadowMd: theme.boxShadow.md,
+  shadowLg: theme.boxShadow.lg,
+  shadow2xl: theme.boxShadow['2xl']
+}}>
+  .our-story {
+    position: relative;
+    padding: var(--spacing24) 0;
+    background: var(--neutralWhite);
+    overflow: hidden;
+  }
+
+  .story-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 var(--spacing4);
+    position: relative;
+    z-index: 10;
+  }
+
+  @media (min-width: 768px) {
+    .story-container {
+      padding: 0 var(--spacing6);
+    }
+  }
+
+  /* Section Header */
+  .section-header {
+    text-align: center;
+    margin-bottom: var(--spacing20);
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .section-eyebrow {
+    display: inline-block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primaryColor);
+    background: var(--primaryLight);
+    padding: var(--spacing2) var(--spacing4);
+    border-radius: var(--borderRadiusLg);
+    margin-bottom: var(--spacing6);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .section-headline {
+    font-family: var(--fontDisplay);
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing6) 0;
+  }
+
+  @media (min-width: 768px) {
+    .section-headline {
+      font-size: 3rem;
+    }
+  }
+
+  .section-description {
+    font-size: 1.25rem;
+    line-height: 1.7;
+    color: var(--neutralGray);
+    margin: 0;
+  }
+
+  /* Story Content */
+  .story-content {
+    margin-bottom: var(--spacing20);
+  }
+
+  .story-paragraph {
+    font-size: 1.125rem;
+    line-height: 1.8;
+    color: var(--neutralGray);
+    margin: 0 0 var(--spacing6) 0;
+  }
+
+  .story-paragraph:first-child {
+    font-size: 1.25rem;
+    color: var(--neutralDark);
+    font-weight: 500;
+  }
+
+  /* Narrative Layout */
+  .narrative-layout {
+    display: grid;
+    gap: var(--spacing16);
+    align-items: start;
+  }
+
+  @media (min-width: 1024px) {
+    .narrative-layout {
+      grid-template-columns: 2fr 1fr;
+      gap: var(--spacing20);
+    }
+  }
+
+  .story-text {
+    max-width: 700px;
+  }
+
+  .story-visual {
+    position: relative;
+  }
+
+  .story-image-container {
+    position: relative;
+    border-radius: var(--borderRadius2xl);
+    overflow: hidden;
+    box-shadow: var(--shadow2xl);
+  }
+
+  .story-image {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .image-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+    padding: var(--spacing8) var(--spacing6);
+    color: var(--neutralWhite);
+  }
+
+  .overlay-content {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+  }
+
+  .overlay-stat {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .overlay-number {
+    font-family: var(--fontDisplay);
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: var(--spacing2);
+  }
+
+  .overlay-label {
+    font-size: 0.875rem;
+    opacity: 0.9;
+  }
+
+  /* Split Layout */
+  .split-layout {
+    display: grid;
+    gap: var(--spacing12);
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .split-layout {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing20);
+    }
+  }
+
+  .split-left {
+    order: 1;
+  }
+
+  .split-right {
+    order: 2;
+  }
+
+  @media (min-width: 1024px) {
+    .split-left {
+      order: 1;
+    }
+    
+    .split-right {
+      order: 2;
+    }
+  }
+
+  /* Timeline Layout */
+  .timeline-layout {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .timeline-intro {
+    text-align: center;
+    margin-bottom: var(--spacing20);
+  }
+
+  .intro-text {
+    font-size: 1.25rem;
+    line-height: 1.7;
+    color: var(--neutralDark);
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .milestones-timeline {
+    position: relative;
+  }
+
+  .timeline-line {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--primaryColor), var(--secondaryColor));
+    border-radius: 2px;
+    transform: translateX(-50%);
+    z-index: 1;
+  }
+
+  @media (max-width: 768px) {
+    .timeline-line {
+      left: 30px;
+    }
+  }
+
+  .milestone-item {
+    position: relative;
+    margin-bottom: var(--spacing16);
+    display: flex;
+    align-items: center;
+  }
+
+  .milestone-item.left {
+    flex-direction: row;
+  }
+
+  .milestone-item.right {
+    flex-direction: row-reverse;
+  }
+
+  @media (max-width: 768px) {
+    .milestone-item,
+    .milestone-item.right {
+      flex-direction: row;
+    }
+  }
+
+  .milestone-marker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 var(--spacing8);
+    position: relative;
+    z-index: 2;
+  }
+
+  @media (max-width: 768px) {
+    .milestone-marker {
+      margin: 0 var(--spacing6) 0 0;
+    }
+  }
+
+  .marker-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    background: var(--primaryColor);
+    color: var(--neutralWhite);
+    border-radius: 50%;
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing2);
+    border: 4px solid var(--neutralWhite);
+    box-shadow: var(--shadowMd);
+  }
+
+  .marker-year {
+    font-family: var(--fontDisplay);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--primaryColor);
+    background: var(--neutralWhite);
+    padding: var(--spacing2) var(--spacing3);
+    border-radius: var(--borderRadiusLg);
+    border: 1px solid var(--borderColor);
+    box-shadow: var(--shadowMd);
+  }
+
+  .milestone-content {
+    flex: 1;
+    max-width: 400px;
+    background: var(--neutralWhite);
+    padding: var(--spacing6);
+    border-radius: var(--borderRadius2xl);
+    box-shadow: var(--shadowLg);
+    border: 1px solid var(--borderColor);
+  }
+
+  @media (max-width: 768px) {
+    .milestone-content {
+      max-width: none;
+    }
+  }
+
+  .milestone-title {
+    font-family: var(--fontDisplay);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing3) 0;
+  }
+
+  .milestone-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--neutralGray);
+    margin: 0;
+  }
+
+  /* Mission & Vision */
+  .mission-vision {
+    margin-bottom: var(--spacing20);
+  }
+
+  .mission-vision-grid {
+    display: grid;
+    gap: var(--spacing8);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 768px) {
+    .mission-vision-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing12);
+    }
+  }
+
+  .mission-card,
+  .vision-card {
+    background: linear-gradient(135deg, var(--primaryLight) 0%, var(--neutralWhite) 100%);
+    padding: var(--spacing8);
+    border-radius: var(--borderRadius2xl);
+    border: 1px solid var(--borderColor);
+    box-shadow: var(--shadowMd);
+    text-align: center;
+  }
+
+  .card-header {
+    margin-bottom: var(--spacing6);
+  }
+
+  .card-icon {
+    font-size: 2rem;
+    margin-bottom: var(--spacing4);
+  }
+
+  .card-title {
+    font-family: var(--fontDisplay);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0;
+  }
+
+  .card-statement {
+    font-family: var(--fontDisplay);
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--primaryColor);
+    margin: 0 0 var(--spacing4) 0;
+    font-style: italic;
+  }
+
+  .card-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--neutralGray);
+    margin: 0;
+  }
+
+  /* Founder Quote */
+  .founder-quote {
+    background: var(--neutralDark);
+    color: var(--neutralWhite);
+    padding: var(--spacing12);
+    border-radius: var(--borderRadius2xl);
+    margin-bottom: var(--spacing20);
+    text-align: center;
+  }
+
+  .quote-content {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .quote-icon {
+    color: var(--primaryColor);
+    margin-bottom: var(--spacing6);
+    opacity: 0.8;
+  }
+
+  .founder-statement {
+    font-family: var(--fontDisplay);
+    font-size: 1.5rem;
+    font-weight: 400;
+    line-height: 1.6;
+    margin: 0 0 var(--spacing8) 0;
+    font-style: italic;
+  }
+
+  .quote-author {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing4);
+  }
+
+  .author-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid var(--primaryColor);
+  }
+
+  .author-info {
+    text-align: left;
+  }
+
+  .author-name {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .author-title {
+    font-size: 0.9375rem;
+    color: var(--primaryColor);
+  }
+
+  /* Story CTA */
+  .story-cta {
+    text-align: center;
+    padding: var(--spacing12);
+    background: linear-gradient(135deg, var(--neutralLight) 0%, var(--neutralWhite) 100%);
+    border-radius: var(--borderRadius2xl);
+    border: 1px solid var(--borderColor);
+  }
+
+  .cta-content {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .cta-title {
+    font-family: var(--fontDisplay);
+    font-size: 1.875rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing4) 0;
+  }
+
+  .cta-description {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: var(--neutralGray);
+    margin: 0 0 var(--spacing8) 0;
+  }
+
+  .cta-actions {
+    display: flex;
+    gap: var(--spacing4);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .cta-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing2);
+    font-family: var(--fontSans);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--neutralWhite);
+    background: var(--primaryColor);
+    text-decoration: none;
+    padding: var(--spacing4) var(--spacing8);
+    border-radius: var(--borderRadiusLg);
+    transition: all 0.3s ease;
+    box-shadow: var(--shadowMd);
+  }
+
+  .cta-primary:hover,
+  .cta-primary:focus {
+    background: var(--primaryHover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadowLg);
+  }
+
+  .cta-primary:focus {
+    outline: 2px solid var(--primaryColor);
+    outline-offset: 2px;
+  }
+
+  .cta-arrow {
+    transition: transform 0.3s ease;
+  }
+
+  .cta-primary:hover .cta-arrow {
+    transform: translateX(4px);
+  }
+
+  .cta-secondary {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--fontSans);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    text-decoration: none;
+    padding: var(--spacing4) var(--spacing6);
+    border-radius: var(--borderRadiusLg);
+    transition: all 0.3s ease;
+    border: 2px solid var(--borderColor);
+  }
+
+  .cta-secondary:hover,
+  .cta-secondary:focus {
+    border-color: var(--primaryColor);
+    color: var(--primaryColor);
+  }
+
+  /* Background Decoration */
+  .story-decoration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .decoration-elements {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .deco-line {
+    position: absolute;
+    background: linear-gradient(90deg, transparent, var(--primaryColor), transparent);
+    opacity: 0.1;
+    height: 2px;
+    animation: slideLine 20s ease-in-out infinite;
+  }
+
+  .deco-dot {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: var(--primaryColor);
+    border-radius: 50%;
+    opacity: 0.2;
+    animation: pulse 4s ease-in-out infinite;
+  }
+
+  .line-1 {
+    top: 20%;
+    left: 0;
+    right: 0;
+    animation-delay: 0s;
+  }
+
+  .line-2 {
+    top: 70%;
+    left: 0;
+    right: 0;
+    animation-delay: 10s;
+  }
+
+  .dot-1 {
+    top: 15%;
+    left: 10%;
+    animation-delay: 0s;
+  }
+
+  .dot-2 {
+    top: 60%;
+    right: 15%;
+    animation-delay: 2s;
+  }
+
+  .dot-3 {
+    bottom: 25%;
+    left: 50%;
+    animation-delay: 4s;
+  }
+
+  @keyframes slideLine {
+    0%, 100% { transform: translateX(-100%); }
+    50% { transform: translateX(100%); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.2; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.5); }
+  }
+
+  /* Animations */
+  [data-animate] {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease;
+  }
+
+  [data-animate="fade-right"] {
+    transform: translateX(-30px);
+  }
+
+  [data-animate="fade-left"] {
+    transform: translateX(30px);
+  }
+
+  [data-animate].animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  [data-animate="fade-right"].animate,
+  [data-animate="fade-left"].animate {
+    transform: translateX(0);
+  }
+
+  /* Mobile Optimizations */
+  @media (max-width: 640px) {
+    .our-story {
+      padding: var(--spacing16) 0;
+    }
+
+    .section-headline {
+      font-size: 2rem;
+    }
+
+    .story-paragraph {
+      font-size: 1rem;
+    }
+
+    .story-paragraph:first-child {
+      font-size: 1.125rem;
+    }
+
+    .narrative-layout,
+    .split-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .mission-vision-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .founder-statement {
+      font-size: 1.25rem;
+    }
+
+    .quote-author {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .author-info {
+      text-align: center;
+    }
+
+    .cta-actions {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .cta-primary,
+    .cta-secondary {
+      width: 100%;
+      max-width: 300px;
+      justify-content: center;
+    }
+
+    .decoration-elements {
+      display: none;
+    }
+  }
+
+  /* Reduced Motion */
+  @media (prefers-reduced-motion: reduce) {
+    .deco-line,
+    .deco-dot {
+      animation: none;
+    }
+    
+    [data-animate] {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // Our Story Animation Controller
+  class OurStoryAnimations {
+    constructor() {
+      this.animatedElements = document.querySelectorAll('.our-story [data-animate]');
+      this.milestoneItems = document.querySelectorAll('.milestone-item');
+      
+      this.init();
+    }
+
+    init() {
+      this.setupScrollAnimations();
+      this.setupTimelineInteractions();
+    }
+
+    setupScrollAnimations() {
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !entry.target.hasAnimated) {
+            const delay = parseInt(entry.target.dataset.delay) || 0;
+            setTimeout(() => {
+              entry.target.classList.add('animate');
+            }, delay);
+            entry.target.hasAnimated = true;
+          }
+        });
+      }, observerOptions);
+
+      this.animatedElements.forEach(el => {
+        observer.observe(el);
+      });
+    }
+
+    setupTimelineInteractions() {
+      // Enhanced milestone interactions
+      this.milestoneItems.forEach(item => {
+        item.addEventListener('mouseenter', () => {
+          item.style.transform = 'scale(1.02)';
+          item.style.zIndex = '10';
+        });
+
+        item.addEventListener('mouseleave', () => {
+          item.style.transform = 'scale(1)';
+          item.style.zIndex = '1';
+        });
+
+        // Add click interaction for mobile
+        item.addEventListener('click', () => {
+          const title = item.querySelector('.milestone-title')?.textContent;
+          console.log(`Milestone clicked: ${title}`);
+        });
+      });
+
+      // Timeline progress animation
+      const timelineLine = document.querySelector('.timeline-line');
+      if (timelineLine) {
+        const timelineObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              timelineLine.style.animation = 'drawLine 2s ease-in-out forwards';
+            }
+          });
+        }, {
+          threshold: 0.3
+        });
+
+        timelineObserver.observe(timelineLine);
+      }
+
+      // Add CSS for line drawing animation
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes drawLine {
+          0% { 
+            height: 0; 
+            opacity: 0;
+          }
+          50% {
+            opacity: 1;
+          }
+          100% { 
+            height: 100%; 
+            opacity: 1;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    // Public method to highlight specific milestone
+    highlightMilestone(year) {
+      const milestone = Array.from(this.milestoneItems).find(item => {
+        const milestoneYear = item.querySelector('.marker-year')?.textContent;
+        return milestoneYear === year;
+      });
+
+      if (milestone) {
+        milestone.style.transform = 'scale(1.05)';
+        milestone.style.backgroundColor = 'rgba(14, 165, 233, 0.1)';
+        milestone.style.borderRadius = '1rem';
+        milestone.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        setTimeout(() => {
+          milestone.style.transform = '';
+          milestone.style.backgroundColor = '';
+          milestone.style.borderRadius = '';
+        }, 3000);
+      }
+    }
+  }
+
+  // Initialize when DOM is loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    window.ourStoryAnimations = new OurStoryAnimations();
+  });
+
+  // Enhanced scroll performance
+  let ticking = false;
+
+  function updateAnimations() {
+    // Any scroll-based animations can be optimized here
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(updateAnimations);
+      ticking = true;
+    }
+  });
+
+  // Performance optimization
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(() => {
+      console.log('Our Story animations optimized');
+    });
+  }
+</script>

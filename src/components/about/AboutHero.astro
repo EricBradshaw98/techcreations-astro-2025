@@ -1,0 +1,891 @@
+---
+// AboutHero.astro - Hero section for about page
+import theme from '../../lib/therme';
+
+export interface Props {
+  // Content props
+  eyebrow?: string;
+  headline?: string;
+  subheadline?: string;
+  description?: string;
+  
+  // Visual props
+  heroImage?: string;
+  heroImageAlt?: string;
+  
+  // Additional elements
+  founded?: string;
+  location?: string;
+  teamSize?: string;
+  
+  // Key stats for credibility
+  quickStats?: Array<{
+    number: string;
+    label: string;
+    suffix?: string;
+  }>;
+  
+  // Layout variant
+  variant?: 'split' | 'centered' | 'overlay';
+}
+
+const {
+  eyebrow = "About Our Agency",
+  headline = "We're More Than Just Developers",
+  subheadline = "We're Strategic Partners in Your Success", 
+  description = "Founded with a mission to bridge the gap between innovative technology and business growth, we've been helping companies transform their digital presence and achieve exceptional results since 2019.",
+  heroImage = "/about/team-hero.jpg",
+  heroImageAlt = "Our team collaborating in our modern office space",
+  founded = "2019",
+  location = "Toronto, Canada",
+  teamSize = "12+ Experts",
+  variant = "split",
+  quickStats = [
+    { number: "150", suffix: "+", label: "Projects Delivered" },
+    { number: "5", suffix: "+", label: "Years Experience" },
+    { number: "98", suffix: "%", label: "Client Satisfaction" },
+    { number: "12", suffix: "+", label: "Team Members" }
+  ]
+} = Astro.props;
+---
+
+<section class={`about-hero variant-${variant}`} aria-labelledby="about-hero-headline">
+  <div class="hero-container">
+    
+    {/* Split Variant */}
+    {variant === 'split' && (
+      <div class="hero-content-split">
+        <div class="hero-text" data-animate="fade-right">
+          <span class="hero-eyebrow">{eyebrow}</span>
+          <h1 id="about-hero-headline" class="hero-headline">
+            {headline}
+          </h1>
+          <p class="hero-subheadline">{subheadline}</p>
+          <p class="hero-description">{description}</p>
+          
+          <!-- Company Facts -->
+          <div class="company-facts">
+            <div class="fact-item">
+              <div class="fact-icon">📅</div>
+              <div class="fact-content">
+                <div class="fact-label">Founded</div>
+                <div class="fact-value">{founded}</div>
+              </div>
+            </div>
+            
+            <div class="fact-item">
+              <div class="fact-icon">📍</div>
+              <div class="fact-content">
+                <div class="fact-label">Location</div>
+                <div class="fact-value">{location}</div>
+              </div>
+            </div>
+            
+            <div class="fact-item">
+              <div class="fact-icon">👥</div>
+              <div class="fact-content">
+                <div class="fact-label">Team Size</div>
+                <div class="fact-value">{teamSize}</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Quick Stats -->
+          {quickStats.length > 0 && (
+            <div class="quick-stats">
+              {quickStats.map((stat, index) => (
+                <div class="stat-item" key={index}>
+                  <div class="stat-number">
+                    <span class="stat-value" data-count-to={stat.number}>0</span>
+                    {stat.suffix && <span class="stat-suffix">{stat.suffix}</span>}
+                  </div>
+                  <div class="stat-label">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        
+        <div class="hero-visual" data-animate="fade-left" data-delay="200">
+          <div class="hero-image-container">
+            <img 
+              src={heroImage}
+              alt={heroImageAlt}
+              class="hero-image"
+              width="600"
+              height="400"
+              loading="eager"
+            />
+            
+            <!-- Floating Elements -->
+            <div class="floating-element element-1" data-animate="float" data-delay="1000">
+              <div class="element-content">
+                <div class="element-icon">🎯</div>
+                <div class="element-text">Mission Driven</div>
+              </div>
+            </div>
+            
+            <div class="floating-element element-2" data-animate="float" data-delay="1500">
+              <div class="element-content">
+                <div class="element-icon">⚡</div>
+                <div class="element-text">Results Focused</div>
+              </div>
+            </div>
+            
+            <div class="floating-element element-3" data-animate="float" data-delay="2000">
+              <div class="element-content">
+                <div class="element-icon">🤝</div>
+                <div class="element-text">Client Partners</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {/* Centered Variant */}
+    {variant === 'centered' && (
+      <div class="hero-content-centered" data-animate="fade-up">
+        <span class="hero-eyebrow">{eyebrow}</span>
+        <h1 id="about-hero-headline" class="hero-headline centered">
+          {headline}
+        </h1>
+        <p class="hero-subheadline centered">{subheadline}</p>
+        <p class="hero-description centered">{description}</p>
+        
+        <!-- Image -->
+        <div class="hero-image-centered">
+          <img 
+            src={heroImage}
+            alt={heroImageAlt}
+            class="hero-image"
+            width="800"
+            height="400"
+            loading="eager"
+          />
+        </div>
+        
+        <!-- Stats Row -->
+        {quickStats.length > 0 && (
+          <div class="stats-row">
+            {quickStats.map((stat, index) => (
+              <div class="stat-item" key={index}>
+                <div class="stat-number">
+                  <span class="stat-value" data-count-to={stat.number}>0</span>
+                  {stat.suffix && <span class="stat-suffix">{stat.suffix}</span>}
+                </div>
+                <div class="stat-label">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    )}
+
+    {/* Overlay Variant */}
+    {variant === 'overlay' && (
+      <div class="hero-content-overlay">
+        <div class="hero-background">
+          <img 
+            src={heroImage}
+            alt={heroImageAlt}
+            class="background-image"
+            width="1200"
+            height="600"
+            loading="eager"
+          />
+          <div class="background-overlay"></div>
+        </div>
+        
+        <div class="overlay-content" data-animate="fade-up">
+          <span class="hero-eyebrow overlay">{eyebrow}</span>
+          <h1 id="about-hero-headline" class="hero-headline overlay">
+            {headline}
+          </h1>
+          <p class="hero-subheadline overlay">{subheadline}</p>
+          <p class="hero-description overlay">{description}</p>
+          
+          <!-- Company Info Cards -->
+          <div class="info-cards">
+            <div class="info-card">
+              <div class="card-icon">📅</div>
+              <div class="card-content">
+                <div class="card-label">Founded</div>
+                <div class="card-value">{founded}</div>
+              </div>
+            </div>
+            
+            <div class="info-card">
+              <div class="card-icon">📍</div>
+              <div class="card-content">
+                <div class="card-label">Based in</div>
+                <div class="card-value">{location}</div>
+              </div>
+            </div>
+            
+            <div class="info-card">
+              <div class="card-icon">👥</div>
+              <div class="card-content">
+                <div class="card-label">Team</div>
+                <div class="card-value">{teamSize}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
+
+  <!-- Background Decoration -->
+  <div class="hero-decoration" aria-hidden="true">
+    <div class="decoration-elements">
+      <div class="deco-circle circle-1"></div>
+      <div class="deco-circle circle-2"></div>
+      <div class="deco-square square-1"></div>
+      <div class="deco-square square-2"></div>
+    </div>
+  </div>
+</section>
+
+<style define:vars={{
+  primaryColor: theme.colors.primary[500],
+  primaryHover: theme.colors.primary[600],
+  primaryLight: theme.colors.primary[100],
+  secondaryColor: theme.colors.secondary[500],
+  neutralWhite: theme.colors.neutral[50],
+  neutralGray: theme.colors.neutral[500],
+  neutralDark: theme.colors.neutral[900],
+  neutralLight: theme.colors.neutral[100],
+  borderColor: theme.colors.border,
+  fontSans: theme.typography.fontFamily.sans.join(', '),
+  fontDisplay: theme.typography.fontFamily.display.join(', '),
+  spacing4: theme.spacing[4],
+  spacing6: theme.spacing[6],
+  spacing8: theme.spacing[8],
+  spacing12: theme.spacing[12],
+  spacing16: theme.spacing[16],
+  spacing20: theme.spacing[20],
+  spacing24: theme.spacing[24],
+  spacing32: theme.spacing[32],
+  borderRadiusLg: theme.borderRadius.lg,
+  borderRadius2xl: theme.borderRadius['2xl'],
+  shadowMd: theme.boxShadow.md,
+  shadowLg: theme.boxShadow.lg,
+  shadow2xl: theme.boxShadow['2xl']
+}}>
+  .about-hero {
+    position: relative;
+    padding: var(--spacing24) 0;
+    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
+    overflow: hidden;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+  }
+
+  .variant-overlay {
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  .hero-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 var(--spacing4);
+    position: relative;
+    z-index: 10;
+    width: 100%;
+  }
+
+  @media (min-width: 768px) {
+    .hero-container {
+      padding: 0 var(--spacing6);
+    }
+  }
+
+  /* Common Elements */
+  .hero-eyebrow {
+    display: inline-block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primaryColor);
+    background: var(--primaryLight);
+    padding: var(--spacing2) var(--spacing4);
+    border-radius: var(--borderRadiusLg);
+    margin-bottom: var(--spacing6);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .hero-eyebrow.overlay {
+    background: rgba(14, 165, 233, 0.2);
+    color: var(--neutralWhite);
+    backdrop-filter: blur(10px);
+  }
+
+  .hero-headline {
+    font-family: var(--fontDisplay);
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing6) 0;
+  }
+
+  @media (min-width: 768px) {
+    .hero-headline {
+      font-size: 3.5rem;
+    }
+  }
+
+  .hero-headline.centered {
+    text-align: center;
+  }
+
+  .hero-headline.overlay {
+    color: var(--neutralWhite);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .hero-subheadline {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primaryColor);
+    margin: 0 0 var(--spacing6) 0;
+    line-height: 1.3;
+  }
+
+  .hero-subheadline.centered {
+    text-align: center;
+  }
+
+  .hero-subheadline.overlay {
+    color: var(--neutralWhite);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+
+  .hero-description {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: var(--neutralGray);
+    margin: 0 0 var(--spacing8) 0;
+    max-width: 600px;
+  }
+
+  .hero-description.centered {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-description.overlay {
+    color: var(--neutralWhite);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Split Variant */
+  .hero-content-split {
+    display: grid;
+    gap: var(--spacing12);
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .hero-content-split {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing20);
+    }
+  }
+
+  .hero-text {
+    order: 1;
+  }
+
+  .hero-visual {
+    order: 2;
+  }
+
+  /* Company Facts */
+  .company-facts {
+    display: flex;
+    gap: var(--spacing6);
+    margin-bottom: var(--spacing8);
+    flex-wrap: wrap;
+  }
+
+  .fact-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing3);
+    padding: var(--spacing3) var(--spacing4);
+    background: var(--neutralWhite);
+    border-radius: var(--borderRadiusLg);
+    border: 1px solid var(--borderColor);
+    box-shadow: var(--shadowMd);
+  }
+
+  .fact-icon {
+    font-size: 1.25rem;
+  }
+
+  .fact-label {
+    font-size: 0.875rem;
+    color: var(--neutralGray);
+    font-weight: 500;
+  }
+
+  .fact-value {
+    font-size: 1rem;
+    color: var(--neutralDark);
+    font-weight: 600;
+  }
+
+  /* Quick Stats */
+  .quick-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing4);
+  }
+
+  @media (min-width: 640px) {
+    .quick-stats {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .stat-item {
+    text-align: center;
+    padding: var(--spacing4);
+    background: var(--neutralWhite);
+    border-radius: var(--borderRadiusLg);
+    border: 1px solid var(--borderColor);
+  }
+
+  .stat-number {
+    font-family: var(--fontDisplay);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primaryColor);
+    line-height: 1;
+    margin-bottom: var(--spacing2);
+    display: block;
+  }
+
+  .stat-label {
+    font-size: 0.875rem;
+    color: var(--neutralGray);
+    font-weight: 500;
+  }
+
+  /* Hero Visual */
+  .hero-image-container {
+    position: relative;
+    border-radius: var(--borderRadius2xl);
+    overflow: hidden;
+    box-shadow: var(--shadow2xl);
+  }
+
+  .hero-image {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Floating Elements */
+  .floating-element {
+    position: absolute;
+    z-index: 10;
+    animation: floatElement 6s ease-in-out infinite;
+  }
+
+  .element-1 {
+    top: 15%;
+    left: -5%;
+    animation-delay: 0s;
+  }
+
+  .element-2 {
+    top: 60%;
+    right: -5%;
+    animation-delay: 2s;
+  }
+
+  .element-3 {
+    bottom: 20%;
+    left: 10%;
+    animation-delay: 4s;
+  }
+
+  @keyframes floatElement {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+  }
+
+  .element-content {
+    background: var(--neutralWhite);
+    padding: var(--spacing3) var(--spacing4);
+    border-radius: var(--borderRadiusLg);
+    box-shadow: var(--shadowLg);
+    border: 1px solid var(--borderColor);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing2);
+    backdrop-filter: blur(10px);
+  }
+
+  .element-icon {
+    font-size: 1rem;
+  }
+
+  .element-text {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    white-space: nowrap;
+  }
+
+  /* Centered Variant */
+  .hero-content-centered {
+    text-align: center;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .hero-image-centered {
+    margin: var(--spacing12) 0;
+    border-radius: var(--borderRadius2xl);
+    overflow: hidden;
+    box-shadow: var(--shadow2xl);
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing6);
+    margin-top: var(--spacing12);
+  }
+
+  @media (min-width: 768px) {
+    .stats-row {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  /* Overlay Variant */
+  .hero-content-overlay {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+  }
+
+  .background-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .background-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 100%);
+  }
+
+  .overlay-content {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 var(--spacing4);
+  }
+
+  /* Info Cards */
+  .info-cards {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing6);
+    margin-top: var(--spacing8);
+    flex-wrap: wrap;
+  }
+
+  .info-card {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing3);
+    padding: var(--spacing4) var(--spacing6);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--borderRadiusLg);
+    backdrop-filter: blur(10px);
+  }
+
+  .card-icon {
+    font-size: 1.25rem;
+  }
+
+  .card-label {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+  }
+
+  .card-value {
+    font-size: 1rem;
+    color: var(--neutralWhite);
+    font-weight: 600;
+  }
+
+  /* Background Decoration */
+  .hero-decoration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .decoration-elements {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .deco-circle,
+  .deco-square {
+    position: absolute;
+    opacity: 0.05;
+    animation: floatDecoration 15s ease-in-out infinite;
+  }
+
+  .deco-circle {
+    border-radius: 50%;
+    background: linear-gradient(45deg, var(--primaryColor), var(--secondaryColor));
+  }
+
+  .deco-square {
+    background: linear-gradient(45deg, var(--secondaryColor), var(--primaryColor));
+    transform: rotate(45deg);
+  }
+
+  .circle-1 {
+    width: 200px;
+    height: 200px;
+    top: 10%;
+    left: -100px;
+    animation-delay: 0s;
+  }
+
+  .circle-2 {
+    width: 150px;
+    height: 150px;
+    bottom: 20%;
+    right: -75px;
+    animation-delay: 5s;
+  }
+
+  .square-1 {
+    width: 100px;
+    height: 100px;
+    top: 50%;
+    right: 10%;
+    animation-delay: 3s;
+  }
+
+  .square-2 {
+    width: 80px;
+    height: 80px;
+    bottom: 40%;
+    left: 5%;
+    animation-delay: 8s;
+  }
+
+  @keyframes floatDecoration {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-30px) rotate(180deg); }
+  }
+
+  /* Animations */
+  [data-animate] {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease;
+  }
+
+  [data-animate="fade-right"] {
+    transform: translateX(-30px);
+  }
+
+  [data-animate="fade-left"] {
+    transform: translateX(30px);
+  }
+
+  [data-animate="float"] {
+    transform: translateY(50px);
+  }
+
+  [data-animate].animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  [data-animate="fade-right"].animate,
+  [data-animate="fade-left"].animate {
+    transform: translateX(0);
+  }
+
+  [data-animate="float"].animate {
+    transform: translateY(0);
+  }
+
+  /* Mobile Optimizations */
+  @media (max-width: 640px) {
+    .about-hero {
+      padding: var(--spacing16) 0;
+      min-height: 60vh;
+    }
+
+    .hero-headline {
+      font-size: 2rem;
+    }
+
+    .hero-subheadline {
+      font-size: 1.25rem;
+    }
+
+    .company-facts {
+      flex-direction: column;
+      gap: var(--spacing4);
+    }
+
+    .quick-stats,
+    .stats-row {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .info-cards {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .floating-element {
+      display: none;
+    }
+
+    .decoration-elements {
+      display: none;
+    }
+  }
+
+  /* Reduced Motion */
+  @media (prefers-reduced-motion: reduce) {
+    .floating-element,
+    .deco-circle,
+    .deco-square {
+      animation: none;
+    }
+    
+    [data-animate] {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // About Hero Animation Controller
+  class AboutHeroAnimations {
+    constructor() {
+      this.animatedElements = document.querySelectorAll('.about-hero [data-animate]');
+      this.statElements = document.querySelectorAll('.about-hero [data-count-to]');
+      
+      this.init();
+    }
+
+    init() {
+      this.setupScrollAnimations();
+      this.setupCounters();
+    }
+
+    setupScrollAnimations() {
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !entry.target.hasAnimated) {
+            const delay = parseInt(entry.target.dataset.delay) || 0;
+            setTimeout(() => {
+              entry.target.classList.add('animate');
+            }, delay);
+            entry.target.hasAnimated = true;
+          }
+        });
+      }, observerOptions);
+
+      this.animatedElements.forEach(el => {
+        observer.observe(el);
+      });
+    }
+
+    setupCounters() {
+      const observerOptions = {
+        threshold: 0.3,
+        rootMargin: '0px 0px -100px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !entry.target.hasAnimated) {
+            this.animateCounter(entry.target);
+            entry.target.hasAnimated = true;
+          }
+        });
+      }, observerOptions);
+
+      this.statElements.forEach(el => {
+        observer.observe(el);
+      });
+    }
+
+    animateCounter(element) {
+      const target = parseInt(element.dataset.countTo);
+      const duration = 2000;
+      
+      let counter = 0;
+      const increment = target / 60;
+      const timer = setInterval(() => {
+        counter += increment;
+        if (counter >= target) {
+          counter = target;
+          clearInterval(timer);
+        }
+        element.textContent = Math.floor(counter).toLocaleString();
+      }, duration / 60);
+    }
+  }
+
+  // Initialize when DOM is loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    new AboutHeroAnimations();
+  });
+</script>

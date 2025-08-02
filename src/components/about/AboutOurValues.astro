@@ -1,0 +1,1449 @@
+---
+// ValuesApproach.astro - Company values and approach section
+import theme from '../../lib/therme';
+
+export interface Props {
+  // Content props
+  eyebrow?: string;
+  headline?: string;
+  description?: string;
+  
+  // Core values
+  values?: Array<{
+    id: string;
+    title: string;
+    description: string;
+    icon: string;
+    principles: string[];
+    featured?: boolean;
+  }>;
+  
+  // Work approach/methodology
+  approach?: {
+    title: string;
+    description: string;
+    methodologies: Array<{
+      id: string;
+      title: string;
+      description: string;
+      icon: string;
+      benefits: string[];
+    }>;
+  };
+  
+  // Working principles
+  principles?: Array<{
+    id: string;
+    title: string;
+    description: string;
+    example: string;
+  }>;
+  
+  // Culture elements
+  culture?: {
+    title: string;
+    description: string;
+    traits: Array<{
+      trait: string;
+      description: string;
+      icon: string;
+    }>;
+  };
+  
+  // Layout variant
+  variant?: 'cards' | 'detailed' | 'principles';
+}
+
+const {
+  eyebrow = "Our Values & Approach",
+  headline = "What Drives Everything We Do",
+  description = "Our values aren't just words on a wall—they're the principles that guide every decision, every project, and every client interaction. Here's what you can expect when working with us.",
+  variant = "detailed",
+  values = [
+    {
+      id: "results-first",
+      title: "Results First",
+      description: "We measure success by your business outcomes, not just pretty designs or cutting-edge technology.",
+      icon: "🎯",
+      principles: [
+        "Every decision is evaluated against business impact",
+        "We prioritize ROI over vanity metrics",
+        "Data drives our recommendations",
+        "Success is measured by your growth"
+      ],
+      featured: true
+    },
+    {
+      id: "transparency",
+      title: "Complete Transparency",
+      description: "No hidden costs, no surprise delays, no technical jargon without explanation. We believe in radical honesty.",
+      icon: "🔍",
+      principles: [
+        "Clear, upfront pricing with no hidden fees",
+        "Regular project updates and communication",
+        "Honest timelines and realistic expectations",
+        "Plain-English explanations of technical decisions"
+      ],
+      featured: false
+    },
+    {
+      id: "partnership",
+      title: "True Partnership",
+      description: "We're not just vendors—we're strategic partners invested in your long-term success and growth.",
+      icon: "🤝",
+      principles: [
+        "We learn your business inside and out",
+        "Proactive recommendations for improvement",
+        "Long-term relationship focus",
+        "Your success is our success"
+      ],
+      featured: false
+    },
+    {
+      id: "innovation",
+      title: "Smart Innovation",
+      description: "We embrace new technologies, but only when they solve real problems and add genuine value.",
+      icon: "💡",
+      principles: [
+        "Technology serves the business, not the other way around",
+        "Proven solutions over experimental trends",
+        "Future-proof architecture and scalability",
+        "Innovation with purpose and measurable impact"
+      ],
+      featured: true
+    },
+    {
+      id: "quality",
+      title: "Uncompromising Quality",
+      description: "We take pride in our craft and deliver work that meets the highest professional standards.",
+      icon: "⭐",
+      principles: [
+        "Rigorous testing and quality assurance",
+        "Clean, maintainable code and design",
+        "Performance optimization built-in",
+        "Security and best practices by default"
+      ],
+      featured: false
+    },
+    {
+      id: "accountability",
+      title: "Full Accountability",
+      description: "We own our commitments and take responsibility for both successes and setbacks.",
+      icon: "🛡️",
+      principles: [
+        "We stand behind our work with guarantees",
+        "Proactive problem-solving and communication",
+        "Taking ownership of project outcomes",
+        "Continuous improvement based on feedback"
+      ],
+      featured: false
+    }
+  ],
+  approach = {
+    title: "Our Methodology",
+    description: "We've refined our approach through hundreds of projects to ensure consistent, exceptional results.",
+    methodologies: [
+      {
+        id: "agile",
+        title: "Agile Development",
+        description: "Flexible, iterative approach that adapts to changing requirements and delivers value quickly.",
+        icon: "🔄",
+        benefits: [
+          "Faster time to market",
+          "Regular client feedback integration",
+          "Reduced project risk",
+          "Continuous improvement"
+        ]
+      },
+      {
+        id: "user-centered",
+        title: "User-Centered Design",
+        description: "Every design decision is based on real user needs and behaviors, not assumptions.",
+        icon: "👥",
+        benefits: [
+          "Higher user satisfaction",
+          "Better conversion rates",
+          "Reduced support costs",
+          "Increased engagement"
+        ]
+      },
+      {
+        id: "data-driven",
+        title: "Data-Driven Decisions",
+        description: "We use analytics, testing, and research to guide every strategic and tactical decision.",
+        icon: "📊",
+        benefits: [
+          "Objective decision making",
+          "Measurable improvements",
+          "Reduced guesswork",
+          "Optimized performance"
+        ]
+      },
+      {
+        id: "collaborative",
+        title: "Collaborative Process",
+        description: "Your team is part of our team. We work together to achieve the best possible outcomes.",
+        icon: "🎭",
+        benefits: [
+          "Knowledge transfer",
+          "Better buy-in",
+          "Aligned expectations",
+          "Shared ownership"
+        ]
+      }
+    ]
+  },
+  principles = [
+    {
+      id: "communicate-early",
+      title: "Communicate Early & Often",
+      description: "We believe in proactive communication to prevent issues before they become problems.",
+      example: "Weekly status updates, immediate alerts for any roadblocks, and regular check-ins to ensure alignment."
+    },
+    {
+      id: "solve-problems",
+      title: "Solve Problems, Don't Just Build Features",
+      description: "We focus on understanding the underlying business challenge, not just implementing requested features.",
+      example: "Instead of just building a contact form, we analyze your lead flow and optimize the entire conversion process."
+    },
+    {
+      id: "think-longterm",
+      title: "Think Long-Term",
+      description: "Every decision considers future scalability, maintainability, and business growth.",
+      example: "We build with growth in mind, ensuring your platform can handle 10x traffic without major rewrites."
+    },
+    {
+      id: "measure-everything",
+      title: "Measure What Matters",
+      description: "We establish clear success metrics upfront and track progress against real business goals.",
+      example: "Rather than just tracking page views, we focus on conversion rates, user engagement, and revenue impact."
+    }
+  ],
+  culture = {
+    title: "Our Culture",
+    description: "The environment and mindset that shapes how we work and interact with clients.",
+    traits: [
+      {
+        trait: "Continuous Learning",
+        description: "We invest in staying current with the latest technologies and best practices",
+        icon: "📚"
+      },
+      {
+        trait: "Work-Life Balance",
+        description: "Sustainable practices lead to better work and happier, more creative teams",
+        icon: "⚖️"
+      },
+      {
+        trait: "Diverse Perspectives",
+        description: "Different backgrounds and viewpoints lead to more innovative solutions",
+        icon: "🌍"
+      },
+      {
+        trait: "Client Success Focus",
+        description: "Every team member is aligned around delivering exceptional client outcomes",
+        icon: "🏆"
+      }
+    ]
+  }
+} = Astro.props;
+---
+
+<section class="values-approach" aria-labelledby="values-headline">
+  <div class="values-container">
+    
+    <!-- Section Header -->
+    <div class="section-header" data-animate="fade-up">
+      <span class="section-eyebrow">{eyebrow}</span>
+      <h2 id="values-headline" class="section-headline">
+        {headline}
+      </h2>
+      <p class="section-description">
+        {description}
+      </p>
+    </div>
+
+    <!-- Core Values -->
+    <div class="values-section" data-animate="fade-up" data-delay="200">
+      <div class="values-header">
+        <h3 class="subsection-title">Our Core Values</h3>
+        <p class="subsection-description">
+          These principles guide every decision we make and every project we deliver.
+        </p>
+      </div>
+
+      {/* Cards Variant */}
+      {variant === 'cards' && (
+        <div class="values-grid cards">
+          {values.map((value, index) => (
+            <div 
+              class={`value-card ${value.featured ? 'featured' : ''}`}
+              data-animate="fade-up"
+              data-delay={300 + (index * 100)}
+              key={value.id}
+            >
+              <div class="card-header">
+                <div class="card-icon">
+                  <span role="img" aria-hidden="true">{value.icon}</span>
+                </div>
+                <h4 class="card-title">{value.title}</h4>
+                {value.featured && (
+                  <span class="featured-badge">Core Value</span>
+                )}
+              </div>
+              
+              <p class="card-description">{value.description}</p>
+              
+              <ul class="card-principles">
+                {value.principles.slice(0, 3).map((principle, principleIndex) => (
+                  <li key={principleIndex}>
+                    <svg class="principle-check" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M13.5 4.5L6 12L2.5 8.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    {principle}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Detailed Variant */}
+      {variant === 'detailed' && (
+        <div class="values-detailed">
+          {values.map((value, index) => (
+            <div 
+              class={`value-detailed ${value.featured ? 'featured' : ''}`}
+              data-animate="fade-up"
+              data-delay={300 + (index * 100)}
+              key={value.id}
+            >
+              <div class="detailed-content">
+                <div class="detailed-header">
+                  <div class="detailed-icon">
+                    <span role="img" aria-hidden="true">{value.icon}</span>
+                  </div>
+                  <div class="detailed-text">
+                    <h4 class="detailed-title">{value.title}</h4>
+                    <p class="detailed-description">{value.description}</p>
+                  </div>
+                  {value.featured && (
+                    <div class="featured-indicator">
+                      <span class="indicator-text">Core</span>
+                    </div>
+                  )}
+                </div>
+                
+                <div class="detailed-principles">
+                  <h5 class="principles-title">How this shows up in our work:</h5>
+                  <div class="principles-grid">
+                    {value.principles.map((principle, principleIndex) => (
+                      <div class="principle-item" key={principleIndex}>
+                        <svg class="principle-icon" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                          <circle cx="7" cy="7" r="7" fill="currentColor"/>
+                          <path d="M4 7L6 9L10 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="principle-text">{principle}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Principles Variant */}
+      {variant === 'principles' && (
+        <div class="principles-layout">
+          <div class="values-overview">
+            {values.filter(v => v.featured).map((value, index) => (
+              <div class="overview-value" key={value.id}>
+                <div class="overview-icon">{value.icon}</div>
+                <div class="overview-content">
+                  <h4 class="overview-title">{value.title}</h4>
+                  <p class="overview-description">{value.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+
+    <!-- Methodology/Approach -->
+    <div class="approach-section" data-animate="fade-up" data-delay="400">
+      <div class="approach-header">
+        <h3 class="subsection-title">{approach.title}</h3>
+        <p class="subsection-description">{approach.description}</p>
+      </div>
+      
+      <div class="methodologies-grid">
+        {approach.methodologies.map((methodology, index) => (
+          <div 
+            class="methodology-card"
+            data-animate="fade-up"
+            data-delay={500 + (index * 100)}
+            key={methodology.id}
+          >
+            <div class="methodology-header">
+              <div class="methodology-icon">
+                <span role="img" aria-hidden="true">{methodology.icon}</span>
+              </div>
+              <h4 class="methodology-title">{methodology.title}</h4>
+            </div>
+            
+            <p class="methodology-description">{methodology.description}</p>
+            
+            <div class="methodology-benefits">
+              <h5 class="benefits-title">Benefits:</h5>
+              <ul class="benefits-list">
+                {methodology.benefits.map((benefit, benefitIndex) => (
+                  <li key={benefitIndex}>
+                    <svg class="benefit-icon" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                      <path d="M10 3L4.5 8.5L2 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    {benefit}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Working Principles -->
+    <div class="principles-section" data-animate="fade-up" data-delay="600">
+      <div class="principles-header">
+        <h3 class="subsection-title">How We Work</h3>
+        <p class="subsection-description">
+          These principles shape our daily interactions and project execution.
+        </p>
+      </div>
+      
+      <div class="working-principles">
+        {principles.map((principle, index) => (
+          <div 
+            class="principle-detailed"
+            data-animate="fade-up"
+            data-delay={700 + (index * 100)}
+            key={principle.id}
+          >
+            <div class="principle-content">
+              <h4 class="principle-title">{principle.title}</h4>
+              <p class="principle-description">{principle.description}</p>
+              <div class="principle-example">
+                <span class="example-label">In practice:</span>
+                <span class="example-text">{principle.example}</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Culture -->
+    <div class="culture-section" data-animate="fade-up" data-delay="800">
+      <div class="culture-header">
+        <h3 class="subsection-title">{culture.title}</h3>
+        <p class="subsection-description">{culture.description}</p>
+      </div>
+      
+      <div class="culture-traits">
+        {culture.traits.map((trait, index) => (
+          <div 
+            class="trait-item"
+            data-animate="fade-up"
+            data-delay={900 + (index * 100)}
+            key={index}
+          >
+            <div class="trait-icon">
+              <span role="img" aria-hidden="true">{trait.icon}</span>
+            </div>
+            <div class="trait-content">
+              <h4 class="trait-title">{trait.trait}</h4>
+              <p class="trait-description">{trait.description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="values-cta" data-animate="fade-up" data-delay="1000">
+      <div class="cta-content">
+        <h3 class="cta-title">Ready to Work with a Team That Shares Your Values?</h3>
+        <p class="cta-description">
+          Experience the difference that working with a truly aligned partner can make for your business.
+        </p>
+        <div class="cta-actions">
+          <a href="/contact" class="cta-primary">
+            Let's Talk About Your Project
+            <svg class="cta-arrow" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M4.16667 10H15.8333M15.8333 10L10.8333 5M15.8333 10L10.8333 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+          <a href="/process" class="cta-secondary">
+            See Our Process
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Background Decoration -->
+  <div class="values-decoration" aria-hidden="true">
+    <div class="decoration-grid">
+      <div class="grid-element element-1"></div>
+      <div class="grid-element element-2"></div>
+      <div class="grid-element element-3"></div>
+      <div class="grid-element element-4"></div>
+      <div class="grid-element element-5"></div>
+      <div class="grid-element element-6"></div>
+    </div>
+  </div>
+</section>
+
+<style define:vars={{
+  primaryColor: theme.colors.primary[500],
+  primaryHover: theme.colors.primary[600],
+  primaryLight: theme.colors.primary[100],
+  secondaryColor: theme.colors.secondary[500],
+  successColor: theme.colors.success[500],
+  neutralWhite: theme.colors.neutral[50],
+  neutralGray: theme.colors.neutral[500],
+  neutralDark: theme.colors.neutral[900],
+  neutralLight: theme.colors.neutral[100],
+  borderColor: theme.colors.border,
+  fontSans: theme.typography.fontFamily.sans.join(', '),
+  fontDisplay: theme.typography.fontFamily.display.join(', '),
+  spacing2: theme.spacing[2],
+  spacing3: theme.spacing[3],
+  spacing4: theme.spacing[4],
+  spacing6: theme.spacing[6],
+  spacing8: theme.spacing[8],
+  spacing12: theme.spacing[12],
+  spacing16: theme.spacing[16],
+  spacing20: theme.spacing[20],
+  spacing24: theme.spacing[24],
+  borderRadiusLg: theme.borderRadius.lg,
+  borderRadius2xl: theme.borderRadius['2xl'],
+  shadowMd: theme.boxShadow.md,
+  shadowLg: theme.boxShadow.lg,
+  shadow2xl: theme.boxShadow['2xl']
+}}>
+  .values-approach {
+    position: relative;
+    padding: var(--spacing24) 0;
+    background: linear-gradient(135deg, #fafafa 0%, #ffffff 50%, #f8fafc 100%);
+    overflow: hidden;
+  }
+
+  .values-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 var(--spacing4);
+    position: relative;
+    z-index: 10;
+  }
+
+  @media (min-width: 768px) {
+    .values-container {
+      padding: 0 var(--spacing6);
+    }
+  }
+
+  /* Section Header */
+  .section-header {
+    text-align: center;
+    margin-bottom: var(--spacing20);
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .section-eyebrow {
+    display: inline-block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primaryColor);
+    background: var(--primaryLight);
+    padding: var(--spacing2) var(--spacing4);
+    border-radius: var(--borderRadiusLg);
+    margin-bottom: var(--spacing6);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .section-headline {
+    font-family: var(--fontDisplay);
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing6) 0;
+  }
+
+  @media (min-width: 768px) {
+    .section-headline {
+      font-size: 3rem;
+    }
+  }
+
+  .section-description {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: var(--neutralGray);
+    margin: 0;
+  }
+
+  /* Subsection Headers */
+  .subsection-title {
+    font-family: var(--fontDisplay);
+    font-size: 1.875rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing4) 0;
+    text-align: center;
+  }
+
+  .subsection-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--neutralGray);
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto var(--spacing12) auto;
+  }
+
+  /* Values Section */
+  .values-section {
+    margin-bottom: var(--spacing24);
+  }
+
+  .values-header {
+    margin-bottom: var(--spacing16);
+  }
+
+  /* Cards Variant */
+  .values-grid.cards {
+    display: grid;
+    gap: var(--spacing8);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .values-grid.cards {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .values-grid.cards {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .value-card {
+    background: var(--neutralWhite);
+    border: 1px solid var(--borderColor);
+    border-radius: var(--borderRadius2xl);
+    padding: var(--spacing8);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .value-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow2xl);
+    border-color: var(--primaryColor);
+  }
+
+  .value-card.featured {
+    border-color: var(--primaryColor);
+    background: linear-gradient(135deg, var(--neutralWhite) 0%, var(--primaryLight) 100%);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing4);
+    margin-bottom: var(--spacing6);
+    position: relative;
+  }
+
+  .card-icon {
+    font-size: 2rem;
+    background: var(--primaryLight);
+    padding: var(--spacing4);
+    border-radius: var(--borderRadiusLg);
+    flex-shrink: 0;
+  }
+
+  .card-title {
+    font-family: var(--fontDisplay);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0;
+    line-height: 1.3;
+    flex: 1;
+  }
+
+  .featured-badge {
+    position: absolute;
+    top: -var(--spacing2);
+    right: -var(--spacing2);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--neutralWhite);
+    background: var(--primaryColor);
+    padding: var(--spacing2) var(--spacing3);
+    border-radius: var(--borderRadiusLg);
+  }
+
+  .card-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--neutralGray);
+    margin: 0 0 var(--spacing6) 0;
+  }
+
+  .card-principles {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .card-principles li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing2);
+    margin-bottom: var(--spacing3);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--neutralGray);
+  }
+
+  .principle-check {
+    color: var(--successColor);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* Detailed Variant */
+  .values-detailed {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing12);
+  }
+
+  .value-detailed {
+    background: var(--neutralWhite);
+    border: 1px solid var(--borderColor);
+    border-radius: var(--borderRadius2xl);
+    padding: var(--spacing8);
+    transition: all 0.3s ease;
+  }
+
+  .value-detailed:hover {
+    box-shadow: var(--shadowLg);
+    border-color: var(--primaryColor);
+  }
+
+  .value-detailed.featured {
+    border-color: var(--primaryColor);
+    background: linear-gradient(135deg, var(--neutralWhite) 0%, var(--primaryLight) 100%);
+  }
+
+  .detailed-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing6);
+  }
+
+  .detailed-header {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing4);
+    position: relative;
+  }
+
+  .detailed-icon {
+    font-size: 2.5rem;
+    background: var(--primaryLight);
+    padding: var(--spacing4);
+    border-radius: var(--borderRadiusLg);
+    flex-shrink: 0;
+  }
+
+  .detailed-text {
+    flex: 1;
+  }
+
+  .detailed-title {
+    font-family: var(--fontDisplay);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing3) 0;
+  }
+
+  .detailed-description {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: var(--neutralGray);
+    margin: 0;
+  }
+
+  .featured-indicator {
+    background: var(--primaryColor);
+    color: var(--neutralWhite);
+    padding: var(--spacing2) var(--spacing4);
+    border-radius: var(--borderRadiusLg);
+    font-size: 0.875rem;
+    font-weight: 600;
+    align-self: flex-start;
+  }
+
+  .detailed-principles {
+    background: var(--neutralLight);
+    padding: var(--spacing6);
+    border-radius: var(--borderRadiusLg);
+  }
+
+  .principles-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing4) 0;
+  }
+
+  .principles-grid {
+    display: grid;
+    gap: var(--spacing3);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .principles-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .principle-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing3);
+  }
+
+  .principle-icon {
+    color: var(--primaryColor);
+    flex-shrink: 0;
+  }
+
+  .principle-text {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--neutralGray);
+  }
+
+  /* Principles Layout Variant */
+  .principles-layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing8);
+  }
+
+  .values-overview {
+    display: grid;
+    gap: var(--spacing6);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 768px) {
+    .values-overview {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .overview-value {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing4);
+    background: var(--neutralWhite);
+    border: 1px solid var(--borderColor);
+    border-radius: var(--borderRadiusLg);
+    padding: var(--spacing6);
+    transition: all 0.3s ease;
+  }
+
+  .overview-value:hover {
+    box-shadow: var(--shadowMd);
+    border-color: var(--primaryColor);
+  }
+
+  .overview-icon {
+    font-size: 2rem;
+    background: var(--primaryLight);
+    padding: var(--spacing3);
+    border-radius: var(--borderRadiusLg);
+    flex-shrink: 0;
+  }
+
+  .overview-content {
+    flex: 1;
+  }
+
+  .overview-title {
+    font-family: var(--fontDisplay);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing2) 0;
+  }
+
+  .overview-description {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--neutralGray);
+    margin: 0;
+  }
+
+  /* Approach Section */
+  .approach-section {
+    margin-bottom: var(--spacing24);
+  }
+
+  .methodologies-grid {
+    display: grid;
+    gap: var(--spacing8);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .methodologies-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .methodologies-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .methodology-card {
+    background: var(--neutralWhite);
+    border: 1px solid var(--borderColor);
+    border-radius: var(--borderRadius2xl);
+    padding: var(--spacing6);
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+
+  .methodology-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadowLg);
+    border-color: var(--primaryColor);
+  }
+
+  .methodology-header {
+    margin-bottom: var(--spacing4);
+  }
+
+  .methodology-icon {
+    font-size: 2rem;
+    background: var(--primaryLight);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--spacing4) auto;
+  }
+
+  .methodology-title {
+    font-family: var(--fontDisplay);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .methodology-description {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--neutralGray);
+    margin: 0 0 var(--spacing6) 0;
+    text-align: left;
+  }
+
+  .methodology-benefits {
+    text-align: left;
+  }
+
+  .benefits-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing3) 0;
+  }
+
+  .benefits-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .benefits-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing2);
+    margin-bottom: var(--spacing2);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--neutralGray);
+  }
+
+  .benefit-icon {
+    color: var(--successColor);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* Working Principles */
+  .principles-section {
+    margin-bottom: var(--spacing24);
+  }
+
+  .working-principles {
+    display: grid;
+    gap: var(--spacing8);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 768px) {
+    .working-principles {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .principle-detailed {
+    background: var(--neutralWhite);
+    border: 1px solid var(--borderColor);
+    border-radius: var(--borderRadius2xl);
+    padding: var(--spacing8);
+    transition: all 0.3s ease;
+  }
+
+  .principle-detailed:hover {
+    box-shadow: var(--shadowLg);
+    border-color: var(--primaryColor);
+  }
+
+  .principle-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing4);
+  }
+
+  .principle-title {
+    font-family: var(--fontDisplay);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0;
+  }
+
+  .principle-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--neutralGray);
+    margin: 0;
+  }
+
+  .principle-example {
+    background: var(--neutralLight);
+    padding: var(--spacing4);
+    border-radius: var(--borderRadiusLg);
+    border-left: 3px solid var(--primaryColor);
+  }
+
+  .example-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primaryColor);
+    display: block;
+    margin-bottom: var(--spacing2);
+  }
+
+  .example-text {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--neutralGray);
+  }
+
+  /* Culture Section */
+  .culture-section {
+    margin-bottom: var(--spacing24);
+  }
+
+  .culture-traits {
+    display: grid;
+    gap: var(--spacing6);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .culture-traits {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .culture-traits {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .trait-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: var(--neutralWhite);
+    border: 1px solid var(--borderColor);
+    border-radius: var(--borderRadius2xl);
+    padding: var(--spacing6);
+    transition: all 0.3s ease;
+  }
+
+  .trait-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadowLg);
+    border-color: var(--primaryColor);
+  }
+
+  .trait-icon {
+    font-size: 2.5rem;
+    background: var(--primaryLight);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing4);
+  }
+
+  .trait-content {
+    flex: 1;
+  }
+
+  .trait-title {
+    font-family: var(--fontDisplay);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing3) 0;
+  }
+
+  .trait-description {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--neutralGray);
+    margin: 0;
+  }
+
+  /* Call to Action */
+  .values-cta {
+    text-align: center;
+    background: linear-gradient(135deg, var(--primaryColor) 0%, var(--primaryHover) 100%);
+    color: var(--neutralWhite);
+    border-radius: var(--borderRadius2xl);
+    padding: var(--spacing16);
+    margin-top: var(--spacing20);
+  }
+
+  .cta-content {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .cta-title {
+    font-family: var(--fontDisplay);
+    font-size: 1.875rem;
+    font-weight: 600;
+    margin: 0 0 var(--spacing4) 0;
+    line-height: 1.3;
+  }
+
+  @media (min-width: 768px) {
+    .cta-title {
+      font-size: 2.25rem;
+    }
+  }
+
+  .cta-description {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    margin: 0 0 var(--spacing8) 0;
+    opacity: 0.9;
+  }
+
+  .cta-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing4);
+    align-items: center;
+  }
+
+  @media (min-width: 640px) {
+    .cta-actions {
+      flex-direction: row;
+      justify-content: center;
+    }
+  }
+
+  .cta-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing2);
+    background: var(--neutralWhite);
+    color: var(--primaryColor);
+    padding: var(--spacing4) var(--spacing8);
+    border-radius: var(--borderRadiusLg);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+  }
+
+  .cta-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadowLg);
+    background: var(--neutralLight);
+  }
+
+  .cta-arrow {
+    transition: transform 0.3s ease;
+  }
+
+  .cta-primary:hover .cta-arrow {
+    transform: translateX(4px);
+  }
+
+  .cta-secondary {
+    color: var(--neutralWhite);
+    padding: var(--spacing4) var(--spacing8);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--borderRadiusLg);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+  }
+
+  .cta-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+
+  /* Background Decoration */
+  .values-decoration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .decoration-grid {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .grid-element {
+    position: absolute;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primaryLight), transparent);
+    opacity: 0.1;
+  }
+
+  .element-1 {
+    width: 200px;
+    height: 200px;
+    top: 10%;
+    left: -5%;
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .element-2 {
+    width: 150px;
+    height: 150px;
+    top: 60%;
+    right: -3%;
+    animation: float 8s ease-in-out infinite reverse;
+  }
+
+  .element-3 {
+    width: 100px;
+    height: 100px;
+    top: 30%;
+    right: 15%;
+    animation: float 7s ease-in-out infinite;
+  }
+
+  .element-4 {
+    width: 120px;
+    height: 120px;
+    bottom: 20%;
+    left: 10%;
+    animation: float 9s ease-in-out infinite reverse;
+  }
+
+  .element-5 {
+    width: 80px;
+    height: 80px;
+    top: 80%;
+    left: 60%;
+    animation: float 5s ease-in-out infinite;
+  }
+
+  .element-6 {
+    width: 180px;
+    height: 180px;
+    bottom: 10%;
+    right: 20%;
+    animation: float 10s ease-in-out infinite reverse;
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-20px) rotate(180deg);
+    }
+  }
+
+  /* Animation utilities */
+  [data-animate] {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease;
+  }
+
+  [data-animate].animate-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .values-approach {
+      padding: var(--spacing16) 0;
+    }
+
+    .section-headline {
+      font-size: 2rem;
+    }
+
+    .subsection-title {
+      font-size: 1.5rem;
+    }
+
+    .methodology-card,
+    .trait-item {
+      text-align: left;
+    }
+
+    .methodology-icon,
+    .trait-icon {
+      margin: 0 0 var(--spacing4) 0;
+      align-self: flex-start;
+    }
+
+    .trait-item {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: var(--spacing4);
+      text-align: left;
+    }
+
+    .trait-icon {
+      width: 60px;
+      height: 60px;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .values-cta {
+      padding: var(--spacing12);
+    }
+
+    .cta-title {
+      font-size: 1.5rem;
+    }
+  }
+
+  /* Focus states for accessibility */
+  .cta-primary:focus,
+  .cta-secondary:focus {
+    outline: 2px solid var(--neutralWhite);
+    outline-offset: 2px;
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .grid-element {
+      animation: none;
+    }
+
+    .value-card:hover,
+    .methodology-card:hover,
+    .trait-item:hover,
+    .principle-detailed:hover,
+    .cta-primary:hover {
+      transform: none;
+    }
+
+    [data-animate] {
+      transition: opacity 0.3s ease;
+    }
+  }
+</style>
+
+<script>
+  // Animation on scroll
+  document.addEventListener('DOMContentLoaded', function() {
+    const animatedElements = document.querySelectorAll('[data-animate]');
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const delay = entry.target.getAttribute('data-delay') || 0;
+          setTimeout(() => {
+            entry.target.classList.add('animate-in');
+          }, parseInt(delay));
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    });
+
+    animatedElements.forEach(el => observer.observe(el));
+  });
+</script>
