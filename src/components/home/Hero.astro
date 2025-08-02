@@ -1,0 +1,982 @@
+---
+import theme from '../../lib/therme';
+
+export interface Props {
+  // Content props
+  headline?: string;
+  subheadline?: string;
+  description?: string;
+  primaryCta?: {
+    text: string;
+    href: string;
+    external?: boolean;
+  };
+  secondaryCta?: {
+    text: string;
+    href: string;
+    external?: boolean;
+  };
+  
+  // Visual props
+  backgroundImage?: string;
+  backgroundVideo?: string;
+  heroImage?: string;
+  heroImageAlt?: string;
+  
+  // Layout props
+  variant?: 'centered' | 'left-aligned' | 'split';
+  showStats?: boolean;
+  stats?: Array<{
+    number: string;
+    label: string;
+    prefix?: string;
+    suffix?: string;
+  }>;
+  
+  // Social proof
+  showLogos?: boolean;
+  clientLogos?: Array<{
+    src: string;
+    alt: string;
+    width?: number;
+    height?: number;
+  }>;
+  trustedByText?: string;
+}
+
+const {
+  headline = "We Build Digital Experiences That Drive Results",
+  subheadline = "Transform Your Business",
+  description = "Partner with us to create exceptional digital solutions that captivate your audience, drive engagement, and accelerate your growth in the digital landscape.",
+  primaryCta = { text: "Start Your Project", href: "/contact" },
+  secondaryCta = { text: "View Our Work", href: "/portfolio" },
+  backgroundImage,
+  backgroundVideo,
+  heroImage = "/hero-illustration.svg",
+  heroImageAlt = "Digital solutions illustration",
+  variant = "split",
+  showStats = true,
+  stats = [
+    { number: "150", suffix: "+", label: "Projects Completed" },
+    { number: "98", suffix: "%", label: "Client Satisfaction" },
+    { number: "5", suffix: "x", label: "ROI Average" },
+    { number: "24", suffix: "/7", label: "Support Available" }
+  ],
+  showLogos = true,
+  clientLogos = [
+    { src: "/logos/client-1.svg", alt: "Client 1", width: 120, height: 40 },
+    { src: "/logos/client-2.svg", alt: "Client 2", width: 120, height: 40 },
+    { src: "/logos/client-3.svg", alt: "Client 3", width: 120, height: 40 },
+    { src: "/logos/client-4.svg", alt: "Client 4", width: 120, height: 40 },
+    { src: "/logos/client-5.svg", alt: "Client 5", width: 120, height: 40 }
+  ],
+  trustedByText = "Trusted by industry leaders"
+} = Astro.props;
+---
+
+<section 
+  class={`hero hero-${variant}`}
+  aria-labelledby="hero-headline"
+>
+  <!-- Background Elements -->
+  {backgroundVideo && (
+    <div class="hero-background">
+      <video 
+        autoplay 
+        muted 
+        loop 
+        playsinline
+        class="hero-video"
+        aria-hidden="true"
+      >
+        <source src={backgroundVideo} type="video/mp4" />
+      </video>
+      <div class="hero-video-overlay"></div>
+    </div>
+  )}
+  
+  {backgroundImage && !backgroundVideo && (
+    <div class="hero-background">
+      <img 
+        src={backgroundImage} 
+        alt="" 
+        class="hero-bg-image"
+        aria-hidden="true"
+      />
+      <div class="hero-bg-overlay"></div>
+    </div>
+  )}
+
+  <!-- Animated Background Elements -->
+  <div class="hero-decoration" aria-hidden="true">
+    <div class="floating-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+      <div class="shape shape-4"></div>
+    </div>
+  </div>
+
+  <div class="hero-container">
+    <div class="hero-content">
+      <!-- Text Content -->
+      <div class="hero-text">
+        {subheadline && (
+          <span class="hero-subheadline" data-animate="fade-up">
+            {subheadline}
+          </span>
+        )}
+        
+        <h1 
+          id="hero-headline" 
+          class="hero-headline"
+          data-animate="fade-up"
+          data-delay="100"
+        >
+          {headline}
+        </h1>
+        
+        <p 
+          class="hero-description"
+          data-animate="fade-up"
+          data-delay="200"
+        >
+          {description}
+        </p>
+        
+        <!-- CTA Buttons -->
+        <div 
+          class="hero-cta"
+          data-animate="fade-up"
+          data-delay="300"
+        >
+          <a 
+            href={primaryCta.href}
+            class="cta-primary"
+            {...(primaryCta.external && { 
+              target: '_blank', 
+              rel: 'noopener noreferrer' 
+            })}
+          >
+            {primaryCta.text}
+            <svg class="cta-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M4.16667 10H15.8333M15.8333 10L10.8333 5M15.8333 10L10.8333 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+          
+          {secondaryCta && (
+            <a 
+              href={secondaryCta.href}
+              class="cta-secondary"
+              {...(secondaryCta.external && { 
+                target: '_blank', 
+                rel: 'noopener noreferrer' 
+              })}
+            >
+              {secondaryCta.text}
+            </a>
+          )}
+        </div>
+
+        <!-- Stats -->
+        {showStats && stats.length > 0 && (
+          <div 
+            class="hero-stats"
+            data-animate="fade-up"
+            data-delay="400"
+          >
+            {stats.map((stat, index) => (
+              <div class="stat-item" key={index}>
+                <div class="stat-number">
+                  {stat.prefix && <span class="stat-prefix">{stat.prefix}</span>}
+                  <span class="stat-value" data-count-to={stat.number}>0</span>
+                  {stat.suffix && <span class="stat-suffix">{stat.suffix}</span>}
+                </div>
+                <div class="stat-label">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <!-- Hero Image/Visual -->
+      {variant === 'split' && heroImage && (
+        <div 
+          class="hero-visual"
+          data-animate="fade-left"
+          data-delay="200"
+        >
+          <div class="hero-image-container">
+            <img 
+              src={heroImage}
+              alt={heroImageAlt}
+              class="hero-image"
+              width="600"
+              height="400"
+              loading="eager"
+            />
+            
+            <!-- Floating UI Elements -->
+            <div class="floating-ui floating-ui-1" data-animate="float" data-delay="1000">
+              <div class="ui-card">
+                <div class="ui-metric">
+                  <span class="ui-number">47%</span>
+                  <span class="ui-text">Conversion Rate</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="floating-ui floating-ui-2" data-animate="float" data-delay="1500">
+              <div class="ui-card">
+                <div class="ui-chart">
+                  <div class="chart-bars">
+                    <div class="chart-bar" style="height: 60%"></div>
+                    <div class="chart-bar" style="height: 80%"></div>
+                    <div class="chart-bar" style="height: 100%"></div>
+                    <div class="chart-bar" style="height: 70%"></div>
+                  </div>
+                  <span class="ui-text">Growth Analytics</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="floating-ui floating-ui-3" data-animate="float" data-delay="2000">
+              <div class="ui-card">
+                <div class="ui-notification">
+                  <div class="notification-dot"></div>
+                  <span class="ui-text">New Lead</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+
+    <!-- Client Logos / Social Proof -->
+    {showLogos && clientLogos.length > 0 && (
+      <div 
+        class="hero-social-proof"
+        data-animate="fade-up"
+        data-delay="500"
+      >
+        <p class="social-proof-text">{trustedByText}</p>
+        <div class="client-logos">
+          {clientLogos.map((logo, index) => (
+            <div class="logo-item" key={index}>
+              <img 
+                src={logo.src}
+                alt={logo.alt}
+                width={logo.width || 120}
+                height={logo.height || 40}
+                loading="lazy"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+
+  <!-- Scroll Indicator -->
+  <div class="scroll-indicator" aria-hidden="true">
+    <div class="scroll-mouse">
+      <div class="scroll-wheel"></div>
+    </div>
+    <span class="scroll-text">Scroll to explore</span>
+  </div>
+</section>
+
+<style define:vars={{
+  primaryColor: theme.colors.primary[500],
+  primaryHover: theme.colors.primary[600],
+  primaryLight: theme.colors.primary[100],
+  secondaryColor: theme.colors.secondary[500],
+  neutralWhite: theme.colors.neutral[50],
+  neutralGray: theme.colors.neutral[500],
+  neutralDark: theme.colors.neutral[900],
+  neutralLight: theme.colors.neutral[100],
+  fontSans: theme.typography.fontFamily.sans.join(', '),
+  fontDisplay: theme.typography.fontFamily.display.join(', '),
+  spacing4: theme.spacing[4],
+  spacing6: theme.spacing[6],
+  spacing8: theme.spacing[8],
+  spacing12: theme.spacing[12],
+  spacing16: theme.spacing[16],
+  spacing20: theme.spacing[20],
+  spacing24: theme.spacing[24],
+  spacing32: theme.spacing[32],
+  borderRadiusLg: theme.borderRadius.lg,
+  borderRadius2xl: theme.borderRadius['2xl'],
+  shadowLg: theme.boxShadow.lg,
+  shadow2xl: theme.boxShadow['2xl']
+}}>
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    overflow: hidden;
+  }
+
+  /* Background Elements */
+  .hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+  }
+
+  .hero-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hero-bg-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hero-video-overlay,
+  .hero-bg-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+  }
+
+  /* Animated Background */
+  .hero-decoration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .floating-shapes {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .shape {
+    position: absolute;
+    border-radius: 50%;
+    background: linear-gradient(45deg, var(--primaryColor), var(--secondaryColor));
+    opacity: 0.1;
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .shape-1 {
+    width: 200px;
+    height: 200px;
+    top: 10%;
+    left: 10%;
+    animation-delay: 0s;
+  }
+
+  .shape-2 {
+    width: 150px;
+    height: 150px;
+    top: 60%;
+    right: 15%;
+    animation-delay: 2s;
+  }
+
+  .shape-3 {
+    width: 100px;
+    height: 100px;
+    bottom: 20%;
+    left: 60%;
+    animation-delay: 4s;
+  }
+
+  .shape-4 {
+    width: 80px;
+    height: 80px;
+    top: 30%;
+    right: 40%;
+    animation-delay: 1s;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(180deg); }
+  }
+
+  /* Container */
+  .hero-container {
+    position: relative;
+    z-index: 10;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: var(--spacing8) var(--spacing4);
+    width: 100%;
+  }
+
+  @media (min-width: 768px) {
+    .hero-container {
+      padding: var(--spacing16) var(--spacing6);
+    }
+  }
+
+  /* Content Layout */
+  .hero-content {
+    display: grid;
+    gap: var(--spacing12);
+    align-items: center;
+  }
+
+  .hero-split .hero-content {
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 1024px) {
+    .hero-split .hero-content {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing16);
+    }
+  }
+
+  .hero-centered .hero-content {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .hero-left-aligned .hero-content {
+    max-width: 600px;
+  }
+
+  /* Text Content */
+  .hero-text {
+    font-family: var(--fontSans);
+  }
+
+  .hero-subheadline {
+    display: inline-block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primaryColor);
+    background: var(--primaryLight);
+    padding: var(--spacing2) var(--spacing4);
+    border-radius: var(--borderRadiusLg);
+    margin-bottom: var(--spacing6);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .hero-headline {
+    font-family: var(--fontDisplay);
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing6) 0;
+    background: linear-gradient(135deg, var(--neutralDark) 0%, var(--primaryColor) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  @media (min-width: 640px) {
+    .hero-headline {
+      font-size: 3.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hero-headline {
+      font-size: 4rem;
+    }
+  }
+
+  .hero-description {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: var(--neutralGray);
+    margin: 0 0 var(--spacing8) 0;
+    max-width: 600px;
+  }
+
+  /* CTA Buttons */
+  .hero-cta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing4);
+    margin-bottom: var(--spacing12);
+  }
+
+  @media (min-width: 640px) {
+    .hero-cta {
+      flex-direction: row;
+      gap: var(--spacing6);
+    }
+  }
+
+  .cta-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing2);
+    font-family: var(--fontSans);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--neutralWhite);
+    background: var(--primaryColor);
+    text-decoration: none;
+    padding: var(--spacing4) var(--spacing8);
+    border-radius: var(--borderRadiusLg);
+    transition: all 0.3s ease;
+    box-shadow: var(--shadowLg);
+    border: 2px solid var(--primaryColor);
+  }
+
+  .cta-primary:hover,
+  .cta-primary:focus {
+    background: var(--primaryHover);
+    border-color: var(--primaryHover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow2xl);
+  }
+
+  .cta-primary:focus {
+    outline: 2px solid var(--primaryColor);
+    outline-offset: 2px;
+  }
+
+  .cta-icon {
+    transition: transform 0.3s ease;
+  }
+
+  .cta-primary:hover .cta-icon {
+    transform: translateX(4px);
+  }
+
+  .cta-secondary {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--fontSans);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    text-decoration: none;
+    padding: var(--spacing4) var(--spacing6);
+    border-radius: var(--borderRadiusLg);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+  }
+
+  .cta-secondary:hover,
+  .cta-secondary:focus {
+    color: var(--primaryColor);
+    background: var(--primaryLight);
+    border-color: var(--primaryColor);
+  }
+
+  /* Stats */
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing6);
+    padding-top: var(--spacing8);
+    border-top: 1px solid #e2e8f0;
+  }
+
+  @media (min-width: 640px) {
+    .hero-stats {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .stat-item {
+    text-align: center;
+  }
+
+  .stat-number {
+    font-family: var(--fontDisplay);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primaryColor);
+    line-height: 1;
+    margin-bottom: var(--spacing2);
+  }
+
+  .stat-label {
+    font-size: 0.875rem;
+    color: var(--neutralGray);
+    font-weight: 500;
+  }
+
+  /* Hero Visual */
+  .hero-visual {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .hero-image-container {
+    position: relative;
+    max-width: 600px;
+    width: 100%;
+  }
+
+  .hero-image {
+    width: 100%;
+    height: auto;
+    border-radius: var(--borderRadius2xl);
+    box-shadow: var(--shadow2xl);
+  }
+
+  /* Floating UI Elements */
+  .floating-ui {
+    position: absolute;
+    z-index: 10;
+    animation: floatUI 4s ease-in-out infinite;
+  }
+
+  .floating-ui-1 {
+    top: 10%;
+    left: -10%;
+    animation-delay: 0s;
+  }
+
+  .floating-ui-2 {
+    top: 60%;
+    right: -15%;
+    animation-delay: 1s;
+  }
+
+  .floating-ui-3 {
+    bottom: 20%;
+    left: 15%;
+    animation-delay: 2s;
+  }
+
+  @keyframes floatUI {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .ui-card {
+    background: var(--neutralWhite);
+    border-radius: var(--borderRadiusLg);
+    padding: var(--spacing4);
+    box-shadow: var(--shadowLg);
+    border: 1px solid #e2e8f0;
+    backdrop-filter: blur(10px);
+  }
+
+  .ui-metric {
+    text-align: center;
+  }
+
+  .ui-number {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primaryColor);
+    line-height: 1;
+  }
+
+  .ui-text {
+    font-size: 0.75rem;
+    color: var(--neutralGray);
+    font-weight: 500;
+  }
+
+  .ui-chart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing2);
+  }
+
+  .chart-bars {
+    display: flex;
+    gap: 3px;
+    align-items: end;
+    height: 30px;
+  }
+
+  .chart-bar {
+    width: 6px;
+    background: var(--primaryColor);
+    border-radius: 3px;
+    opacity: 0.8;
+  }
+
+  .ui-notification {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing2);
+  }
+
+  .notification-dot {
+    width: 8px;
+    height: 8px;
+    background: #10b981;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  /* Social Proof */
+  .hero-social-proof {
+    margin-top: var(--spacing16);
+    text-align: center;
+  }
+
+  .social-proof-text {
+    font-size: 0.875rem;
+    color: var(--neutralGray);
+    margin: 0 0 var(--spacing6) 0;
+    font-weight: 500;
+  }
+
+  .client-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing8);
+    flex-wrap: wrap;
+  }
+
+  .logo-item {
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+    filter: grayscale(100%);
+  }
+
+  .logo-item:hover {
+    opacity: 1;
+    filter: grayscale(0%);
+  }
+
+  .logo-item img {
+    height: 40px;
+    width: auto;
+  }
+
+  /* Scroll Indicator */
+  .scroll-indicator {
+    position: absolute;
+    bottom: var(--spacing8);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing2);
+    animation: bounce 2s infinite;
+  }
+
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+    40% { transform: translateX(-50%) translateY(-10px); }
+    60% { transform: translateX(-50%) translateY(-5px); }
+  }
+
+  .scroll-mouse {
+    width: 24px;
+    height: 40px;
+    border: 2px solid var(--neutralGray);
+    border-radius: 12px;
+    position: relative;
+  }
+
+  .scroll-wheel {
+    width: 4px;
+    height: 8px;
+    background: var(--neutralGray);
+    border-radius: 2px;
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: scroll 2s infinite;
+  }
+
+  @keyframes scroll {
+    0% { top: 8px; opacity: 0; }
+    10%, 90% { opacity: 1; }
+    100% { top: 24px; opacity: 0; }
+  }
+
+  .scroll-text {
+    font-size: 0.75rem;
+    color: var(--neutralGray);
+    font-weight: 500;
+  }
+
+  /* Animations */
+  [data-animate] {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease;
+  }
+
+  [data-animate="fade-left"] {
+    transform: translateX(30px);
+  }
+
+  [data-animate].animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  [data-animate="fade-left"].animate {
+    transform: translateX(0);
+  }
+
+  /* Mobile Optimizations */
+  @media (max-width: 640px) {
+    .hero {
+      min-height: 90vh;
+    }
+
+    .floating-ui {
+      display: none;
+    }
+
+    .hero-stats {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .stat-number {
+      font-size: 1.5rem;
+    }
+
+    .scroll-indicator {
+      display: none;
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .shape,
+    .floating-ui,
+    .scroll-indicator,
+    .scroll-wheel,
+    .notification-dot {
+      animation: none;
+    }
+    
+    [data-animate] {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  // Hero Animation Controller
+  class HeroAnimations {
+    constructor() {
+      this.animatedElements = document.querySelectorAll('[data-animate]');
+      this.statElements = document.querySelectorAll('[data-count-to]');
+      this.hasAnimated = false;
+      
+      this.init();
+    }
+
+    init() {
+      // Initial animation on load
+      this.animateOnLoad();
+      
+      // Counter animations
+      this.setupCounters();
+      
+      // Intersection observer for scroll-triggered animations
+      this.setupScrollAnimations();
+    }
+
+    animateOnLoad() {
+      setTimeout(() => {
+        this.animatedElements.forEach((el, index) => {
+          const delay = parseInt(el.dataset.delay) || 0;
+          setTimeout(() => {
+            el.classList.add('animate');
+          }, delay);
+        });
+        this.hasAnimated = true;
+      }, 500); // Initial delay
+    }
+
+    setupCounters() {
+      const observerOptions = {
+        threshold: 0.5,
+        rootMargin: '0px 0px -100px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !entry.target.hasAnimated) {
+            this.animateCounter(entry.target);
+            entry.target.hasAnimated = true;
+          }
+        });
+      }, observerOptions);
+
+      this.statElements.forEach(el => {
+        observer.observe(el);
+      });
+    }
+
+    animateCounter(element) {
+      const target = parseInt(element.dataset.countTo);
+      const duration = 2000; // 2 seconds
+      const stepTime = Math.abs(Math.floor(duration / target));
+      const current = 0;
+      
+      let counter = current;
+      const timer = setInterval(() => {
+        counter += Math.ceil(target / 50);
+        if (counter >= target) {
+          counter = target;
+          clearInterval(timer);
+        }
+        element.textContent = counter.toLocaleString();
+      }, stepTime);
+    }
+
+    setupScrollAnimations() {
+      // Parallax effect for floating shapes
+      const shapes = document.querySelectorAll('.shape');
+      
+      window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        const parallax = scrolled * 0.5;
+        
+        shapes.forEach((shape, index) => {
+          const speed = 0.5 + (index * 0.1);
+          shape.style.transform = `translateY(${parallax * speed}px) rotate(${scrolled * 0.1}deg)`;
+        });
+      });
+    }
+  }
+
+  // Initialize when DOM is loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    new HeroAnimations();
+  });
+
+  // Handle reduced motion preference
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.documentElement.style.setProperty('--animation-duration', '0ms');
+  }
+</script>

@@ -1,0 +1,160 @@
+---
+import theme from "../../lib/therme"
+---
+ 
+ 
+ <footer class="site-footer">
+      <div class="footer-container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3 class="footer-title">Your Agency</h3>
+            <p class="footer-description">
+              Creating exceptional digital experiences that drive results.
+            </p>
+          </div>
+          
+          <div class="footer-section">
+            <h4 class="footer-heading">Quick Links</h4>
+            <ul class="footer-links">
+              <li><a href="/services">Services</a></li>
+              <li><a href="/about">About</a></li>
+              <li><a href="/portfolio">Portfolio</a></li>
+              <li><a href="/contact">Contact</a></li>
+            </ul>
+          </div>
+          
+          <div class="footer-section">
+            <h4 class="footer-heading">Contact</h4>
+            <ul class="footer-links">
+              <li><a href="mailto:hello@youragency.com">hello@youragency.com</a></li>
+              <li><a href="tel:+1234567890">+1 (234) 567-890</a></li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="footer-bottom">
+          <p>&copy; {new Date().getFullYear()} Your Agency. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <style define:vars={{
+  primaryColor: theme.colors.primary[500],
+  neutralWhite: theme.colors.neutral[50],
+  neutralGray: theme.colors.neutral[500],
+  neutralDark: theme.colors.neutral[900],
+  neutralLight: theme.colors.neutral[100],
+  borderColor: theme.colors.border,
+  fontSans: theme.typography.fontFamily.sans.join(', '),
+  fontDisplay: theme.typography.fontFamily.display.join(', '),
+  spacing4: theme.spacing[4],
+  spacing6: theme.spacing[6],
+  spacing8: theme.spacing[8],
+  spacing12: theme.spacing[12],
+  spacing16: theme.spacing[16],
+  spacing20: theme.spacing[20],
+  borderRadiusLg: theme.borderRadius.lg,
+  shadowMd: theme.boxShadow.md,
+  transitionNormal: theme.animation.duration.normal,
+  navbarHeight: theme.components.navbar.height,
+  mobileNavbarHeight: theme.components.navbar.mobileNavbarHeight
+}}>
+
+     /* Footer styles */
+  .site-footer {
+    background: var(--neutralDark);
+    color: var(--neutralWhite);
+    margin-top: auto;
+  }
+
+  .footer-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: var(--spacing16) var(--spacing4) var(--spacing8);
+  }
+
+  @media (min-width: 768px) {
+    .footer-container {
+      padding: var(--spacing20) var(--spacing6) var(--spacing8);
+    }
+  }
+
+  .footer-content {
+    display: grid;
+    gap: var(--spacing12);
+    margin-bottom: var(--spacing12);
+  }
+
+  @media (min-width: 768px) {
+    .footer-content {
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: var(--spacing16);
+    }
+  }
+
+  .footer-section {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .footer-title {
+    font-family: var(--fontDisplay);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primaryColor);
+    margin: 0 0 var(--spacing4) 0;
+  }
+
+  .footer-description {
+    color: var(--neutralGray);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .footer-heading {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0 0 var(--spacing6) 0;
+    color: var(--neutralWhite);
+  }
+
+  .footer-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .footer-links li {
+    margin-bottom: var(--spacing4);
+  }
+
+  .footer-links a {
+    color: var(--neutralGray);
+    text-decoration: none;
+    transition: color var(--transitionNormal) ease;
+  }
+
+  .footer-links a:hover,
+  .footer-links a:focus {
+    color: var(--primaryColor);
+  }
+
+  .footer-links a:focus {
+    outline: 2px solid var(--primaryColor);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  .footer-bottom {
+    padding-top: var(--spacing8);
+    border-top: 1px solid #374151;
+    text-align: center;
+  }
+
+  .footer-bottom p {
+    margin: 0;
+    color: var(--neutralGray);
+    font-size: 0.875rem;
+  }
+
+  </style>

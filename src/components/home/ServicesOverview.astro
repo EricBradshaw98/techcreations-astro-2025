@@ -1,0 +1,718 @@
+---
+// ServicesOverview.astro - Services overview section for agency landing page
+import theme from '../../lib/therme';
+
+export interface Props {
+  // Content props
+  eyebrow?: string;
+  headline?: string;
+  description?: string;
+  ctaText?: string;
+  ctaHref?: string;
+  
+  // Services data
+  services?: Array<{
+    icon: string;
+    title: string;
+    description: string;
+    features: string[];
+    href?: string;
+    highlighted?: boolean;
+  }>;
+  
+  // Layout props
+  variant?: 'grid' | 'cards' | 'minimal';
+  showCta?: boolean;
+  maxServices?: number;
+}
+
+const {
+  eyebrow = "What We Do",
+  headline = "Comprehensive Digital Solutions for Modern Businesses",
+  description = "From strategy to execution, we provide end-to-end digital services that transform your business and accelerate growth in the digital landscape.",
+  ctaText = "View All Services",
+  ctaHref = "/services",
+  variant = "cards",
+  showCta = true,
+  maxServices = 6,
+  services = [
+    {
+      icon: "🎨",
+      title: "Brand Strategy & Design",
+      description: "Create compelling brand identities that resonate with your audience and set you apart from competitors.",
+      features: ["Brand Identity", "Logo Design", "Brand Guidelines", "Marketing Materials"],
+      href: "/services/branding",
+      highlighted: false
+    },
+    {
+      icon: "💻",
+      title: "Web Development",
+      description: "Build fast, responsive, and user-friendly websites that convert visitors into customers.",
+      features: ["Custom Development", "E-commerce", "CMS Integration", "Performance Optimization"],
+      href: "/services/web-development",
+      highlighted: true
+    },
+    {
+      icon: "📱",
+      title: "Mobile App Development",
+      description: "Develop native and cross-platform mobile applications that engage users and drive business growth.",
+      features: ["iOS Development", "Android Development", "Cross-platform", "App Store Optimization"],
+      href: "/services/mobile-development",
+      highlighted: false
+    },
+    {
+      icon: "📈",
+      title: "Digital Marketing",
+      description: "Grow your online presence with data-driven marketing strategies that deliver measurable results.",
+      features: ["SEO & SEM", "Social Media", "Content Marketing", "Analytics & Reporting"],
+      href: "/services/digital-marketing",
+      highlighted: false
+    },
+    {
+      icon: "☁️",
+      title: "Cloud Solutions",
+      description: "Migrate and optimize your infrastructure with scalable cloud solutions that reduce costs and improve performance.",
+      features: ["Cloud Migration", "DevOps", "Infrastructure", "Security & Compliance"],
+      href: "/services/cloud-solutions",
+      highlighted: false
+    },
+    {
+      icon: "🔧",
+      title: "Maintenance & Support",
+      description: "Keep your digital assets running smoothly with our comprehensive maintenance and support services.",
+      features: ["24/7 Monitoring", "Regular Updates", "Security Patches", "Technical Support"],
+      href: "/services/maintenance",
+      highlighted: false
+    }
+  ]
+} = Astro.props;
+
+// Limit services if specified
+const displayServices = services.slice(0, maxServices);
+---
+
+<section class="services-overview" aria-labelledby="services-headline">
+  <div class="services-container">
+    <!-- Section Header -->
+    <div class="services-header" data-animate="fade-up">
+      <span class="services-eyebrow">{eyebrow}</span>
+      <h2 id="services-headline" class="services-headline">
+        {headline}
+      </h2>
+      <p class="services-description">
+        {description}
+      </p>
+    </div>
+
+    <!-- Services Grid -->
+    <div 
+      class={`services-grid services-${variant}`}
+      data-animate="fade-up"
+      data-delay="200"
+    >
+      {displayServices.map((service, index) => (
+        <article 
+          class={`service-card ${service.highlighted ? 'highlighted' : ''}`}
+          data-animate="fade-up"
+          data-delay={300 + (index * 100)}
+          key={index}
+        >
+          <div class="service-content">
+            <!-- Icon -->
+            <div class="service-icon">
+              <span class="icon-emoji" role="img" aria-hidden="true">
+                {service.icon}
+              </span>
+            </div>
+
+            <!-- Content -->
+            <div class="service-text">
+              <h3 class="service-title">{service.title}</h3>
+              <p class="service-description">{service.description}</p>
+              
+              <!-- Features List -->
+              <ul class="service-features" aria-label={`${service.title} features`}>
+                {service.features.map((feature, featureIndex) => (
+                  <li class="feature-item" key={featureIndex}>
+                    <svg class="feature-check" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M13.5 4.5L6 12L2.5 8.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <!-- CTA -->
+            {service.href && (
+              <div class="service-cta">
+                <a href={service.href} class="service-link">
+                  Learn More
+                  <svg class="link-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </a>
+              </div>
+            )}
+          </div>
+
+          <!-- Highlight Badge -->
+          {service.highlighted && (
+            <div class="highlight-badge">
+              <span>Most Popular</span>
+            </div>
+          )}
+
+          <!-- Hover Effect Background -->
+          <div class="service-bg" aria-hidden="true"></div>
+        </article>
+      ))}
+    </div>
+
+    <!-- Section CTA -->
+    {showCta && (
+      <div 
+        class="services-cta"
+        data-animate="fade-up"
+        data-delay="600"
+      >
+        <a href={ctaHref} class="cta-button">
+          {ctaText}
+          <svg class="cta-arrow" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M4.16667 10H15.8333M15.8333 10L10.8333 5M15.8333 10L10.8333 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+    )}
+  </div>
+
+  <!-- Background Decoration -->
+  <div class="services-decoration" aria-hidden="true">
+    <div class="decoration-grid">
+      <div class="grid-dot"></div>
+      <div class="grid-dot"></div>
+      <div class="grid-dot"></div>
+      <div class="grid-dot"></div>
+      <div class="grid-dot"></div>
+      <div class="grid-dot"></div>
+    </div>
+  </div>
+</section>
+
+<style define:vars={{
+  primaryColor: theme.colors.primary[500],
+  primaryHover: theme.colors.primary[600],
+  primaryLight: theme.colors.primary[100],
+  secondaryColor: theme.colors.secondary[500],
+  successColor: theme.colors.success[500],
+  neutralWhite: theme.colors.neutral[50],
+  neutralGray: theme.colors.neutral[500],
+  neutralDark: theme.colors.neutral[900],
+  neutralLight: theme.colors.neutral[100],
+  borderColor: theme.colors.border,
+  fontSans: theme.typography.fontFamily.sans.join(', '),
+  fontDisplay: theme.typography.fontFamily.display.join(', '),
+  spacing4: theme.spacing[4],
+  spacing6: theme.spacing[6],
+  spacing8: theme.spacing[8],
+  spacing12: theme.spacing[12],
+  spacing16: theme.spacing[16],
+  spacing20: theme.spacing[20],
+  spacing24: theme.spacing[24],
+  borderRadiusLg: theme.borderRadius.lg,
+  borderRadius2xl: theme.borderRadius['2xl'],
+  shadowMd: theme.boxShadow.md,
+  shadowLg: theme.boxShadow.lg,
+  shadow2xl: theme.boxShadow['2xl']
+}}>
+  .services-overview {
+    position: relative;
+    padding: var(--spacing20) 0;
+    background: var(--neutralWhite);
+    overflow: hidden;
+  }
+
+  @media (min-width: 768px) {
+    .services-overview {
+      padding: var(--spacing24) 0;
+    }
+  }
+
+  .services-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 var(--spacing4);
+    position: relative;
+    z-index: 10;
+  }
+
+  @media (min-width: 768px) {
+    .services-container {
+      padding: 0 var(--spacing6);
+    }
+  }
+
+  /* Section Header */
+  .services-header {
+    text-align: center;
+    margin-bottom: var(--spacing16);
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .services-eyebrow {
+    display: inline-block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primaryColor);
+    background: var(--primaryLight);
+    padding: var(--spacing2) var(--spacing4);
+    border-radius: var(--borderRadiusLg);
+    margin-bottom: var(--spacing6);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .services-headline {
+    font-family: var(--fontDisplay);
+    font-size: 2.25rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing6) 0;
+  }
+
+  @media (min-width: 768px) {
+    .services-headline {
+      font-size: 3rem;
+    }
+  }
+
+  .services-description {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: var(--neutralGray);
+    margin: 0;
+  }
+
+  /* Services Grid */
+  .services-grid {
+    display: grid;
+    gap: var(--spacing8);
+    margin-bottom: var(--spacing16);
+  }
+
+  /* Grid Variants */
+  .services-cards {
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 768px) {
+    .services-cards {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .services-cards {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .services-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .services-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .services-minimal {
+    gap: var(--spacing12);
+  }
+
+  /* Service Cards */
+  .service-card {
+    position: relative;
+    background: var(--neutralWhite);
+    border: 1px solid var(--borderColor);
+    border-radius: var(--borderRadius2xl);
+    padding: var(--spacing8);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .service-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow2xl);
+    border-color: var(--primaryColor);
+  }
+
+  .service-card.highlighted {
+    border-color: var(--primaryColor);
+    background: linear-gradient(135deg, var(--neutralWhite) 0%, var(--primaryLight) 100%);
+  }
+
+  .service-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Service Icon */
+  .service-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    background: var(--primaryLight);
+    border-radius: var(--borderRadius2xl);
+    margin-bottom: var(--spacing6);
+    transition: all 0.3s ease;
+  }
+
+  .service-card:hover .service-icon {
+    background: var(--primaryColor);
+    transform: scale(1.1);
+  }
+
+  .icon-emoji {
+    font-size: 2rem;
+    transition: all 0.3s ease;
+  }
+
+  .service-card:hover .icon-emoji {
+    transform: scale(1.1);
+  }
+
+  /* Service Text */
+  .service-text {
+    flex: 1;
+  }
+
+  .service-title {
+    font-family: var(--fontDisplay);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing4) 0;
+    line-height: 1.3;
+  }
+
+  .service-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--neutralGray);
+    margin: 0 0 var(--spacing6) 0;
+  }
+
+  /* Features List */
+  .service-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--spacing6) 0;
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing2);
+    margin-bottom: var(--spacing2);
+    font-size: 0.875rem;
+    color: var(--neutralGray);
+  }
+
+  .feature-check {
+    color: var(--successColor);
+    flex-shrink: 0;
+  }
+
+  /* Service CTA */
+  .service-cta {
+    margin-top: auto;
+  }
+
+  .service-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing2);
+    font-weight: 600;
+    color: var(--primaryColor);
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+  }
+
+  .service-link:hover,
+  .service-link:focus {
+    color: var(--primaryHover);
+    gap: var(--spacing4);
+  }
+
+  .service-link:focus {
+    outline: 2px solid var(--primaryColor);
+    outline-offset: 2px;
+    border-radius: var(--spacing2);
+  }
+
+  .link-arrow {
+    transition: transform 0.3s ease;
+  }
+
+  .service-link:hover .link-arrow {
+    transform: translateX(4px);
+  }
+
+  /* Highlight Badge */
+  .highlight-badge {
+    position: absolute;
+    top: var(--spacing4);
+    right: var(--spacing4);
+    background: var(--primaryColor);
+    color: var(--neutralWhite);
+    padding: var(--spacing2) var(--spacing4);
+    border-radius: var(--borderRadiusLg);
+    font-size: 0.75rem;
+    font-weight: 600;
+    z-index: 3;
+  }
+
+  /* Service Background Effect */
+  .service-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, transparent 0%, var(--primaryLight) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: var(--borderRadius2xl);
+  }
+
+  .service-card:hover .service-bg {
+    opacity: 0.5;
+  }
+
+  /* Section CTA */
+  .services-cta {
+    text-align: center;
+    margin-top: var(--spacing12);
+  }
+
+  .cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing2);
+    font-family: var(--fontSans);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--neutralWhite);
+    background: var(--primaryColor);
+    text-decoration: none;
+    padding: var(--spacing4) var(--spacing8);
+    border-radius: var(--borderRadiusLg);
+    transition: all 0.3s ease;
+    box-shadow: var(--shadowLg);
+    border: 2px solid var(--primaryColor);
+  }
+
+  .cta-button:hover,
+  .cta-button:focus {
+    background: var(--primaryHover);
+    border-color: var(--primaryHover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow2xl);
+  }
+
+  .cta-button:focus {
+    outline: 2px solid var(--primaryColor);
+    outline-offset: 2px;
+  }
+
+  .cta-arrow {
+    transition: transform 0.3s ease;
+  }
+
+  .cta-button:hover .cta-arrow {
+    transform: translateX(4px);
+  }
+
+  /* Background Decoration */
+  .services-decoration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .decoration-grid {
+    position: absolute;
+    top: 10%;
+    right: 5%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing8);
+    opacity: 0.1;
+  }
+
+  .grid-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--primaryColor);
+    border-radius: 50%;
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  .grid-dot:nth-child(2) { animation-delay: 0.5s; }
+  .grid-dot:nth-child(3) { animation-delay: 1s; }
+  .grid-dot:nth-child(4) { animation-delay: 1.5s; }
+  .grid-dot:nth-child(5) { animation-delay: 2s; }
+  .grid-dot:nth-child(6) { animation-delay: 2.5s; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+
+  /* Animations */
+  [data-animate] {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease;
+  }
+
+  [data-animate].animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Mobile Optimizations */
+  @media (max-width: 640px) {
+    .services-overview {
+      padding: var(--spacing16) 0;
+    }
+
+    .services-headline {
+      font-size: 2rem;
+    }
+
+    .service-card {
+      padding: var(--spacing6);
+    }
+
+    .decoration-grid {
+      display: none;
+    }
+  }
+
+  /* Reduced Motion */
+  @media (prefers-reduced-motion: reduce) {
+    .service-card,
+    .service-icon,
+    .service-link,
+    .cta-button,
+    .grid-dot {
+      transition: none;
+      animation: none;
+    }
+    
+    .service-card:hover {
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  // Services Animation Controller
+  class ServicesAnimations {
+    constructor() {
+      this.animatedElements = document.querySelectorAll('.services-overview [data-animate]');
+      this.serviceCards = document.querySelectorAll('.service-card');
+      
+      this.init();
+    }
+
+    init() {
+      this.setupScrollAnimations();
+      this.setupCardInteractions();
+    }
+
+    setupScrollAnimations() {
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !entry.target.hasAnimated) {
+            const delay = parseInt(entry.target.dataset.delay) || 0;
+            setTimeout(() => {
+              entry.target.classList.add('animate');
+            }, delay);
+            entry.target.hasAnimated = true;
+          }
+        });
+      }, observerOptions);
+
+      this.animatedElements.forEach(el => {
+        observer.observe(el);
+      });
+    }
+
+    setupCardInteractions() {
+      this.serviceCards.forEach(card => {
+        // Add ripple effect on click
+        card.addEventListener('click', (e) => {
+          if (e.target.closest('.service-link')) return;
+          
+          const link = card.querySelector('.service-link');
+          if (link) {
+            link.click();
+          }
+        });
+
+        // Enhanced hover tracking
+        card.addEventListener('mouseenter', () => {
+          card.style.setProperty('--hover-scale', '1.02');
+        });
+
+        card.addEventListener('mouseleave', () => {
+          card.style.setProperty('--hover-scale', '1');
+        });
+      });
+    }
+  }
+
+  // Initialize when DOM is loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    new ServicesAnimations();
+  });
+
+  // Performance optimization: lazy load non-critical animations
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(() => {
+      // Initialize additional non-critical animations
+      console.log('Services animations loaded');
+    });
+  }
+</script>
