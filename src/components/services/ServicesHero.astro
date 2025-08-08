@@ -1,0 +1,577 @@
+---
+// ServicesHero.astro
+import theme from '../../lib/therme';
+
+export interface Props {
+  variant?: 'split' | 'centered' | 'minimal';
+  headline: string;
+  subheadline: string;
+  primaryButtonText?: string;
+  primaryButtonLink?: string;
+  secondaryButtonText?: string;
+  secondaryButtonLink?: string;
+  services?: Array<{
+    icon: string;
+    name: string;
+    description?: string;
+  }>;
+  backgroundGradient?: 'default' | 'purple' | 'blue' | 'minimal';
+  showFloatingCards?: boolean;
+}
+
+const {
+  variant = 'split',
+  headline,
+  subheadline,
+  primaryButtonText = 'View Our Work',
+  primaryButtonLink = '/portfolio',
+  secondaryButtonText = 'Get Started',
+  secondaryButtonLink = '/contact',
+  services = [
+    { icon: '🎨', name: 'Design', description: 'Beautiful, user-focused designs' },
+    { icon: '⚡', name: 'Development', description: 'Fast, modern web applications' },
+    { icon: '🚀', name: 'Launch', description: 'Seamless deployment & support' }
+  ],
+  backgroundGradient = 'default',
+  showFloatingCards = true
+} = Astro.props;
+
+// Create background gradient based on variant
+const getBackgroundGradient = (type: string) => {
+  switch (type) {
+    case 'purple':
+      return `linear-gradient(135deg, ${theme.colors.neutral[50]} 0%, ${theme.colors.secondary[100]} 100%)`;
+    case 'blue':
+      return `linear-gradient(135deg, ${theme.colors.primary[50]} 0%, ${theme.colors.primary[200]} 100%)`;
+    case 'minimal':
+      return theme.colors.neutral[50];
+    default:
+      return `linear-gradient(135deg, ${theme.colors.neutral[50]} 0%, ${theme.colors.primary[100]} 100%)`;
+  }
+};
+
+// Extract highlight word (assumes it's wrapped in <span>)
+const getHighlightWord = (text: string) => {
+  const match = text.match(/<span[^>]*>(.*?)<\/span>/);
+  return match ? match[1] : '';
+};
+
+const cleanHeadline = headline.replace(/<span[^>]*>.*?<\/span>/, '{HIGHLIGHT}');
+const highlightWord = getHighlightWord(headline);
+---
+
+<section class={`services-hero variant-${variant}`} data-background={backgroundGradient}>
+  <div class="container">
+    <div class="content">
+      <div class="text-content">
+        <h1 class="title">
+          {cleanHeadline.split('{HIGHLIGHT}').map((part, index) => (
+            index === 0 ? (
+              <Fragment>{part}<span class="highlight">{highlightWord}</span></Fragment>
+            ) : (
+              <Fragment>{part}</Fragment>
+            )
+          ))}
+        </h1>
+        <p class="subtitle">
+          {subheadline}
+        </p>
+        <div class="cta-group">
+          <a href={primaryButtonLink} class="btn-primary">{primaryButtonText}</a>
+          <a href={secondaryButtonLink} class="btn-secondary">{secondaryButtonText}</a>
+        </div>
+      </div>
+      
+      {variant === 'split' && showFloatingCards && (
+        <div class="visual-content">
+          <div class="service-cards">
+            {services.map((service, index) => (
+              <div class={`card card-${index + 1}`}>
+                <div class="icon">{service.icon}</div>
+                <div class="card-text">
+                  <span class="service-name">{service.name}</span>
+                  {service.description && (
+                    <span class="service-description">{service.description}</span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      
+      {variant === 'centered' && (
+        <div class="centered-services">
+          {services.map((service) => (
+            <div class="service-badge">
+              <span class="badge-icon">{service.icon}</span>
+              <span class="badge-text">{service.name}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+</section>
+
+<style define:vars={{
+  primaryColor: theme.colors.primary[500],
+  primaryLight: theme.colors.primary[100],
+  primaryDark: theme.colors.primary[700],
+  secondaryColor: theme.colors.secondary[500],
+  secondaryLight: theme.colors.secondary[100],
+  neutral900: theme.colors.neutral[900],
+  neutral700: theme.colors.neutral[700],
+  neutral500: theme.colors.neutral[500],
+  neutral100: theme.colors.neutral[100],
+  neutral50: theme.colors.neutral[50],
+  fontDisplay: theme.typography.fontFamily.display.join(', '),
+  fontSans: theme.typography.fontFamily.sans.join(', '),
+  spacing16: theme.spacing[16],
+  spacing12: theme.spacing[12],
+  spacing8: theme.spacing[8],
+  spacing6: theme.spacing[6],
+  spacing4: theme.spacing[4],
+  spacing3: theme.spacing[3],
+  spacing2: theme.spacing[2],
+  borderRadiusXl: theme.borderRadius.xl,
+  borderRadius2xl: theme.borderRadius['2xl'],
+  shadowLg: theme.boxShadow.lg,
+  shadowXl: theme.boxShadow.xl,
+  animationNormal: theme.animation.duration.normal,
+  animationSlow: theme.animation.duration.slow,
+  easingInOut: theme.animation.easing['in-out'],
+  containerMaxWidth: theme.layout.container.xl
+}}>
+  .services-hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: var(--spacing8) 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Background variants */
+  .services-hero[data-background="default"] {
+    background: linear-gradient(135deg, var(--neutral50) 0%, var(--primaryLight) 100%);
+  }
+
+  .services-hero[data-background="purple"] {
+    background: linear-gradient(135deg, var(--neutral50) 0%, var(--secondaryLight) 100%);
+  }
+
+  .services-hero[data-background="blue"] {
+    background: linear-gradient(135deg, var(--primaryLight) 0%, var(--primaryColor)20 100%);
+  }
+
+  .services-hero[data-background="minimal"] {
+    background: var(--neutral50);
+  }
+
+  .services-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 20%, var(--primaryColor)10 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, var(--primaryColor)05 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .container {
+    max-width: var(--containerMaxWidth);
+    margin: 0 auto;
+    padding: 0 var(--spacing6);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Layout variants */
+  .variant-split .content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing16);
+    align-items: center;
+    min-height: 70vh;
+  }
+
+  .variant-centered .content {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .variant-minimal .content {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .text-content {
+    animation: slideInLeft var(--animationSlow) var(--easingInOut);
+  }
+
+  .variant-centered .text-content,
+  .variant-minimal .text-content {
+    animation: fadeInUp var(--animationSlow) var(--easingInOut);
+  }
+
+  .title {
+    font-family: var(--fontDisplay);
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--neutral900);
+    margin-bottom: var(--spacing6);
+    letter-spacing: -0.02em;
+  }
+
+  .variant-minimal .title {
+    font-size: clamp(2rem, 4vw, 3rem);
+  }
+
+  .highlight {
+    color: var(--primaryColor);
+    position: relative;
+  }
+
+  .highlight::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primaryColor), var(--primaryDark));
+    border-radius: 2px;
+    animation: underlineGrow var(--animationSlow) var(--easingInOut) 0.5s both;
+  }
+
+  .subtitle {
+    font-family: var(--fontSans);
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: var(--neutral700);
+    margin-bottom: var(--spacing8);
+  }
+
+  .variant-split .subtitle {
+    max-width: 90%;
+  }
+
+  .variant-minimal .subtitle {
+    font-size: 1.125rem;
+  }
+
+  .cta-group {
+    display: flex;
+    gap: var(--spacing4);
+    flex-wrap: wrap;
+  }
+
+  .variant-centered .cta-group,
+  .variant-minimal .cta-group {
+    justify-content: center;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    font-family: var(--fontSans);
+    font-weight: 600;
+    font-size: 1rem;
+    padding: var(--spacing4) var(--spacing8);
+    border-radius: var(--borderRadiusXl);
+    border: none;
+    cursor: pointer;
+    transition: all var(--animationNormal) var(--easingInOut);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 140px;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primaryColor), var(--primaryDark));
+    color: white;
+    box-shadow: var(--shadowLg);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadowXl);
+    filter: brightness(1.1);
+  }
+
+  .btn-secondary {
+    background: white;
+    color: var(--neutral900);
+    border: 2px solid var(--neutral100);
+    box-shadow: var(--shadowLg);
+  }
+
+  .btn-secondary:hover {
+    transform: translateY(-2px);
+    border-color: var(--primaryColor);
+    color: var(--primaryColor);
+    box-shadow: var(--shadowXl);
+  }
+
+  /* Split variant visual content */
+  .visual-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: slideInRight var(--animationSlow) var(--easingInOut);
+  }
+
+  .service-cards {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing6);
+    transform: rotate(15deg);
+  }
+
+  .card {
+    background: white;
+    padding: var(--spacing6);
+    border-radius: var(--borderRadius2xl);
+    box-shadow: var(--shadowXl);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing4);
+    min-width: 240px;
+    transition: all var(--animationNormal) var(--easingInOut);
+    border: 1px solid var(--neutral100);
+  }
+
+  .card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+
+  .card-1 {
+    animation: floatCard var(--animationSlow) var(--easingInOut) 0.2s both;
+  }
+
+  .card-2 {
+    animation: floatCard var(--animationSlow) var(--easingInOut) 0.4s both;
+    margin-left: var(--spacing8);
+  }
+
+  .card-3 {
+    animation: floatCard var(--animationSlow) var(--easingInOut) 0.6s both;
+  }
+
+  .icon {
+    font-size: 2rem;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primaryLight), var(--primaryColor)20);
+    border-radius: var(--borderRadiusXl);
+    flex-shrink: 0;
+  }
+
+  .card-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing2);
+  }
+
+  .service-name {
+    font-family: var(--fontSans);
+    font-weight: 600;
+    color: var(--neutral900);
+    font-size: 1.1rem;
+  }
+
+  .service-description {
+    font-family: var(--fontSans);
+    font-size: 0.875rem;
+    color: var(--neutral500);
+    line-height: 1.4;
+  }
+
+  /* Centered variant services */
+  .centered-services {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing6);
+    margin-top: var(--spacing8);
+    flex-wrap: wrap;
+  }
+
+  .service-badge {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing3);
+    background: white;
+    padding: var(--spacing3) var(--spacing6);
+    border-radius: var(--borderRadiusXl);
+    box-shadow: var(--shadowLg);
+    border: 1px solid var(--neutral100);
+    transition: all var(--animationNormal) var(--easingInOut);
+  }
+
+  .service-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadowXl);
+  }
+
+  .badge-icon {
+    font-size: 1.25rem;
+  }
+
+  .badge-text {
+    font-family: var(--fontSans);
+    font-weight: 600;
+    color: var(--neutral900);
+    font-size: 0.9rem;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 1024px) {
+    .variant-split .content {
+      grid-template-columns: 1fr;
+      gap: var(--spacing12);
+      text-align: center;
+    }
+
+    .service-cards {
+      flex-direction: row;
+      transform: none;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .card-2 {
+      margin-left: 0;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .services-hero {
+      min-height: 90vh;
+      padding: var(--spacing6) 0;
+    }
+
+    .service-cards {
+      gap: var(--spacing4);
+    }
+
+    .card {
+      min-width: 200px;
+      padding: var(--spacing4);
+      flex-direction: column;
+      text-align: center;
+      gap: var(--spacing3);
+    }
+
+    .card-text {
+      align-items: center;
+    }
+
+    .icon {
+      width: 50px;
+      height: 50px;
+      font-size: 1.5rem;
+    }
+
+    .cta-group {
+      justify-content: center;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+      min-width: 120px;
+      padding: var(--spacing3) var(--spacing6);
+    }
+
+    .centered-services {
+      gap: var(--spacing4);
+    }
+
+    .service-badge {
+      padding: var(--spacing2) var(--spacing4);
+    }
+  }
+
+  /* Animations */
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes floatCard {
+    from {
+      opacity: 0;
+      transform: translateY(30px) rotate(15deg);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) rotate(15deg);
+    }
+  }
+
+  @keyframes underlineGrow {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  /* Reduce motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    .services-hero *,
+    .services-hero *::before,
+    .services-hero *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>

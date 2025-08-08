@@ -1,0 +1,141 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ServicesHero from "../components/services/ServicesHero.astro";
+import ServicesGrid from "../components/services/ServicesGrid.astro";
+import ServicesProcess from "../components/services/ServicesProcess.astro";
+import ServicesTechStack from "../components/services/ServicesTechStack.astro";
+
+---
+
+<Layout title="Services - Your Agency"
+  description="Learn more about your future strategic partner."
+  type="website">
+<ServicesHero 
+  variant="split"
+  headline="We Build <span>Amazing</span> Digital Experiences"
+  subheadline="Our full-service approach ensures every pixel serves a purpose and drives measurable results for your business."
+  primaryButtonText="View Our Portfolio"
+  primaryButtonLink="/portfolio"
+  secondaryButtonText="Start a Project"
+  secondaryButtonLink="/contact"
+  services={[
+    { 
+      icon: '🎨', 
+      name: 'UI/UX Design', 
+      description: 'Beautiful, conversion-focused designs' 
+    },
+    { 
+      icon: '⚡', 
+      name: 'Web Development', 
+      description: 'Lightning-fast, scalable applications' 
+    },
+    { 
+      icon: '📈', 
+      name: 'Digital Strategy', 
+      description: 'Data-driven growth solutions' 
+    }
+  ]}
+  backgroundGradient="purple"
+  showFloatingCards={true}
+/>
+
+<ServicesGrid 
+  services={[
+    {
+      icon: '🎨',
+      title: 'Web Design',
+      description: 'Beautiful, user-focused designs that convert visitors into customers.',
+      features: ['Custom Design', 'Mobile Responsive', 'User Testing'],
+      link: '/services/design'
+    },
+    {
+      icon: '⚡',
+      title: 'Development',
+      description: 'Fast, scalable web applications built with modern technologies.',
+      features: ['React/Astro', 'Performance Optimized', 'SEO Ready'],
+      link: '/services/development'
+    },
+    {
+      icon: '🚀',
+      title: 'Digital Marketing',
+      description: 'Data-driven strategies to grow your online presence.',
+      features: ['SEO Strategy', 'Content Marketing', 'Analytics'],
+      link: '/services/marketing'
+    }
+  ]}
+/>
+
+<ServicesProcess 
+  steps={[
+    {
+      icon: '🔍',
+      title: 'Discovery',
+      description: 'We start by understanding your business goals, target audience, and project requirements through detailed research and consultation.',
+      duration: '1-2 weeks'
+    },
+    {
+      icon: '🎨',
+      title: 'Design',
+      description: 'Our team creates wireframes, prototypes, and visual designs that align with your brand and user experience goals.',
+      duration: '2-3 weeks'
+    },
+    {
+      icon: '⚡',
+      title: 'Development',
+      description: 'We build your project using modern technologies, ensuring performance, security, and scalability.',
+      duration: '4-6 weeks'
+    },
+    {
+      icon: '🚀',
+      title: 'Launch',
+      description: 'After thorough testing, we deploy your project and provide ongoing support to ensure everything runs smoothly.',
+      duration: '1 week'
+    }
+  ]}
+/>
+<ServicesTechStack 
+  variant="categories"
+  sectionTitle="Our Technology Arsenal"
+  sectionSubtitle="We leverage the best tools to deliver exceptional results"
+  backgroundColor="gray"
+  showProficiency={true}
+  technologies={[
+    // Frontend
+    { name: 'React', logo: '/logos/react.svg', category: 'Frontend', proficiency: 'expert' },
+    { name: 'Astro', logo: '/logos/astro.svg', category: 'Frontend', proficiency: 'expert' },
+    { name: 'Vue.js', logo: '/logos/vue.svg', category: 'Frontend', proficiency: 'intermediate' },
+    { name: 'Tailwind CSS', logo: '/logos/tailwind.svg', category: 'Frontend', proficiency: 'expert' },
+    
+    // Backend
+    { name: 'Node.js', logo: '/logos/nodejs.svg', category: 'Backend', proficiency: 'expert' },
+    { name: 'Python', logo: '/logos/python.svg', category: 'Backend', proficiency: 'intermediate' },
+    { name: 'Express', icon: '🚂', category: 'Backend', proficiency: 'expert' },
+    
+    // Database
+    { name: 'PostgreSQL', logo: '/logos/postgresql.svg', category: 'Database', proficiency: 'expert' },
+    { name: 'MongoDB', logo: '/logos/mongodb.svg', category: 'Database', proficiency: 'expert' },
+    { name: 'Redis', logo: '/logos/redis.svg', category: 'Database', proficiency: 'intermediate' },
+    
+    // DevOps
+    { name: 'AWS', logo: '/logos/aws.svg', category: 'DevOps', proficiency: 'intermediate' },
+    { name: 'Vercel', logo: '/logos/vercel.svg', category: 'DevOps', proficiency: 'expert' },
+    { name: 'Docker', logo: '/logos/docker.svg', category: 'DevOps', proficiency: 'expert' },
+    
+    // Design
+    { name: 'Figma', logo: '/logos/figma.svg', category: 'Design', proficiency: 'expert' },
+    { name: 'Adobe Creative Suite', icon: '🎨', category: 'Design', proficiency: 'intermediate' },
+    
+    // Mobile
+    { name: 'React Native', logo: '/logos/react-native.svg', category: 'Mobile', proficiency: 'intermediate' },
+    { name: 'Flutter', logo: '/logos/flutter.svg', category: 'Mobile', proficiency: 'beginner' }
+  ]}
+  categories={[
+    { name: 'Frontend', icon: '🎨', description: 'Modern UI frameworks and libraries for stunning interfaces' },
+    { name: 'Backend', icon: '⚙️', description: 'Robust server-side technologies for scalable applications' },
+    { name: 'Database', icon: '🗄️', description: 'Reliable data storage and management solutions' },
+    { name: 'DevOps', icon: '🚀', description: 'Deployment, hosting, and infrastructure management' },
+    { name: 'Design', icon: '✨', description: 'Creative tools for beautiful user experiences' },
+    { name: 'Mobile', icon: '📱', description: 'Cross-platform mobile development'},
+  ]}/>
+
+</Layout>
