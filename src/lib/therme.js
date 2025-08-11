@@ -9,7 +9,7 @@ export const theme = {
       200: '#bae6fd',
       300: '#7dd3fc',
       400: '#38bdf8',
-      500: '#0ee9a7ff', // Main brand color
+      500: '#afe90eff', // Main brand color
       600: '#0284c7',
       700: '#0369a1',
       800: '#075985',

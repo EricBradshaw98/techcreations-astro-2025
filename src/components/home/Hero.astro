@@ -24,7 +24,7 @@ export interface Props {
   heroImageAlt?: string;
   
   // Layout props
-  variant?: 'centered' | 'left-aligned' | 'split';
+  variant?: 'centered' | 'left-aligned' | 'split' | 'process-focused';
   showStats?: boolean;
   stats?: Array<{
     number: string;
@@ -32,6 +32,30 @@ export interface Props {
     prefix?: string;
     suffix?: string;
   }>;
+  
+  // Process-specific props
+  showProcess?: boolean;
+  processSteps?: Array<{
+    number: string;
+    title: string;
+    description: string;
+    icon?: string;
+  }>;
+  
+  // Before/After props
+  showBeforeAfter?: boolean;
+  beforeAfter?: {
+    before: {
+      image: string;
+      alt: string;
+      stats: Array<{ label: string; value: string; }>;
+    };
+    after: {
+      image: string;
+      alt: string;
+      stats: Array<{ label: string; value: string; }>;
+    };
+  };
   
   // Social proof
   showLogos?: boolean;
@@ -62,6 +86,33 @@ const {
     { number: "5", suffix: "x", label: "ROI Average" },
     { number: "24", suffix: "/7", label: "Support Available" }
   ],
+  showProcess = false,
+  processSteps = [
+    { number: "1", title: "Send Content", description: "Share your text, images, and brand assets", icon: "📤" },
+    { number: "2", title: "We Build", description: "Custom development on enterprise infrastructure", icon: "🔧" },
+    { number: "3", title: "You're Live", description: "Simple DNS change, zero downtime launch", icon: "🚀" }
+  ],
+  showBeforeAfter = false,
+  beforeAfter = {
+    before: {
+      image: "/before-site.webp",
+      alt: "Slow WordPress site",
+      stats: [
+        { label: "Load Time", value: "3.2s" },
+        { label: "Security Score", value: "C" },
+        { label: "SEO Score", value: "65" }
+      ]
+    },
+    after: {
+      image: "/after-site.webp", 
+      alt: "Fast Astro site",
+      stats: [
+        { label: "Load Time", value: "0.8s" },
+        { label: "Security Score", value: "A+" },
+        { label: "SEO Score", value: "98" }
+      ]
+    }
+  },
   showLogos = true,
   clientLogos = [
     { src: "/logos/client-1.svg", alt: "Client 1", width: 120, height: 40 },
@@ -199,7 +250,7 @@ const {
         )}
       </div>
 
-      <!-- Hero Image/Visual -->
+      <!-- Hero Visual - Regular Split -->
       {variant === 'split' && heroImage && (
         <div 
           class="hero-visual"
@@ -216,39 +267,141 @@ const {
               loading="eager"
             />
             
-            <!-- Floating UI Elements -->
+            <!-- Updated Floating UI Elements for Website Transformation -->
             <div class="floating-ui floating-ui-1" data-animate="float" data-delay="1000">
               <div class="ui-card">
-                <div class="ui-metric">
-                  <span class="ui-number">47%</span>
-                  <span class="ui-text">Conversion Rate</span>
+                <div class="ui-status">
+                  <div class="status-icon">✓</div>
+                  <span class="ui-text">Content Received</span>
                 </div>
               </div>
             </div>
             
             <div class="floating-ui floating-ui-2" data-animate="float" data-delay="1500">
               <div class="ui-card">
-                <div class="ui-chart">
-                  <div class="chart-bars">
-                    <div class="chart-bar" style="height: 60%"></div>
-                    <div class="chart-bar" style="height: 80%"></div>
-                    <div class="chart-bar" style="height: 100%"></div>
-                    <div class="chart-bar" style="height: 70%"></div>
+                <div class="ui-progress">
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 85%"></div>
                   </div>
-                  <span class="ui-text">Growth Analytics</span>
+                  <span class="ui-text">Build Progress: 85%</span>
                 </div>
               </div>
             </div>
             
             <div class="floating-ui floating-ui-3" data-animate="float" data-delay="2000">
               <div class="ui-card">
-                <div class="ui-notification">
-                  <div class="notification-dot"></div>
-                  <span class="ui-text">New Lead</span>
+                <div class="ui-performance">
+                  <div class="performance-change">
+                    <span class="before">3.2s</span>
+                    <span class="arrow">→</span>
+                    <span class="after">0.8s</span>
+                  </div>
+                  <span class="ui-text">Load Time</span>
                 </div>
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      <!-- Process-Focused Variant -->
+      {variant === 'process-focused' && (
+        <div 
+          class="hero-visual-process"
+          data-animate="fade-left"
+          data-delay="200"
+        >
+          <!-- Process Steps -->
+          {showProcess && processSteps.length > 0 && (
+            <div class="process-container">
+              <h3 class="process-title">Your Simple Process</h3>
+              <div class="process-steps">
+                {processSteps.map((step, index) => (
+                  <div 
+                    class="process-step"
+                    data-animate="fade-up"
+                    data-delay={400 + (index * 100)}
+                    key={index}
+                  >
+                    <div class="step-icon">
+                      <span class="step-emoji">{step.icon}</span>
+                      <span class="step-number">{step.number}</span>
+                    </div>
+                    <div class="step-content">
+                      <h4 class="step-title">{step.title}</h4>
+                      <p class="step-description">{step.description}</p>
+                    </div>
+                    {index < processSteps.length - 1 && (
+                      <div class="step-connector" aria-hidden="true">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <!-- Before/After Comparison -->
+          {showBeforeAfter && beforeAfter && (
+            <div class="before-after-container">
+              <h3 class="comparison-title">The Transformation</h3>
+              <div class="comparison-grid">
+                <!-- Before -->
+                <div class="comparison-item before">
+                  <div class="comparison-label">Before</div>
+                  <div class="comparison-image">
+                    <img 
+                      src={beforeAfter.before.image}
+                      alt={beforeAfter.before.alt}
+                      width="300"
+                      height="200"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div class="comparison-stats">
+                    {beforeAfter.before.stats.map((stat, index) => (
+                      <div class="stat-row" key={index}>
+                        <span class="stat-label">{stat.label}:</span>
+                        <span class="stat-value before-value">{stat.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <!-- Arrow -->
+                <div class="comparison-arrow">
+                  <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                    <path d="M8 24h32m-16-16l16 16-16 16" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+
+                <!-- After -->
+                <div class="comparison-item after">
+                  <div class="comparison-label">After</div>
+                  <div class="comparison-image">
+                    <img 
+                      src={beforeAfter.after.image}
+                      alt={beforeAfter.after.alt}
+                      width="300"
+                      height="200"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div class="comparison-stats">
+                    {beforeAfter.after.stats.map((stat, index) => (
+                      <div class="stat-row" key={index}>
+                        <span class="stat-label">{stat.label}:</span>
+                        <span class="stat-value after-value">{stat.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -296,8 +449,12 @@ const {
   neutralGray: theme.colors.neutral[500],
   neutralDark: theme.colors.neutral[900],
   neutralLight: theme.colors.neutral[100],
+  successColor: '#10b981',
+  warningColor: '#f59e0b',
   fontSans: theme.typography.fontFamily.sans.join(', '),
   fontDisplay: theme.typography.fontFamily.display.join(', '),
+  spacing2: theme.spacing[2],
+  spacing3: theme.spacing[3],
   spacing4: theme.spacing[4],
   spacing6: theme.spacing[6],
   spacing8: theme.spacing[8],
@@ -437,12 +594,14 @@ const {
     align-items: center;
   }
 
-  .hero-split .hero-content {
+  .hero-split .hero-content,
+  .hero-process-focused .hero-content {
     grid-template-columns: 1fr;
   }
 
   @media (min-width: 1024px) {
-    .hero-split .hero-content {
+    .hero-split .hero-content,
+    .hero-process-focused .hero-content {
       grid-template-columns: 1fr 1fr;
       gap: var(--spacing16);
     }
@@ -638,7 +797,7 @@ const {
     box-shadow: var(--shadow2xl);
   }
 
-  /* Floating UI Elements */
+  /* Updated Floating UI Elements */
   .floating-ui {
     position: absolute;
     z-index: 10;
@@ -675,18 +834,74 @@ const {
     box-shadow: var(--shadowLg);
     border: 1px solid #e2e8f0;
     backdrop-filter: blur(10px);
+    min-width: 120px;
   }
 
-  .ui-metric {
+  .ui-status {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing2);
+  }
+
+  .status-icon {
+    width: 20px;
+    height: 20px;
+    background: var(--successColor);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .ui-progress {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing2);
+  }
+
+  .progress-bar {
+    width: 80px;
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--primaryColor);
+    transition: width 2s ease;
+  }
+
+  .ui-performance {
     text-align: center;
   }
 
-  .ui-number {
-    display: block;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--primaryColor);
-    line-height: 1;
+  .performance-change {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: var(--spacing2);
+  }
+
+  .before {
+    color: #ef4444;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .arrow {
+    color: var(--neutralGray);
+    font-weight: 600;
+  }
+
+  .after {
+    color: var(--successColor);
+    font-weight: 600;
+    font-size: 14px;
   }
 
   .ui-text {
@@ -695,44 +910,233 @@ const {
     font-weight: 500;
   }
 
-  .ui-chart {
+  /* Process-Focused Variant */
+  .hero-visual-process {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing12);
+  }
+
+  .process-container {
+    background: var(--neutralWhite);
+    border-radius: var(--borderRadius2xl);
+    padding: var(--spacing8);
+    box-shadow: var(--shadowLg);
+  }
+
+  .process-title {
+    font-family: var(--fontDisplay);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--neutralDark);
+    margin-bottom: var(--spacing6);
+    text-align: center;
+  }
+
+  .process-steps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing6);
+  }
+
+  @media (min-width: 768px) {
+    .process-steps {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  .process-step {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--spacing2);
+    text-align: center;
+    position: relative;
   }
 
-  .chart-bars {
-    display: flex;
-    gap: 3px;
-    align-items: end;
-    height: 30px;
+  .step-icon {
+    position: relative;
+    margin-bottom: var(--spacing4);
   }
 
-  .chart-bar {
-    width: 6px;
+  .step-emoji {
+    font-size: 2rem;
+    margin-bottom: var(--spacing2);
+    display: block;
+  }
+
+  .step-number {
+    position: absolute;
+    bottom: -8px;
+    right: -8px;
+    width: 24px;
+    height: 24px;
     background: var(--primaryColor);
-    border-radius: 3px;
-    opacity: 0.8;
-  }
-
-  .ui-notification {
+    color: white;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: 600;
     display: flex;
     align-items: center;
+    justify-content: center;
+  }
+
+  .step-content {
+    flex: 1;
+  }
+
+  .step-title {
+    font-family: var(--fontSans);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin-bottom: var(--spacing2);
+  }
+
+  .step-description {
+    font-size: 0.875rem;
+    color: var(--neutralGray);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .step-connector {
+    display: none;
+    position: absolute;
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primaryColor);
+  }
+
+  @media (min-width: 768px) {
+    .step-connector {
+      display: block;
+    }
+    
+    .process-step:last-child .step-connector {
+      display: none;
+    }
+  }
+
+  /* Before/After Comparison */
+  .before-after-container {
+    background: var(--neutralWhite);
+    border-radius: var(--borderRadius2xl);
+    padding: var(--spacing8);
+    box-shadow: var(--shadowLg);
+  }
+
+  .comparison-title {
+    font-family: var(--fontDisplay);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--neutralDark);
+    margin-bottom: var(--spacing6);
+    text-align: center;
+  }
+
+  .comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing6);
+    align-items: center;
+  }
+
+  @media (min-width: 768px) {
+    .comparison-grid {
+      grid-template-columns: 1fr auto 1fr;
+      gap: var(--spacing8);
+    }
+  }
+
+  .comparison-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .comparison-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing3);
+    padding: var(--spacing2) var(--spacing4);
+    border-radius: var(--borderRadiusLg);
+  }
+
+  .before .comparison-label {
+    background: #fef2f2;
+    color: #dc2626;
+  }
+
+  .after .comparison-label {
+    background: #f0fdf4;
+    color: #16a34a;
+  }
+
+  .comparison-image {
+    margin-bottom: var(--spacing4);
+    border-radius: var(--borderRadiusLg);
+    overflow: hidden;
+    box-shadow: var(--shadowLg);
+  }
+
+  .comparison-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .comparison-stats {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
     gap: var(--spacing2);
   }
 
-  .notification-dot {
-    width: 8px;
-    height: 8px;
-    background: #10b981;
-    border-radius: 50%;
-    animation: pulse 2s infinite;
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing2) var(--spacing3);
+    background: #f8fafc;
+    border-radius: var(--spacing2);
   }
 
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+  .stat-label {
+    font-size: 0.875rem;
+    color: var(--neutralGray);
+    font-weight: 500;
+  }
+
+  .stat-value {
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .before-value {
+    color: #dc2626;
+  }
+
+  .after-value {
+    color: var(--successColor);
+  }
+
+  .comparison-arrow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--primaryColor);
+    order: -1;
+  }
+
+  @media (min-width: 768px) {
+    .comparison-arrow {
+      order: 0;
+    }
   }
 
   /* Social Proof */
@@ -864,6 +1268,15 @@ const {
     .scroll-indicator {
       display: none;
     }
+
+    .process-container,
+    .before-after-container {
+      padding: var(--spacing6);
+    }
+
+    .comparison-grid {
+      gap: var(--spacing4);
+    }
   }
 
   /* Reduced motion support */
@@ -872,7 +1285,8 @@ const {
     .floating-ui,
     .scroll-indicator,
     .scroll-wheel,
-    .notification-dot {
+    .notification-dot,
+    .progress-fill {
       animation: none;
     }
     
@@ -889,6 +1303,7 @@ const {
     constructor() {
       this.animatedElements = document.querySelectorAll('[data-animate]');
       this.statElements = document.querySelectorAll('[data-count-to]');
+      this.progressBars = document.querySelectorAll('.progress-fill');
       this.hasAnimated = false;
       
       this.init();
@@ -900,6 +1315,9 @@ const {
       
       // Counter animations
       this.setupCounters();
+      
+      // Progress bar animations
+      this.setupProgressBars();
       
       // Intersection observer for scroll-triggered animations
       this.setupScrollAnimations();
@@ -934,6 +1352,30 @@ const {
 
       this.statElements.forEach(el => {
         observer.observe(el);
+      });
+    }
+
+    setupProgressBars() {
+      const observerOptions = {
+        threshold: 0.5,
+        rootMargin: '0px 0px -100px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !entry.target.hasAnimated) {
+            const targetWidth = entry.target.style.width;
+            entry.target.style.width = '0%';
+            setTimeout(() => {
+              entry.target.style.width = targetWidth;
+            }, 100);
+            entry.target.hasAnimated = true;
+          }
+        });
+      }, observerOptions);
+
+      this.progressBars.forEach(bar => {
+        observer.observe(bar);
       });
     }
 

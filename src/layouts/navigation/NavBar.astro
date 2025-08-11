@@ -1,5 +1,5 @@
 ---
-// Navbar.astro - Responsive and accessible navigation component
+// Navbar.astro - Responsive and accessible navigation component with mega menu
 import theme from '../../lib/therme';
 
 export interface Props {
@@ -13,6 +13,13 @@ export interface Props {
     href: string;
     label: string;
     external?: boolean;
+    submenu?: Array<{
+      href: string;
+      label: string;
+      description?: string;
+      external?: boolean;
+      icon?: string;
+    }>;
   }>;
   ctaButton?: {
     href: string;
@@ -25,11 +32,55 @@ const {
   currentPath = '',
   logo = { text: 'Agency', src: '/favicon.webp' },
   links = [
-    { href: '/', label: 'Home' },
-    { href: '/services', label: 'Services' },
-    { href: '/about', label: 'About' },
-    { href: '/portfolio', label: 'Portfolio' },
-    { href: '/blog', label: 'Blog' },
+    { 
+      href: '/', 
+      label: 'Home',
+      submenu: [
+        { href: '/', label: 'Overview', description: 'Welcome to our agency' },
+        { href: '/features', label: 'Features', description: 'What makes us different' },
+        { href: '/testimonials', label: 'Testimonials', description: 'What our clients say' }
+      ]
+    },
+    { 
+      href: '/services', 
+      label: 'Services',
+      submenu: [
+        { href: '/services/web-design', label: 'Web Design', description: 'Custom website design & development' },
+        { href: '/services/branding', label: 'Branding', description: 'Logo design & brand identity' },
+        { href: '/services/marketing', label: 'Digital Marketing', description: 'SEO, PPC & social media' },
+        { href: '/services/consulting', label: 'Consulting', description: 'Strategic business guidance' }
+      ]
+    },
+    { 
+      href: '/about', 
+      label: 'About',
+      submenu: [
+        { href: '/about', label: 'Our Story', description: 'Learn about our journey' },
+        { href: '/about/team', label: 'Team', description: 'Meet our talented professionals' },
+        { href: '/about/careers', label: 'Careers', description: 'Join our growing team' },
+        { href: '/about/culture', label: 'Culture', description: 'Our values and mission' }
+      ]
+    },
+    { 
+      href: '/portfolio', 
+      label: 'Portfolio',
+      submenu: [
+        { href: '/portfolio', label: 'All Projects', description: 'View our complete portfolio' },
+        { href: '/portfolio/web', label: 'Web Projects', description: 'Website design & development' },
+        { href: '/portfolio/branding', label: 'Brand Projects', description: 'Logo & identity work' },
+        { href: '/portfolio/case-studies', label: 'Case Studies', description: 'In-depth project breakdowns' }
+      ]
+    },
+    { 
+      href: '/blog', 
+      label: 'Blog',
+      submenu: [
+        { href: '/blog', label: 'Latest Posts', description: 'Our newest articles' },
+        { href: '/blog/tutorials', label: 'Tutorials', description: 'Step-by-step guides' },
+        { href: '/blog/insights', label: 'Industry Insights', description: 'Trends and analysis' },
+        { href: '/blog/news', label: 'Company News', description: 'Updates and announcements' }
+      ]
+    },
     { href: '/contact', label: 'Contact' }
   ],
   ctaButton = { href: '/contact', label: 'Get Started' }
@@ -40,6 +91,12 @@ const isActive = (href: string) => {
   if (href === '/' && currentPath === '/') return true;
   if (href !== '/' && currentPath.startsWith(href)) return true;
   return false;
+};
+
+// Helper function to check if any submenu item is active
+const hasActiveSubmenu = (submenu?: Array<{href: string}>) => {
+  if (!submenu) return false;
+  return submenu.some(item => isActive(item.href));
 };
 ---
 
@@ -65,21 +122,74 @@ const isActive = (href: string) => {
     <!-- Desktop Navigation -->
     <div class="navbar-menu desktop-only" role="menubar">
       <ul class="nav-list" role="none">
-        {links.map((link) => (
-          <li role="none">
-            <a 
-              href={link.href}
-              class={`nav-link ${isActive(link.href) ? 'active' : ''}`}
-              role="menuitem"
-              aria-current={isActive(link.href) ? 'page' : undefined}
-              {...(link.external && { 
-                target: '_blank', 
-                rel: 'noopener noreferrer',
-                'aria-label': `${link.label} (opens in new tab)`
-              })}
-            >
-              {link.label}
-            </a>
+        {links.map((link, index) => (
+          <li class="nav-item" role="none">
+            {link.submenu ? (
+              <!-- Dropdown Menu Item -->
+              <div class="dropdown" data-dropdown={`dropdown-${index}`}>
+                <button 
+                  class={`nav-link dropdown-trigger ${isActive(link.href) || hasActiveSubmenu(link.submenu) ? 'active' : ''}`}
+                  role="menuitem"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                  aria-controls={`submenu-${index}`}
+                  data-dropdown-trigger={`dropdown-${index}`}
+                >
+                  {link.label}
+                  <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                    <path d="M6 8.5L2.5 5h7L6 8.5z"/>
+                  </svg>
+                </button>
+                
+                <!-- Mega Menu -->
+                <div 
+                  class="mega-menu"
+                  id={`submenu-${index}`}
+                  role="menu"
+                  aria-hidden="true"
+                  data-dropdown-menu={`dropdown-${index}`}
+                >
+                  <div class="mega-menu-content">
+                    <div class="submenu-grid">
+                      {link.submenu.map((subItem) => (
+                        <a 
+                          href={subItem.href}
+                          class={`submenu-item ${isActive(subItem.href) ? 'active' : ''}`}
+                          role="menuitem"
+                          {...(subItem.external && { 
+                            target: '_blank', 
+                            rel: 'noopener noreferrer',
+                            'aria-label': `${subItem.label} (opens in new tab)`
+                          })}
+                        >
+                          <div class="submenu-item-content">
+                            <span class="submenu-label">{subItem.label}</span>
+                            {subItem.description && (
+                              <span class="submenu-description">{subItem.description}</span>
+                            )}
+                          </div>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <!-- Regular Menu Item -->
+              <a 
+                href={link.href}
+                class={`nav-link ${isActive(link.href) ? 'active' : ''}`}
+                role="menuitem"
+                aria-current={isActive(link.href) ? 'page' : undefined}
+                {...(link.external && { 
+                  target: '_blank', 
+                  rel: 'noopener noreferrer',
+                  'aria-label': `${link.label} (opens in new tab)`
+                })}
+              >
+                {link.label}
+              </a>
+            )}
           </li>
         ))}
       </ul>
@@ -124,21 +234,65 @@ const isActive = (href: string) => {
   >
     <div class="mobile-menu-content">
       <ul class="mobile-nav-list" role="none">
-        {links.map((link) => (
-          <li role="none">
-            <a 
-              href={link.href}
-              class={`mobile-nav-link ${isActive(link.href) ? 'active' : ''}`}
-              role="menuitem"
-              aria-current={isActive(link.href) ? 'page' : undefined}
-              {...(link.external && { 
-                target: '_blank', 
-                rel: 'noopener noreferrer',
-                'aria-label': `${link.label} (opens in new tab)`
-              })}
-            >
-              {link.label}
-            </a>
+        {links.map((link, index) => (
+          <li class="mobile-nav-item" role="none">
+            {link.submenu ? (
+              <!-- Mobile Dropdown -->
+              <div class="mobile-dropdown">
+                <button 
+                  class={`mobile-nav-link mobile-dropdown-trigger ${isActive(link.href) || hasActiveSubmenu(link.submenu) ? 'active' : ''}`}
+                  aria-expanded="false"
+                  aria-controls={`mobile-submenu-${index}`}
+                  data-mobile-dropdown-trigger={`mobile-dropdown-${index}`}
+                >
+                  {link.label}
+                  <svg class="mobile-dropdown-arrow" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M8 11L4 7h8l-4 4z"/>
+                  </svg>
+                </button>
+                
+                <div 
+                  class="mobile-submenu"
+                  id={`mobile-submenu-${index}`}
+                  aria-hidden="true"
+                  data-mobile-dropdown-menu={`mobile-dropdown-${index}`}
+                >
+                  {link.submenu.map((subItem) => (
+                    <a 
+                      href={subItem.href}
+                      class={`mobile-submenu-item ${isActive(subItem.href) ? 'active' : ''}`}
+                      {...(subItem.external && { 
+                        target: '_blank', 
+                        rel: 'noopener noreferrer',
+                        'aria-label': `${subItem.label} (opens in new tab)`
+                      })}
+                    >
+                      <div class="mobile-submenu-content">
+                        <span class="mobile-submenu-label">{subItem.label}</span>
+                        {subItem.description && (
+                          <span class="mobile-submenu-description">{subItem.description}</span>
+                        )}
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <!-- Regular Mobile Item -->
+              <a 
+                href={link.href}
+                class={`mobile-nav-link ${isActive(link.href) ? 'active' : ''}`}
+                role="menuitem"
+                aria-current={isActive(link.href) ? 'page' : undefined}
+                {...(link.external && { 
+                  target: '_blank', 
+                  rel: 'noopener noreferrer',
+                  'aria-label': `${link.label} (opens in new tab)`
+                })}
+              >
+                {link.label}
+              </a>
+            )}
           </li>
         ))}
       </ul>
@@ -167,6 +321,7 @@ const isActive = (href: string) => {
   primaryHover: theme.colors.primary[600],
   neutralWhite: theme.colors.neutral[50],
   neutralGray: theme.colors.neutral[500],
+  neutralLight: theme.colors.neutral[100],
   neutralDark: theme.colors.neutral[900],
   borderColor: theme.colors.border,
   navbarHeight: theme.components.navbar.height,
@@ -180,6 +335,7 @@ const isActive = (href: string) => {
   spacing8: theme.spacing[8],
   borderRadiusLg: theme.borderRadius.lg,
   shadowMd: theme.boxShadow.md,
+  shadowLg: theme.boxShadow.lg,
   transitionNormal: theme.animation.duration.normal,
   breakpointMd: theme.breakpoints.md
 }}>
@@ -256,10 +412,14 @@ const isActive = (href: string) => {
   .nav-list {
     display: flex;
     align-items: center;
-    gap: var(--spacing6);
+    gap: var(--spacing2);
     list-style: none;
     margin: 0;
     padding: 0;
+  }
+
+  .nav-item {
+    position: relative;
   }
 
   .nav-link {
@@ -272,6 +432,12 @@ const isActive = (href: string) => {
     border-radius: var(--borderRadiusLg);
     transition: all var(--transitionNormal) ease;
     position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing2);
+    background: none;
+    border: none;
+    cursor: pointer;
   }
 
   .nav-link:hover,
@@ -300,6 +466,97 @@ const isActive = (href: string) => {
     height: 6px;
     background: var(--primaryColor);
     border-radius: 50%;
+  }
+
+  /* Dropdown Arrow */
+  .dropdown-arrow {
+    transition: transform var(--transitionNormal) ease;
+  }
+
+  .dropdown[aria-expanded="true"] .dropdown-arrow {
+    transform: rotate(180deg);
+  }
+
+  /* Mega Menu */
+  .mega-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 320px;
+    max-width: 480px;
+    background: var(--neutralWhite);
+    border: 1px solid var(--borderColor);
+    border-radius: var(--borderRadiusLg);
+    box-shadow: var(--shadowLg);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) translateY(-10px);
+    transition: all 0.2s ease;
+    z-index: 1000;
+  }
+
+  .dropdown:hover .mega-menu,
+  .dropdown[aria-expanded="true"] .mega-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .mega-menu-content {
+    padding: var(--spacing4);
+  }
+
+  .submenu-grid {
+    display: grid;
+    gap: var(--spacing2);
+  }
+
+  .submenu-item {
+    display: block;
+    text-decoration: none;
+    padding: var(--spacing3);
+    border-radius: var(--borderRadiusLg);
+    transition: all var(--transitionNormal) ease;
+  }
+
+  .submenu-item:hover,
+  .submenu-item:focus {
+    background: rgba(14, 165, 233, 0.05);
+  }
+
+  .submenu-item:focus {
+    outline: 2px solid var(--primaryColor);
+    outline-offset: 2px;
+  }
+
+  .submenu-item.active {
+    background: rgba(14, 165, 233, 0.1);
+  }
+
+  .submenu-item-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing2);
+  }
+
+  .submenu-label {
+    font-family: var(--fontSans);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+  }
+
+  .submenu-description {
+    font-family: var(--fontSans);
+    font-size: 0.8125rem;
+    color: var(--neutralGray);
+    line-height: 1.4;
+  }
+
+  .submenu-item:hover .submenu-label,
+  .submenu-item:focus .submenu-label {
+    color: var(--primaryColor);
   }
 
   /* CTA Button */
@@ -390,6 +647,8 @@ const isActive = (href: string) => {
     visibility: hidden;
     transform: translateY(-10px);
     transition: all 0.3s ease;
+    max-height: calc(100vh - var(--mobileNavbarHeight));
+    overflow-y: auto;
   }
 
   .mobile-menu[aria-hidden="false"] {
@@ -408,6 +667,10 @@ const isActive = (href: string) => {
     padding: 0;
   }
 
+  .mobile-nav-item {
+    margin-bottom: var(--spacing2);
+  }
+
   .mobile-nav-link {
     display: block;
     font-family: var(--fontSans);
@@ -418,7 +681,11 @@ const isActive = (href: string) => {
     padding: var(--spacing4) var(--spacing3);
     border-radius: var(--borderRadiusLg);
     transition: all var(--transitionNormal) ease;
-    margin-bottom: var(--spacing2);
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
   }
 
   .mobile-nav-link:hover,
@@ -436,6 +703,80 @@ const isActive = (href: string) => {
     color: var(--primaryColor);
     font-weight: 600;
     background: rgba(14, 165, 233, 0.05);
+  }
+
+  /* Mobile Dropdown */
+  .mobile-dropdown-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .mobile-dropdown-arrow {
+    transition: transform var(--transitionNormal) ease;
+  }
+
+  .mobile-dropdown-trigger[aria-expanded="true"] .mobile-dropdown-arrow {
+    transform: rotate(180deg);
+  }
+
+  .mobile-submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    margin-left: var(--spacing4);
+  }
+
+  .mobile-submenu[aria-hidden="false"] {
+    max-height: 600px;
+  }
+
+  .mobile-submenu-item {
+    display: block;
+    text-decoration: none;
+    padding: var(--spacing3);
+    border-radius: var(--borderRadiusLg);
+    transition: all var(--transitionNormal) ease;
+    margin-bottom: var(--spacing2);
+  }
+
+  .mobile-submenu-item:hover,
+  .mobile-submenu-item:focus {
+    background: rgba(14, 165, 233, 0.05);
+  }
+
+  .mobile-submenu-item:focus {
+    outline: 2px solid var(--primaryColor);
+    outline-offset: 2px;
+  }
+
+  .mobile-submenu-item.active {
+    background: rgba(14, 165, 233, 0.1);
+  }
+
+  .mobile-submenu-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing2);
+  }
+
+  .mobile-submenu-label {
+    font-family: var(--fontSans);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--neutralDark);
+  }
+
+  .mobile-submenu-description {
+    font-family: var(--fontSans);
+    font-size: 0.875rem;
+    color: var(--neutralGray);
+    line-height: 1.4;
+  }
+
+  .mobile-submenu-item:hover .mobile-submenu-label,
+  .mobile-submenu-item:focus .mobile-submenu-label {
+    color: var(--primaryColor);
   }
 
   .mobile-cta-container {
@@ -500,11 +841,98 @@ const isActive = (href: string) => {
 </style>
 
 <script>
-  // Mobile menu functionality
+  // Dropdown menu functionality
+  class DropdownNavigation {
+    constructor() {
+      this.dropdowns = document.querySelectorAll('[data-dropdown]');
+      this.init();
+    }
+
+    init() {
+      this.dropdowns.forEach(dropdown => {
+        const trigger = dropdown.querySelector('[data-dropdown-trigger]');
+        const menu = dropdown.querySelector('[data-dropdown-menu]');
+        
+        if (!trigger || !menu) return;
+
+        // Mouse events for desktop hover
+        dropdown.addEventListener('mouseenter', () => this.openDropdown(trigger, menu));
+        dropdown.addEventListener('mouseleave', () => this.closeDropdown(trigger, menu));
+        
+        // Keyboard events
+        trigger.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.toggleDropdown(trigger, menu);
+        });
+
+        trigger.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            this.toggleDropdown(trigger, menu);
+          } else if (e.key === 'Escape') {
+            this.closeDropdown(trigger, menu);
+          } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            this.openDropdown(trigger, menu);
+            this.focusFirstMenuItem(menu);
+          }
+        });
+
+        // Handle menu item keyboard navigation
+        this.setupMenuNavigation(menu);
+      });
+
+      // Close dropdowns when clicking outside
+      document.addEventListener('click', (e) => {
+        this.dropdowns.forEach(dropdown => {
+          if (!dropdown.contains(e.target)) {
+            const trigger = dropdown.querySelector('[data-dropdown-trigger]');
+            const menu = dropdown.querySelector('[data-dropdown-menu]');
+            this.closeDropdown(trigger, menu);
+          }
+        });
+      });
+    }
+
+focusFirstMenuItem(menu) {
+      const firstItem = menu.querySelector('a');
+      if (firstItem) {
+        firstItem.focus();
+      }
+    }
+
+    setupMenuNavigation(menu) {
+      const menuItems = menu.querySelectorAll('a');
+      
+      menuItems.forEach((item, index) => {
+        item.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            const nextItem = menuItems[index + 1] || menuItems[0];
+            nextItem.focus();
+          } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            const prevItem = menuItems[index - 1] || menuItems[menuItems.length - 1];
+            prevItem.focus();
+          } else if (e.key === 'Escape') {
+            e.preventDefault();
+            const dropdown = item.closest('[data-dropdown]');
+            const trigger = dropdown.querySelector('[data-dropdown-trigger]');
+            const menu = dropdown.querySelector('[data-dropdown-menu]');
+            this.closeDropdown(trigger, menu);
+            trigger.focus();
+          }
+        });
+      });
+    }
+  }
+
+  // Mobile navigation functionality
   class MobileNavigation {
     constructor() {
       this.button = document.querySelector('[data-mobile-menu-toggle]');
       this.menu = document.querySelector('[data-mobile-menu]');
+      this.dropdownTriggers = document.querySelectorAll('[data-mobile-dropdown-trigger]');
       this.isOpen = false;
       
       this.init();
@@ -513,8 +941,21 @@ const isActive = (href: string) => {
     init() {
       if (!this.button || !this.menu) return;
 
-      // Button click handler
+      // Main menu toggle
       this.button.addEventListener('click', () => this.toggle());
+
+      // Mobile dropdown functionality
+      this.dropdownTriggers.forEach(trigger => {
+        const dropdownId = trigger.getAttribute('data-mobile-dropdown-trigger');
+        const menu = document.querySelector(`[data-mobile-dropdown-menu="${dropdownId}"]`);
+        
+        if (menu) {
+          trigger.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.toggleMobileDropdown(trigger, menu);
+          });
+        }
+      });
 
       // Close on escape key
       document.addEventListener('keydown', (e) => {
@@ -551,7 +992,7 @@ const isActive = (href: string) => {
       this.menu.setAttribute('aria-hidden', 'false');
       
       // Focus first menu item
-      const firstMenuItem = this.menu.querySelector('a');
+      const firstMenuItem = this.menu.querySelector('a, button');
       if (firstMenuItem) {
         firstMenuItem.focus();
       }
@@ -565,6 +1006,16 @@ const isActive = (href: string) => {
       this.button.setAttribute('aria-expanded', 'false');
       this.menu.setAttribute('aria-hidden', 'true');
       
+      // Close all mobile dropdowns
+      this.dropdownTriggers.forEach(trigger => {
+        const dropdownId = trigger.getAttribute('data-mobile-dropdown-trigger');
+        const menu = document.querySelector(`[data-mobile-dropdown-menu="${dropdownId}"]`);
+        if (menu) {
+          trigger.setAttribute('aria-expanded', 'false');
+          menu.setAttribute('aria-hidden', 'true');
+        }
+      });
+      
       // Return focus to button
       this.button.focus();
       
@@ -572,8 +1023,14 @@ const isActive = (href: string) => {
       document.body.style.overflow = '';
     }
 
+    toggleMobileDropdown(trigger, menu) {
+      const isOpen = trigger.getAttribute('aria-expanded') === 'true';
+      trigger.setAttribute('aria-expanded', !isOpen);
+      menu.setAttribute('aria-hidden', isOpen);
+    }
+
     setupFocusManagement() {
-      const menuItems = this.menu.querySelectorAll('a');
+      const menuItems = this.menu.querySelectorAll('a, button');
       
       menuItems.forEach((item, index) => {
         item.addEventListener('keydown', (e) => {
@@ -596,6 +1053,7 @@ const isActive = (href: string) => {
 
   // Initialize when DOM is loaded
   document.addEventListener('DOMContentLoaded', () => {
+    new DropdownNavigation();
     new MobileNavigation();
   });
 

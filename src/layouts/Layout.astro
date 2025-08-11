@@ -4,6 +4,7 @@ import NavBar from './navigation/NavBar.astro';
 import Footer from './navigation/Footer.astro';
 import CookieConsent from './navigation/CookieConsent.astro';
 import theme from '../lib/therme';
+import { businessNavigationConfig as navigation } from '../lib/navigation';
 
 
 export interface Props {
@@ -28,21 +29,7 @@ const {
 const currentPath = Astro.url.pathname;
 
 // Navigation configuration
-const navigation = {
-  logo: { src: '/favicon.webp', alt: 'Your Agency' },
-  links: [
-    { href: '/', label: 'Home' },
-    { href: '/services', label: 'Services' },
-    { href: '/about', label: 'About' },
-    { href: '/portfolio', label: 'Portfolio' },
-    { href: '/blog', label: 'Blog' },
-    { href: '/contact', label: 'Contact' }
-  ],
-  ctaButton: { 
-    href: '/contact', 
-    label: 'Get Started' 
-  }
-};
+
 
 // Construct full URL for canonical and og:url
 const site = Astro.site || 'https://youragency.com';

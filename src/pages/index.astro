@@ -10,14 +10,18 @@ import HowWeWork from '../components/home/HowWeWork.astro';
 import FAQ from '../components/home/FAQ.astro';
 import FinalCTA from '../components/home/FinalCTA.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import { homeHeroConfig } from '../lib/home';
+
+
 ---
 
 <Layout  title="Home - Your Agency"
   description="We create digital solutions that drive results">
 
-  <Hero/>
+ <Hero 
+
+  {...homeHeroConfig}
+/>
   <ServicesOverview/>
   <WhyChooseUs/>
    <CaseStudies 
