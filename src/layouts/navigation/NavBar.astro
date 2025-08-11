@@ -1,6 +1,6 @@
 ---
-// Navbar.astro - Responsive and accessible navigation component with mega menu
-import theme from '../../lib/therme';
+// SimpleNavbar.astro - WCAG/ARIA/AODA compliant navigation using theme system
+import theme from '../../lib/theme.js';
 
 export interface Props {
   currentPath?: string;
@@ -16,9 +16,7 @@ export interface Props {
     submenu?: Array<{
       href: string;
       label: string;
-      description?: string;
       external?: boolean;
-      icon?: string;
     }>;
   }>;
   ctaButton?: {
@@ -30,333 +28,267 @@ export interface Props {
 
 const {
   currentPath = '',
-  logo = { text: 'Agency', src: '/favicon.webp' },
+  logo = { text: 'Your Company', src: '/logo.svg' },
   links = [
-    { 
-      href: '/', 
-      label: 'Home',
-      submenu: [
-        { href: '/', label: 'Overview', description: 'Welcome to our agency' },
-        { href: '/features', label: 'Features', description: 'What makes us different' },
-        { href: '/testimonials', label: 'Testimonials', description: 'What our clients say' }
-      ]
-    },
+    { href: '/', label: 'Home' },
     { 
       href: '/services', 
       label: 'Services',
       submenu: [
-        { href: '/services/web-design', label: 'Web Design', description: 'Custom website design & development' },
-        { href: '/services/branding', label: 'Branding', description: 'Logo design & brand identity' },
-        { href: '/services/marketing', label: 'Digital Marketing', description: 'SEO, PPC & social media' },
-        { href: '/services/consulting', label: 'Consulting', description: 'Strategic business guidance' }
+        { href: '/services/web-design', label: 'Web Design' },
+        { href: '/services/consulting', label: 'Consulting' }
       ]
     },
-    { 
-      href: '/about', 
-      label: 'About',
-      submenu: [
-        { href: '/about', label: 'Our Story', description: 'Learn about our journey' },
-        { href: '/about/team', label: 'Team', description: 'Meet our talented professionals' },
-        { href: '/about/careers', label: 'Careers', description: 'Join our growing team' },
-        { href: '/about/culture', label: 'Culture', description: 'Our values and mission' }
-      ]
-    },
-    { 
-      href: '/portfolio', 
-      label: 'Portfolio',
-      submenu: [
-        { href: '/portfolio', label: 'All Projects', description: 'View our complete portfolio' },
-        { href: '/portfolio/web', label: 'Web Projects', description: 'Website design & development' },
-        { href: '/portfolio/branding', label: 'Brand Projects', description: 'Logo & identity work' },
-        { href: '/portfolio/case-studies', label: 'Case Studies', description: 'In-depth project breakdowns' }
-      ]
-    },
-    { 
-      href: '/blog', 
-      label: 'Blog',
-      submenu: [
-        { href: '/blog', label: 'Latest Posts', description: 'Our newest articles' },
-        { href: '/blog/tutorials', label: 'Tutorials', description: 'Step-by-step guides' },
-        { href: '/blog/insights', label: 'Industry Insights', description: 'Trends and analysis' },
-        { href: '/blog/news', label: 'Company News', description: 'Updates and announcements' }
-      ]
-    },
+    { href: '/about', label: 'About' },
     { href: '/contact', label: 'Contact' }
   ],
   ctaButton = { href: '/contact', label: 'Get Started' }
 } = Astro.props;
 
-// Helper function to check if link is active
+// Check if current page matches link
 const isActive = (href: string) => {
   if (href === '/' && currentPath === '/') return true;
   if (href !== '/' && currentPath.startsWith(href)) return true;
   return false;
 };
-
-// Helper function to check if any submenu item is active
-const hasActiveSubmenu = (submenu?: Array<{href: string}>) => {
-  if (!submenu) return false;
-  return submenu.some(item => isActive(item.href));
-};
 ---
 
 <nav class="navbar" aria-label="Main navigation">
   <div class="navbar-container">
-    <!-- Logo/Brand -->
-    <div class="navbar-brand">
-      <a href="/" class="brand-link" aria-label="Home">
-        {logo.src ? (
-          <img 
-            src={logo.src} 
-            alt={logo.alt || 'Company logo'} 
-            class="brand-logo"
-            width="40"
-            height="40"
-          />
-        ) : (
-          <span class="brand-text">{logo.text}</span>
-        )}
-      </a>
-    </div>
+    <!-- Logo -->
+    <a href="/" class="logo" aria-label="Go to homepage">
+      {logo.src && (
+        <img src={logo.src} alt={logo.alt || 'Company logo'} class="logo-img" />
+      )}
+      {logo.text && <span class="logo-text">{logo.text}</span>}
+    </a>
 
     <!-- Desktop Navigation -->
-    <div class="navbar-menu desktop-only" role="menubar">
-      <ul class="nav-list" role="none">
-        {links.map((link, index) => (
-          <li class="nav-item" role="none">
-            {link.submenu ? (
-              <!-- Dropdown Menu Item -->
-              <div class="dropdown" data-dropdown={`dropdown-${index}`}>
-                <button 
-                  class={`nav-link dropdown-trigger ${isActive(link.href) || hasActiveSubmenu(link.submenu) ? 'active' : ''}`}
-                  role="menuitem"
-                  aria-haspopup="true"
-                  aria-expanded="false"
-                  aria-controls={`submenu-${index}`}
-                  data-dropdown-trigger={`dropdown-${index}`}
-                >
-                  {link.label}
-                  <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-                    <path d="M6 8.5L2.5 5h7L6 8.5z"/>
-                  </svg>
-                </button>
-                
-                <!-- Mega Menu -->
-                <div 
-                  class="mega-menu"
-                  id={`submenu-${index}`}
-                  role="menu"
-                  aria-hidden="true"
-                  data-dropdown-menu={`dropdown-${index}`}
-                >
-                  <div class="mega-menu-content">
-                    <div class="submenu-grid">
-                      {link.submenu.map((subItem) => (
-                        <a 
-                          href={subItem.href}
-                          class={`submenu-item ${isActive(subItem.href) ? 'active' : ''}`}
-                          role="menuitem"
-                          {...(subItem.external && { 
-                            target: '_blank', 
-                            rel: 'noopener noreferrer',
-                            'aria-label': `${subItem.label} (opens in new tab)`
-                          })}
-                        >
-                          <div class="submenu-item-content">
-                            <span class="submenu-label">{subItem.label}</span>
-                            {subItem.description && (
-                              <span class="submenu-description">{subItem.description}</span>
-                            )}
-                          </div>
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <!-- Regular Menu Item -->
-              <a 
-                href={link.href}
-                class={`nav-link ${isActive(link.href) ? 'active' : ''}`}
-                role="menuitem"
-                aria-current={isActive(link.href) ? 'page' : undefined}
-                {...(link.external && { 
-                  target: '_blank', 
-                  rel: 'noopener noreferrer',
-                  'aria-label': `${link.label} (opens in new tab)`
-                })}
+    <ul class="nav-links desktop-nav">
+      {links.map((link) => (
+        <li class="nav-item">
+          {link.submenu ? (
+            <!-- Dropdown -->
+            <div class="dropdown">
+              <button 
+                class={`nav-link dropdown-toggle ${isActive(link.href) ? 'active' : ''}`}
+                aria-expanded="false"
+                aria-haspopup="true"
               >
                 {link.label}
-              </a>
-            )}
-          </li>
-        ))}
-      </ul>
-      
-      <!-- CTA Button -->
-      {ctaButton && (
-        <a 
-          href={ctaButton.href}
-          class="cta-button"
-          {...(ctaButton.external && { 
-            target: '_blank', 
-            rel: 'noopener noreferrer',
-            'aria-label': `${ctaButton.label} (opens in new tab)`
-          })}
-        >
-          {ctaButton.label}
-        </a>
-      )}
-    </div>
+                <svg class="dropdown-arrow" width="12" height="12" aria-hidden="true">
+                  <path d="M6 8.5L2.5 5h7L6 8.5z" fill="currentColor"/>
+                </svg>
+              </button>
+              <ul class="dropdown-menu">
+                {link.submenu.map((subLink) => (
+                  <li>
+                    <a 
+                      href={subLink.href}
+                      class={`dropdown-link ${isActive(subLink.href) ? 'active' : ''}`}
+                      {...(subLink.external && { 
+                        target: '_blank', 
+                        rel: 'noopener noreferrer' 
+                      })}
+                    >
+                      {subLink.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <!-- Regular Link -->
+            <a 
+              href={link.href}
+              class={`nav-link ${isActive(link.href) ? 'active' : ''}`}
+              aria-current={isActive(link.href) ? 'page' : undefined}
+              {...(link.external && { 
+                target: '_blank', 
+                rel: 'noopener noreferrer' 
+              })}
+            >
+              {link.label}
+            </a>
+          )}
+        </li>
+      ))}
+    </ul>
+
+    <!-- CTA Button -->
+    {ctaButton && (
+      <a 
+        href={ctaButton.href}
+        class="cta-button desktop-nav"
+        {...(ctaButton.external && { 
+          target: '_blank', 
+          rel: 'noopener noreferrer' 
+        })}
+      >
+        {ctaButton.label}
+      </a>
+    )}
 
     <!-- Mobile Menu Button -->
     <button 
-      class="mobile-menu-button mobile-only"
-      aria-label="Toggle navigation menu"
+      class="mobile-menu-btn mobile-nav" 
       aria-expanded="false"
       aria-controls="mobile-menu"
-      data-mobile-menu-toggle
+      aria-label="Open navigation menu"
     >
-      <span class="hamburger-line"></span>
-      <span class="hamburger-line"></span>
-      <span class="hamburger-line"></span>
+      <span class="hamburger"></span>
+      <span class="hamburger"></span>
+      <span class="hamburger"></span>
     </button>
   </div>
 
-  <!-- Mobile Navigation -->
-  <div 
-    class="mobile-menu mobile-only" 
-    id="mobile-menu"
-    role="menu"
-    aria-hidden="true"
-    data-mobile-menu
-  >
-    <div class="mobile-menu-content">
-      <ul class="mobile-nav-list" role="none">
-        {links.map((link, index) => (
-          <li class="mobile-nav-item" role="none">
-            {link.submenu ? (
-              <!-- Mobile Dropdown -->
-              <div class="mobile-dropdown">
-                <button 
-                  class={`mobile-nav-link mobile-dropdown-trigger ${isActive(link.href) || hasActiveSubmenu(link.submenu) ? 'active' : ''}`}
-                  aria-expanded="false"
-                  aria-controls={`mobile-submenu-${index}`}
-                  data-mobile-dropdown-trigger={`mobile-dropdown-${index}`}
-                >
-                  {link.label}
-                  <svg class="mobile-dropdown-arrow" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                    <path d="M8 11L4 7h8l-4 4z"/>
-                  </svg>
-                </button>
-                
-                <div 
-                  class="mobile-submenu"
-                  id={`mobile-submenu-${index}`}
-                  aria-hidden="true"
-                  data-mobile-dropdown-menu={`mobile-dropdown-${index}`}
-                >
-                  {link.submenu.map((subItem) => (
-                    <a 
-                      href={subItem.href}
-                      class={`mobile-submenu-item ${isActive(subItem.href) ? 'active' : ''}`}
-                      {...(subItem.external && { 
-                        target: '_blank', 
-                        rel: 'noopener noreferrer',
-                        'aria-label': `${subItem.label} (opens in new tab)`
-                      })}
-                    >
-                      <div class="mobile-submenu-content">
-                        <span class="mobile-submenu-label">{subItem.label}</span>
-                        {subItem.description && (
-                          <span class="mobile-submenu-description">{subItem.description}</span>
-                        )}
-                      </div>
-                    </a>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <!-- Regular Mobile Item -->
-              <a 
-                href={link.href}
-                class={`mobile-nav-link ${isActive(link.href) ? 'active' : ''}`}
-                role="menuitem"
-                aria-current={isActive(link.href) ? 'page' : undefined}
-                {...(link.external && { 
-                  target: '_blank', 
-                  rel: 'noopener noreferrer',
-                  'aria-label': `${link.label} (opens in new tab)`
-                })}
+  <!-- Mobile Menu -->
+  <div class="mobile-menu mobile-nav" id="mobile-menu" aria-hidden="true">
+    <ul class="mobile-nav-links">
+      {links.map((link) => (
+        <li class="mobile-nav-item">
+          {link.submenu ? (
+            <!-- Mobile Dropdown -->
+            <div class="mobile-dropdown">
+              <button 
+                class={`mobile-nav-link mobile-dropdown-toggle ${isActive(link.href) ? 'active' : ''}`}
+                aria-expanded="false"
               >
                 {link.label}
-              </a>
-            )}
-          </li>
-        ))}
-      </ul>
+                <svg class="mobile-dropdown-arrow" width="16" height="16" aria-hidden="true">
+                  <path d="M8 11L4 7h8l-4 4z" fill="currentColor"/>
+                </svg>
+              </button>
+              <ul class="mobile-dropdown-menu">
+                {link.submenu.map((subLink) => (
+                  <li>
+                    <a 
+                      href={subLink.href}
+                      class={`mobile-dropdown-link ${isActive(subLink.href) ? 'active' : ''}`}
+                      {...(subLink.external && { 
+                        target: '_blank', 
+                        rel: 'noopener noreferrer' 
+                      })}
+                    >
+                      {subLink.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <!-- Regular Mobile Link -->
+            <a 
+              href={link.href}
+              class={`mobile-nav-link ${isActive(link.href) ? 'active' : ''}`}
+              aria-current={isActive(link.href) ? 'page' : undefined}
+              {...(link.external && { 
+                target: '_blank', 
+                rel: 'noopener noreferrer' 
+              })}
+            >
+              {link.label}
+            </a>
+          )}
+        </li>
+      ))}
       
       {ctaButton && (
-        <div class="mobile-cta-container">
+        <li class="mobile-nav-item">
           <a 
             href={ctaButton.href}
             class="mobile-cta-button"
             {...(ctaButton.external && { 
               target: '_blank', 
-              rel: 'noopener noreferrer',
-              'aria-label': `${ctaButton.label} (opens in new tab)`
+              rel: 'noopener noreferrer' 
             })}
           >
             {ctaButton.label}
           </a>
-        </div>
+        </li>
       )}
-    </div>
+    </ul>
   </div>
 </nav>
 
 <style define:vars={{
+  // Colors from theme
   primaryColor: theme.colors.primary[500],
   primaryHover: theme.colors.primary[600],
+  primaryLight: theme.colors.primary[100],
   neutralWhite: theme.colors.neutral[50],
   neutralGray: theme.colors.neutral[500],
   neutralLight: theme.colors.neutral[100],
   neutralDark: theme.colors.neutral[900],
   borderColor: theme.colors.border,
-  navbarHeight: theme.components.navbar.height,
-  mobileNavbarHeight: theme.components.navbar.mobileHeight,
+  backgroundColor: theme.colors.background,
+  foregroundColor: theme.colors.foreground,
+  mutedColor: theme.colors.muted,
+  
+  // Typography from theme
   fontSans: theme.typography.fontFamily.sans.join(', '),
   fontDisplay: theme.typography.fontFamily.display.join(', '),
+  
+  // Spacing from theme
+  spacing1: theme.spacing[1],
   spacing2: theme.spacing[2],
   spacing3: theme.spacing[3],
   spacing4: theme.spacing[4],
+  spacing5: theme.spacing[5],
   spacing6: theme.spacing[6],
   spacing8: theme.spacing[8],
+  spacing11: theme.spacing[11], // 44px for touch targets
+  spacing12: theme.spacing[12], // 48px for enhanced touch targets
+  spacing16: theme.spacing[16],
+  spacing20: theme.spacing[20],
+  
+  // Border radius from theme
+  borderRadiusSm: theme.borderRadius.sm,
+  borderRadiusBase: theme.borderRadius.base,
   borderRadiusLg: theme.borderRadius.lg,
+  borderRadiusXl: theme.borderRadius.xl,
+  
+  // Shadows from theme
+  shadowSm: theme.boxShadow.sm,
+  shadowBase: theme.boxShadow.base,
   shadowMd: theme.boxShadow.md,
   shadowLg: theme.boxShadow.lg,
-  transitionNormal: theme.animation.duration.normal,
-  breakpointMd: theme.breakpoints.md
+  
+  // Animation from theme
+  durationFast: theme.animation.duration.fast,
+  durationNormal: theme.animation.duration.normal,
+  easingOut: theme.animation.easing.out,
+  
+  // Component specific from theme
+  navbarHeight: theme.components.navbar.height,
+  mobileNavbarHeight: theme.components.navbar.mobileHeight,
+  
+  // Z-index from theme
+  zIndexSkipLink: theme.zIndex.skipLink,
+  zIndexSticky: theme.zIndex.sticky,
+  zIndexDropdown: theme.zIndex.dropdown,
+  zIndexModal: theme.zIndex.modal
 }}>
+  /* Main navbar */
   .navbar {
+    background: var(--backgroundColor);
+    border-bottom: 1px solid var(--borderColor);
     position: sticky;
     top: 0;
-    z-index: 1100;
-    background: var(--neutralWhite);
-    border-bottom: 1px solid var(--borderColor);
-    backdrop-filter: blur(10px);
-    background: rgba(255, 255, 255, 0.95);
+    z-index: var(--zIndexSticky);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
 
   .navbar-container {
-    max-width: 1280px;
+    max-width: var(--spacing80); /* 1280px equivalent */
     margin: 0 auto;
     padding: 0 var(--spacing4);
     display: flex;
     align-items: center;
     justify-content: space-between;
     height: var(--mobileNavbarHeight);
+    position: relative;
   }
 
   @media (min-width: 768px) {
@@ -366,50 +298,40 @@ const hasActiveSubmenu = (submenu?: Array<{href: string}>) => {
     }
   }
 
-  /* Brand/Logo Styles */
-  .navbar-brand {
-    flex-shrink: 0;
-  }
-
-  .brand-link {
+  /* Logo - Ensuring proper touch target */
+  .logo {
     display: flex;
     align-items: center;
+    gap: var(--spacing2);
     text-decoration: none;
-    color: var(--neutralDark);
-    transition: opacity var(--transitionNormal) ease;
+    color: var(--foregroundColor);
+    font-family: var(--fontDisplay);
+    font-weight: 700;
+    font-size: 1.25rem;
+    padding: var(--spacing3);
+    border-radius: var(--borderRadiusLg);
+    /* Minimum touch target size */
+    min-height: var(--spacing11); /* 44px */
+    touch-action: manipulation;
+    transition: all var(--durationNormal) var(--easingOut);
   }
 
-  .brand-link:hover,
-  .brand-link:focus {
+  .logo:focus {
+    outline: 2px solid var(--primaryColor);
+    outline-offset: 2px;
+  }
+
+  .logo:hover {
     opacity: 0.8;
   }
 
-  .brand-link:focus {
-    outline: 2px solid var(--primaryColor);
-    outline-offset: 2px;
-    border-radius: var(--spacing2);
-  }
-
-  .brand-logo {
-    height: 40px;
+  .logo-img {
+    height: var(--spacing8); /* 32px */
     width: auto;
   }
 
-  .brand-text {
-    font-family: var(--fontDisplay);
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--primaryColor);
-  }
-
   /* Desktop Navigation */
-  .navbar-menu {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing8);
-  }
-
-  .nav-list {
+  .nav-links {
     display: flex;
     align-items: center;
     gap: var(--spacing2);
@@ -423,27 +345,30 @@ const hasActiveSubmenu = (submenu?: Array<{href: string}>) => {
   }
 
   .nav-link {
-    font-family: var(--fontSans);
-    font-size: 0.9375rem;
-    font-weight: 500;
-    color: var(--neutralGray);
-    text-decoration: none;
-    padding: var(--spacing2) var(--spacing3);
-    border-radius: var(--borderRadiusLg);
-    transition: all var(--transitionNormal) ease;
-    position: relative;
     display: flex;
     align-items: center;
-    gap: var(--spacing2);
+    gap: var(--spacing1);
+    text-decoration: none;
+    color: var(--neutralGray);
+    font-family: var(--fontSans);
+    font-weight: 500;
+    font-size: 0.9375rem;
+    padding: var(--spacing3) var(--spacing4);
+    border-radius: var(--borderRadiusLg);
+    transition: all var(--durationNormal) var(--easingOut);
     background: none;
     border: none;
     cursor: pointer;
+    white-space: nowrap;
+    /* Ensure minimum touch target */
+    min-height: var(--spacing11); /* 44px */
+    touch-action: manipulation;
   }
 
   .nav-link:hover,
   .nav-link:focus {
     color: var(--primaryColor);
-    background: rgba(14, 165, 233, 0.05);
+    background: rgba(175, 233, 14, 0.1); /* Using theme primary with alpha */
   }
 
   .nav-link:focus {
@@ -456,121 +381,92 @@ const hasActiveSubmenu = (submenu?: Array<{href: string}>) => {
     font-weight: 600;
   }
 
-  .nav-link.active::after {
-    content: '';
-    position: absolute;
-    bottom: -8px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 6px;
-    height: 6px;
-    background: var(--primaryColor);
-    border-radius: 50%;
+  /* Dropdown */
+  .dropdown {
+    position: relative;
   }
 
-  /* Dropdown Arrow */
   .dropdown-arrow {
-    transition: transform var(--transitionNormal) ease;
+    transition: transform var(--durationNormal) var(--easingOut);
+    flex-shrink: 0;
   }
 
-  .dropdown[aria-expanded="true"] .dropdown-arrow {
+  .dropdown:hover .dropdown-arrow,
+  .dropdown-toggle[aria-expanded="true"] .dropdown-arrow {
     transform: rotate(180deg);
   }
 
-  /* Mega Menu */
-  .mega-menu {
+  .dropdown-menu {
     position: absolute;
-    top: calc(100% + 8px);
-    left: 50%;
-    transform: translateX(-50%);
-    min-width: 320px;
-    max-width: 480px;
-    background: var(--neutralWhite);
+    top: calc(100% + var(--spacing2));
+    left: 0;
+    min-width: 200px;
+    background: var(--backgroundColor);
     border: 1px solid var(--borderColor);
     border-radius: var(--borderRadiusLg);
     box-shadow: var(--shadowLg);
+    list-style: none;
+    margin: 0;
+    padding: var(--spacing2) 0;
     opacity: 0;
     visibility: hidden;
-    transform: translateX(-50%) translateY(-10px);
-    transition: all 0.2s ease;
-    z-index: 1000;
+    transform: translateY(-10px);
+    transition: all var(--durationNormal) var(--easingOut);
+    z-index: var(--zIndexDropdown);
   }
 
-  .dropdown:hover .mega-menu,
-  .dropdown[aria-expanded="true"] .mega-menu {
+  .dropdown:hover .dropdown-menu,
+  .dropdown-toggle[aria-expanded="true"] + .dropdown-menu {
     opacity: 1;
     visibility: visible;
-    transform: translateX(-50%) translateY(0);
+    transform: translateY(0);
   }
 
-  .mega-menu-content {
-    padding: var(--spacing4);
-  }
-
-  .submenu-grid {
-    display: grid;
-    gap: var(--spacing2);
-  }
-
-  .submenu-item {
+  .dropdown-link {
     display: block;
+    padding: var(--spacing3) var(--spacing4);
     text-decoration: none;
-    padding: var(--spacing3);
-    border-radius: var(--borderRadiusLg);
-    transition: all var(--transitionNormal) ease;
-  }
-
-  .submenu-item:hover,
-  .submenu-item:focus {
-    background: rgba(14, 165, 233, 0.05);
-  }
-
-  .submenu-item:focus {
-    outline: 2px solid var(--primaryColor);
-    outline-offset: 2px;
-  }
-
-  .submenu-item.active {
-    background: rgba(14, 165, 233, 0.1);
-  }
-
-  .submenu-item-content {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing2);
-  }
-
-  .submenu-label {
-    font-family: var(--fontSans);
-    font-size: 0.9375rem;
-    font-weight: 600;
-    color: var(--neutralDark);
-  }
-
-  .submenu-description {
-    font-family: var(--fontSans);
-    font-size: 0.8125rem;
     color: var(--neutralGray);
-    line-height: 1.4;
+    font-family: var(--fontSans);
+    transition: all var(--durationNormal) var(--easingOut);
+    /* Ensure minimum touch target */
+    min-height: var(--spacing11); /* 44px */
+    touch-action: manipulation;
   }
 
-  .submenu-item:hover .submenu-label,
-  .submenu-item:focus .submenu-label {
+  .dropdown-link:hover,
+  .dropdown-link:focus {
+    background: rgba(175, 233, 14, 0.1);
     color: var(--primaryColor);
+  }
+
+  .dropdown-link:focus {
+    outline: 2px solid var(--primaryColor);
+    outline-offset: -2px;
+  }
+
+  .dropdown-link.active {
+    color: var(--primaryColor);
+    background: rgba(175, 233, 14, 0.1);
   }
 
   /* CTA Button */
   .cta-button {
-    font-family: var(--fontSans);
-    font-size: 0.9375rem;
-    font-weight: 600;
-    color: var(--neutralWhite);
     background: var(--primaryColor);
+    color: var(--neutralDark);
     text-decoration: none;
     padding: var(--spacing3) var(--spacing6);
     border-radius: var(--borderRadiusLg);
-    transition: all var(--transitionNormal) ease;
+    font-family: var(--fontSans);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    transition: all var(--durationNormal) var(--easingOut);
     border: 2px solid var(--primaryColor);
+    /* Ensure minimum touch target */
+    min-height: var(--spacing11); /* 44px */
+    display: flex;
+    align-items: center;
+    touch-action: manipulation;
   }
 
   .cta-button:hover,
@@ -587,50 +483,53 @@ const hasActiveSubmenu = (submenu?: Array<{href: string}>) => {
   }
 
   /* Mobile Menu Button */
-  .mobile-menu-button {
+  .mobile-menu-btn {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    width: 40px;
-    height: 40px;
     background: none;
-    border: none;
+    border: 2px solid transparent;
     cursor: pointer;
-    padding: var(--spacing2);
+    padding: var(--spacing3);
     border-radius: var(--borderRadiusLg);
-    transition: background var(--transitionNormal) ease;
+    transition: all var(--durationNormal) var(--easingOut);
+    /* Ensure proper touch target - using theme spacing */
+    min-width: var(--spacing12); /* 48px for enhanced accessibility */
+    min-height: var(--spacing12); /* 48px */
+    touch-action: manipulation;
   }
 
-  .mobile-menu-button:hover,
-  .mobile-menu-button:focus {
-    background: rgba(14, 165, 233, 0.05);
+  .mobile-menu-btn:hover,
+  .mobile-menu-btn:focus {
+    background: rgba(175, 233, 14, 0.1);
+    border-color: var(--primaryLight);
   }
 
-  .mobile-menu-button:focus {
+  .mobile-menu-btn:focus {
     outline: 2px solid var(--primaryColor);
     outline-offset: 2px;
   }
 
-  .hamburger-line {
+  .hamburger {
     display: block;
-    width: 20px;
-    height: 2px;
-    background: var(--neutralDark);
+    width: var(--spacing6); /* 24px */
+    height: 3px;
+    background: var(--foregroundColor);
+    transition: all 0.3s var(--easingOut);
+    border-radius: 2px;
     margin: 2px 0;
-    transition: all 0.3s ease;
-    border-radius: 1px;
   }
 
-  .mobile-menu-button[aria-expanded="true"] .hamburger-line:nth-child(1) {
+  .mobile-menu-btn[aria-expanded="true"] .hamburger:nth-child(1) {
     transform: rotate(45deg) translate(5px, 5px);
   }
 
-  .mobile-menu-button[aria-expanded="true"] .hamburger-line:nth-child(2) {
+  .mobile-menu-btn[aria-expanded="true"] .hamburger:nth-child(2) {
     opacity: 0;
   }
 
-  .mobile-menu-button[aria-expanded="true"] .hamburger-line:nth-child(3) {
+  .mobile-menu-btn[aria-expanded="true"] .hamburger:nth-child(3) {
     transform: rotate(-45deg) translate(7px, -6px);
   }
 
@@ -640,58 +539,60 @@ const hasActiveSubmenu = (submenu?: Array<{href: string}>) => {
     top: 100%;
     left: 0;
     right: 0;
-    background: var(--neutralWhite);
+    background: var(--backgroundColor);
     border-bottom: 1px solid var(--borderColor);
     box-shadow: var(--shadowMd);
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: all 0.3s ease;
-    max-height: calc(100vh - var(--mobileNavbarHeight));
-    overflow-y: auto;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s var(--easingOut);
+    z-index: var(--zIndexModal);
   }
 
   .mobile-menu[aria-hidden="false"] {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
+    max-height: 100vh;
   }
 
-  .mobile-menu-content {
-    padding: var(--spacing6) var(--spacing4);
-  }
-
-  .mobile-nav-list {
+  .mobile-nav-links {
     list-style: none;
     margin: 0;
-    padding: 0;
+    padding: var(--spacing4);
   }
 
   .mobile-nav-item {
     margin-bottom: var(--spacing2);
   }
 
+  .mobile-nav-item:last-child {
+    margin-bottom: 0;
+  }
+
   .mobile-nav-link {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-decoration: none;
+    color: var(--foregroundColor);
     font-family: var(--fontSans);
     font-size: 1.125rem;
     font-weight: 500;
-    color: var(--neutralGray);
-    text-decoration: none;
     padding: var(--spacing4) var(--spacing3);
     border-radius: var(--borderRadiusLg);
-    transition: all var(--transitionNormal) ease;
+    transition: all var(--durationNormal) var(--easingOut);
     background: none;
-    border: none;
+    border: 2px solid transparent;
+    cursor: pointer;
     width: 100%;
     text-align: left;
-    cursor: pointer;
+    /* Ensure proper touch targets for mobile */
+    min-height: var(--spacing12); /* 48px for mobile */
+    touch-action: manipulation;
   }
 
   .mobile-nav-link:hover,
   .mobile-nav-link:focus {
     color: var(--primaryColor);
-    background: rgba(14, 165, 233, 0.05);
+    background: rgba(175, 233, 14, 0.1);
+    border-color: var(--primaryLight);
   }
 
   .mobile-nav-link:focus {
@@ -702,102 +603,86 @@ const hasActiveSubmenu = (submenu?: Array<{href: string}>) => {
   .mobile-nav-link.active {
     color: var(--primaryColor);
     font-weight: 600;
-    background: rgba(14, 165, 233, 0.05);
+    background: rgba(175, 233, 14, 0.1);
+    border-color: var(--primaryColor);
   }
 
   /* Mobile Dropdown */
-  .mobile-dropdown-trigger {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
   .mobile-dropdown-arrow {
-    transition: transform var(--transitionNormal) ease;
+    transition: transform var(--durationNormal) var(--easingOut);
+    flex-shrink: 0;
   }
 
-  .mobile-dropdown-trigger[aria-expanded="true"] .mobile-dropdown-arrow {
+  .mobile-dropdown-toggle[aria-expanded="true"] .mobile-dropdown-arrow {
     transform: rotate(180deg);
   }
 
-  .mobile-submenu {
+  .mobile-dropdown-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    margin-left: var(--spacing4);
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease;
-    margin-left: var(--spacing4);
+    transition: all 0.3s var(--easingOut);
   }
 
-  .mobile-submenu[aria-hidden="false"] {
-    max-height: 600px;
+  .mobile-dropdown-toggle[aria-expanded="true"] + .mobile-dropdown-menu {
+    max-height: 500px;
+    margin-top: var(--spacing2);
   }
 
-  .mobile-submenu-item {
+  .mobile-dropdown-link {
     display: block;
     text-decoration: none;
+    color: var(--neutralGray);
+    font-family: var(--fontSans);
     padding: var(--spacing3);
     border-radius: var(--borderRadiusLg);
-    transition: all var(--transitionNormal) ease;
-    margin-bottom: var(--spacing2);
+    transition: all var(--durationNormal) var(--easingOut);
+    margin-bottom: var(--spacing1);
+    border: 2px solid transparent;
+    /* Ensure proper mobile touch targets */
+    min-height: var(--spacing11); /* 44px minimum */
+    touch-action: manipulation;
   }
 
-  .mobile-submenu-item:hover,
-  .mobile-submenu-item:focus {
-    background: rgba(14, 165, 233, 0.05);
+  .mobile-dropdown-link:hover,
+  .mobile-dropdown-link:focus {
+    background: rgba(175, 233, 14, 0.1);
+    color: var(--primaryColor);
+    border-color: var(--primaryLight);
   }
 
-  .mobile-submenu-item:focus {
+  .mobile-dropdown-link:focus {
     outline: 2px solid var(--primaryColor);
     outline-offset: 2px;
   }
 
-  .mobile-submenu-item.active {
-    background: rgba(14, 165, 233, 0.1);
-  }
-
-  .mobile-submenu-content {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing2);
-  }
-
-  .mobile-submenu-label {
-    font-family: var(--fontSans);
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--neutralDark);
-  }
-
-  .mobile-submenu-description {
-    font-family: var(--fontSans);
-    font-size: 0.875rem;
-    color: var(--neutralGray);
-    line-height: 1.4;
-  }
-
-  .mobile-submenu-item:hover .mobile-submenu-label,
-  .mobile-submenu-item:focus .mobile-submenu-label {
+  .mobile-dropdown-link.active {
     color: var(--primaryColor);
+    background: rgba(175, 233, 14, 0.1);
+    border-color: var(--primaryColor);
   }
 
-  .mobile-cta-container {
-    margin-top: var(--spacing6);
-    padding-top: var(--spacing6);
-    border-top: 1px solid var(--borderColor);
-  }
-
+  /* Mobile CTA */
   .mobile-cta-button {
     display: block;
-    font-family: var(--fontSans);
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: var(--neutralWhite);
     background: var(--primaryColor);
+    color: var(--neutralDark);
     text-decoration: none;
-    text-align: center;
-    padding: var(--spacing4) var(--spacing6);
+    padding: var(--spacing4);
     border-radius: var(--borderRadiusLg);
-    transition: all var(--transitionNormal) ease;
+    font-family: var(--fontSans);
+    font-weight: 600;
+    font-size: 1.125rem;
+    text-align: center;
+    transition: all var(--durationNormal) var(--easingOut);
+    margin-top: var(--spacing6);
     border: 2px solid var(--primaryColor);
+    /* Enhanced mobile touch target */
+    min-height: var(--spacing12); /* 48px */
+    touch-action: manipulation;
   }
 
   .mobile-cta-button:hover,
@@ -811,22 +696,51 @@ const hasActiveSubmenu = (submenu?: Array<{href: string}>) => {
     outline-offset: 2px;
   }
 
-  /* Responsive utility classes */
-  .desktop-only {
+  /* Responsive utilities */
+  .desktop-nav {
     display: none;
   }
 
-  .mobile-only {
+  .mobile-nav {
     display: block;
   }
 
   @media (min-width: 768px) {
-    .desktop-only {
+    .desktop-nav {
       display: flex;
     }
 
-    .mobile-only {
+    .mobile-nav {
       display: none;
+    }
+  }
+
+  /* High contrast support */
+  @media (prefers-contrast: high) {
+    .navbar {
+      border-bottom-width: 2px;
+    }
+    
+    .nav-link,
+    .mobile-nav-link,
+    .dropdown-link,
+    .mobile-dropdown-link,
+    .logo,
+    .cta-button,
+    .mobile-cta-button,
+    .mobile-menu-btn {
+      border-width: 2px;
+    }
+    
+    .nav-link:focus,
+    .mobile-nav-link:focus,
+    .dropdown-link:focus,
+    .mobile-dropdown-link:focus,
+    .logo:focus,
+    .cta-button:focus,
+    .mobile-cta-button:focus,
+    .mobile-menu-btn:focus {
+      outline-width: 3px;
     }
   }
 
@@ -837,228 +751,275 @@ const hasActiveSubmenu = (submenu?: Array<{href: string}>) => {
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
     }
+    
+    .dropdown-menu,
+    .mobile-menu,
+    .mobile-dropdown-menu {
+      transition: none;
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    .navbar {
+      position: static;
+      background: white;
+      border-bottom: 1px solid black;
+    }
+    
+    .mobile-menu,
+    .dropdown-menu,
+    .mobile-menu-btn,
+    .cta-button,
+    .mobile-cta-button {
+      display: none !important;
+    }
+    
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    
+    .nav-link {
+      color: black;
+      text-decoration: underline;
+    }
   }
 </style>
 
 <script>
-  // Dropdown menu functionality
-  class DropdownNavigation {
+  class SimpleNavbar {
     constructor() {
-      this.dropdowns = document.querySelectorAll('[data-dropdown]');
+      this.mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+      this.mobileMenu = document.querySelector('.mobile-menu');
+      this.dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+      this.mobileDropdownToggles = document.querySelectorAll('.mobile-dropdown-toggle');
+      
       this.init();
     }
 
     init() {
-      this.dropdowns.forEach(dropdown => {
-        const trigger = dropdown.querySelector('[data-dropdown-trigger]');
-        const menu = dropdown.querySelector('[data-dropdown-menu]');
-        
-        if (!trigger || !menu) return;
-
-        // Mouse events for desktop hover
-        dropdown.addEventListener('mouseenter', () => this.openDropdown(trigger, menu));
-        dropdown.addEventListener('mouseleave', () => this.closeDropdown(trigger, menu));
-        
-        // Keyboard events
-        trigger.addEventListener('click', (e) => {
-          e.preventDefault();
-          this.toggleDropdown(trigger, menu);
+      // Mobile menu toggle
+      if (this.mobileMenuBtn && this.mobileMenu) {
+        this.mobileMenuBtn.addEventListener('click', () => {
+          this.toggleMobileMenu();
         });
-
-        trigger.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            this.toggleDropdown(trigger, menu);
-          } else if (e.key === 'Escape') {
-            this.closeDropdown(trigger, menu);
-          } else if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            this.openDropdown(trigger, menu);
-            this.focusFirstMenuItem(menu);
+        
+        // Close on escape key
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && this.mobileMenu.getAttribute('aria-hidden') === 'false') {
+            this.closeMobileMenu();
           }
         });
+        
+        // Close mobile menu on window resize to desktop
+        window.addEventListener('resize', () => {
+          if (window.innerWidth >= 768 && this.mobileMenu.getAttribute('aria-hidden') === 'false') {
+            this.closeMobileMenu();
+          }
+        });
+      }
 
-        // Handle menu item keyboard navigation
-        this.setupMenuNavigation(menu);
+      // Desktop dropdowns
+      this.dropdownToggles.forEach(toggle => {
+        const dropdown = toggle.closest('.dropdown');
+        const menu = toggle.nextElementSibling;
+
+        // Mouse events
+        dropdown.addEventListener('mouseenter', () => {
+          this.openDropdown(toggle, menu);
+        });
+
+        dropdown.addEventListener('mouseleave', () => {
+          this.closeDropdown(toggle, menu);
+        });
+
+        // Keyboard events
+        toggle.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.toggleDropdown(toggle, menu);
+        });
+
+        toggle.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            this.toggleDropdown(toggle, menu);
+          } else if (e.key === 'Escape') {
+            this.closeDropdown(toggle, menu);
+          }
+        });
+      });
+
+      // Mobile dropdowns
+      this.mobileDropdownToggles.forEach(toggle => {
+        const menu = toggle.nextElementSibling;
+
+        toggle.addEventListener('click', () => {
+          this.toggleMobileDropdown(toggle, menu);
+        });
+
+        toggle.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            this.toggleMobileDropdown(toggle, menu);
+          }
+        });
       });
 
       // Close dropdowns when clicking outside
       document.addEventListener('click', (e) => {
-        this.dropdowns.forEach(dropdown => {
-          if (!dropdown.contains(e.target)) {
-            const trigger = dropdown.querySelector('[data-dropdown-trigger]');
-            const menu = dropdown.querySelector('[data-dropdown-menu]');
-            this.closeDropdown(trigger, menu);
-          }
-        });
+        if (!e.target.closest('.dropdown')) {
+          this.closeAllDropdowns();
+        }
       });
+      
+      // Announce navigation state changes to screen readers
+      this.setupScreenReaderAnnouncements();
     }
 
-focusFirstMenuItem(menu) {
-      const firstItem = menu.querySelector('a');
-      if (firstItem) {
-        firstItem.focus();
+    toggleMobileMenu() {
+      const isOpen = this.mobileMenu.getAttribute('aria-hidden') === 'false';
+      
+      if (isOpen) {
+        this.closeMobileMenu();
+      } else {
+        this.openMobileMenu();
       }
     }
 
-    setupMenuNavigation(menu) {
-      const menuItems = menu.querySelectorAll('a');
-      
-      menuItems.forEach((item, index) => {
-        item.addEventListener('keydown', (e) => {
-          if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            const nextItem = menuItems[index + 1] || menuItems[0];
-            nextItem.focus();
-          } else if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            const prevItem = menuItems[index - 1] || menuItems[menuItems.length - 1];
-            prevItem.focus();
-          } else if (e.key === 'Escape') {
-            e.preventDefault();
-            const dropdown = item.closest('[data-dropdown]');
-            const trigger = dropdown.querySelector('[data-dropdown-trigger]');
-            const menu = dropdown.querySelector('[data-dropdown-menu]');
-            this.closeDropdown(trigger, menu);
-            trigger.focus();
-          }
-        });
-      });
-    }
-  }
-
-  // Mobile navigation functionality
-  class MobileNavigation {
-    constructor() {
-      this.button = document.querySelector('[data-mobile-menu-toggle]');
-      this.menu = document.querySelector('[data-mobile-menu]');
-      this.dropdownTriggers = document.querySelectorAll('[data-mobile-dropdown-trigger]');
-      this.isOpen = false;
-      
-      this.init();
-    }
-
-    init() {
-      if (!this.button || !this.menu) return;
-
-      // Main menu toggle
-      this.button.addEventListener('click', () => this.toggle());
-
-      // Mobile dropdown functionality
-      this.dropdownTriggers.forEach(trigger => {
-        const dropdownId = trigger.getAttribute('data-mobile-dropdown-trigger');
-        const menu = document.querySelector(`[data-mobile-dropdown-menu="${dropdownId}"]`);
-        
-        if (menu) {
-          trigger.addEventListener('click', (e) => {
-            e.preventDefault();
-            this.toggleMobileDropdown(trigger, menu);
-          });
-        }
-      });
-
-      // Close on escape key
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && this.isOpen) {
-          this.close();
-        }
-      });
-
-      // Close when clicking outside
-      document.addEventListener('click', (e) => {
-        if (this.isOpen && !this.button.contains(e.target) && !this.menu.contains(e.target)) {
-          this.close();
-        }
-      });
-
-      // Close on window resize (when switching to desktop)
-      window.addEventListener('resize', () => {
-        if (window.innerWidth >= 768 && this.isOpen) {
-          this.close();
-        }
-      });
-
-      // Handle focus management
-      this.setupFocusManagement();
-    }
-
-    toggle() {
-      this.isOpen ? this.close() : this.open();
-    }
-
-    open() {
-      this.isOpen = true;
-      this.button.setAttribute('aria-expanded', 'true');
-      this.menu.setAttribute('aria-hidden', 'false');
-      
-      // Focus first menu item
-      const firstMenuItem = this.menu.querySelector('a, button');
-      if (firstMenuItem) {
-        firstMenuItem.focus();
-      }
-      
-      // Prevent body scroll
+    openMobileMenu() {
+      this.mobileMenuBtn.setAttribute('aria-expanded', 'true');
+      this.mobileMenuBtn.setAttribute('aria-label', 'Close navigation menu');
+      this.mobileMenu.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
+      this.announceToScreenReader('Navigation menu opened');
     }
 
-    close() {
-      this.isOpen = false;
-      this.button.setAttribute('aria-expanded', 'false');
-      this.menu.setAttribute('aria-hidden', 'true');
-      
-      // Close all mobile dropdowns
-      this.dropdownTriggers.forEach(trigger => {
-        const dropdownId = trigger.getAttribute('data-mobile-dropdown-trigger');
-        const menu = document.querySelector(`[data-mobile-dropdown-menu="${dropdownId}"]`);
-        if (menu) {
-          trigger.setAttribute('aria-expanded', 'false');
-          menu.setAttribute('aria-hidden', 'true');
-        }
-      });
-      
-      // Return focus to button
-      this.button.focus();
-      
-      // Restore body scroll
+    closeMobileMenu() {
+      this.mobileMenuBtn.setAttribute('aria-expanded', 'false');
+      this.mobileMenuBtn.setAttribute('aria-label', 'Open navigation menu');
+      this.mobileMenu.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
-    }
-
-    toggleMobileDropdown(trigger, menu) {
-      const isOpen = trigger.getAttribute('aria-expanded') === 'true';
-      trigger.setAttribute('aria-expanded', !isOpen);
-      menu.setAttribute('aria-hidden', isOpen);
-    }
-
-    setupFocusManagement() {
-      const menuItems = this.menu.querySelectorAll('a, button');
       
-      menuItems.forEach((item, index) => {
-        item.addEventListener('keydown', (e) => {
-          if (e.key === 'Tab') {
-            // If last item and tabbing forward, close menu
-            if (index === menuItems.length - 1 && !e.shiftKey) {
-              e.preventDefault();
-              this.close();
-            }
-            // If first item and tabbing backward, close menu
-            if (index === 0 && e.shiftKey) {
-              e.preventDefault();
-              this.close();
-            }
-          }
-        });
+      // Close all mobile dropdowns when closing menu
+      this.mobileDropdownToggles.forEach(toggle => {
+        toggle.setAttribute('aria-expanded', 'false');
       });
+      
+      this.announceToScreenReader('Navigation menu closed');
+    }
+
+    toggleDropdown(toggle, menu) {
+      const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+      
+      if (isOpen) {
+        this.closeDropdown(toggle, menu);
+      } else {
+        this.closeAllDropdowns();
+        this.openDropdown(toggle, menu);
+      }
+    }
+
+    openDropdown(toggle, menu) {
+      toggle.setAttribute('aria-expanded', 'true');
+    }
+
+    closeDropdown(toggle, menu) {
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+
+    closeAllDropdowns() {
+      this.dropdownToggles.forEach(toggle => {
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+    }
+
+    toggleMobileDropdown(toggle, menu) {
+      const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', !isOpen);
+    }
+    
+    setupScreenReaderAnnouncements() {
+      // Create live region for announcements
+      if (!document.getElementById('nav-announcements')) {
+        const liveRegion = document.createElement('div');
+        liveRegion.id = 'nav-announcements';
+        liveRegion.setAttribute('aria-live', 'polite');
+        liveRegion.setAttribute('aria-atomic', 'true');
+        liveRegion.style.position = 'absolute';
+        liveRegion.style.left = '-10000px';
+        liveRegion.style.width = '1px';
+        liveRegion.style.height = '1px';
+        liveRegion.style.overflow = 'hidden';
+        document.body.appendChild(liveRegion);
+      }
+    }
+    
+    announceToScreenReader(message) {
+      const liveRegion = document.getElementById('nav-announcements');
+      if (liveRegion) {
+        liveRegion.textContent = message;
+        
+        // Clear after announcement
+        setTimeout(() => {
+          liveRegion.textContent = '';
+        }, 1000);
+      }
     }
   }
 
-  // Initialize when DOM is loaded
+  // Initialize when DOM is ready
   document.addEventListener('DOMContentLoaded', () => {
-    new DropdownNavigation();
-    new MobileNavigation();
+    try {
+      new SimpleNavbar();
+      
+      // Mark as successfully loaded for debugging
+      document.documentElement.classList.add('navbar-js-loaded');
+      
+    } catch (error) {
+      console.error('Error initializing navbar:', error);
+      
+      // Provide basic fallback functionality
+      const mobileBtn = document.querySelector('.mobile-menu-btn');
+      const mobileMenu = document.querySelector('.mobile-menu');
+      
+      if (mobileBtn && mobileMenu) {
+        mobileBtn.addEventListener('click', () => {
+          const isHidden = mobileMenu.getAttribute('aria-hidden') === 'true';
+          mobileMenu.setAttribute('aria-hidden', !isHidden);
+          mobileBtn.setAttribute('aria-expanded', isHidden);
+        });
+      }
+    }
   });
 
-  // Handle page navigation (close mobile menu if open)
+  // Handle page navigation cleanup
   window.addEventListener('beforeunload', () => {
     document.body.style.overflow = '';
   });
-</script>
+
+  // Expose utilities for external use
+  window.NavbarUtils = {
+    closeAllMenus: () => {
+      const mobileMenu = document.querySelector('.mobile-menu');
+      const mobileButton = document.querySelector('.mobile-menu-btn');
+      
+      if (mobileMenu && mobileButton) {
+        mobileMenu.setAttribute('aria-hidden', 'true');
+        mobileButton.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      }
+      
+      document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+    },
+    
+    announceToScreenReader: (message) => {
+      const liveRegion = document.getElementById('nav-announcements');
+      if (liveRegion) {
+        liveRegion.textContent = message;
+        setTimeout(() => liveRegion.textContent = '', 1000);
+      }
+    }
+  };

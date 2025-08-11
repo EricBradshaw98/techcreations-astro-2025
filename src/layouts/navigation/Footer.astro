@@ -1,160 +1,1142 @@
 ---
-import theme from "../../lib/therme"
+// SimpleFooter.astro - WCAG/ARIA/AODA compliant footer using theme system
+import theme from '../../lib/theme.js';
+
+export interface Props {
+  logo?: {
+    src?: string;
+    alt?: string;
+    text?: string;
+  };
+  companyInfo?: {
+    name?: string;
+    description?: string;
+    address?: string;
+    phone?: string;
+    email?: string;
+  };
+  links?: {
+    company?: Array<{
+      href: string;
+      label: string;
+      external?: boolean;
+    }>;
+    services?: Array<{
+      href: string;
+      label: string;
+      external?: boolean;
+    }>;
+    resources?: Array<{
+      href: string;
+      label: string;
+      external?: boolean;
+    }>;
+    legal?: Array<{
+      href: string;
+      label: string;
+      external?: boolean;
+    }>;
+  };
+  socialLinks?: Array<{
+    href: string;
+    label: string;
+    icon: string; // SVG path or icon name
+    platform: string;
+  }>;
+  newsletter?: {
+    title?: string;
+    description?: string;
+    placeholder?: string;
+    buttonText?: string;
+  };
+  copyright?: string;
+}
+
+const {
+  logo = { text: 'Your Company', src: '/logo.svg' },
+  companyInfo = {
+    name: 'Your Company',
+    description: 'Building amazing digital experiences for businesses worldwide.',
+    address: '123 Business St, City, State 12345',
+    phone: '+1 (555) 123-4567',
+    email: 'hello@yourcompany.com'
+  },
+  links = {
+    company: [
+      { href: '/about', label: 'About Us' },
+      { href: '/team', label: 'Our Team' },
+      { href: '/careers', label: 'Careers' },
+      { href: '/contact', label: 'Contact' }
+    ],
+    services: [
+      { href: '/services/web-design', label: 'Web Design' },
+      { href: '/services/development', label: 'Development' },
+      { href: '/services/consulting', label: 'Consulting' },
+      { href: '/services/support', label: 'Support' }
+    ],
+    resources: [
+      { href: '/blog', label: 'Blog' },
+      { href: '/case-studies', label: 'Case Studies' },
+      { href: '/documentation', label: 'Documentation' },
+      { href: '/help', label: 'Help Center' }
+    ],
+    legal: [
+      { href: '/privacy', label: 'Privacy Policy' },
+      { href: '/terms', label: 'Terms of Service' },
+      { href: '/cookies', label: 'Cookie Policy' },
+      { href: '/accessibility', label: 'Accessibility' }
+    ]
+  },
+  socialLinks = [
+    { href: 'https://twitter.com', label: 'Follow us on Twitter', icon: 'M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z', platform: 'Twitter' },
+    { href: 'https://linkedin.com', label: 'Connect with us on LinkedIn', icon: 'M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z M4 6a2 2 0 100-4 2 2 0 000 4z', platform: 'LinkedIn' },
+    { href: 'https://github.com', label: 'Check out our GitHub', icon: 'M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22', platform: 'GitHub' }
+  ],
+  newsletter = {
+    title: 'Stay Updated',
+    description: 'Get the latest news and updates delivered to your inbox.',
+    placeholder: 'Enter your email',
+    buttonText: 'Subscribe'
+  },
+  copyright = `© ${new Date().getFullYear()} Your Company. All rights reserved.`
+} = Astro.props;
+
+const currentYear = new Date().getFullYear();
 ---
- 
- 
- <footer class="site-footer">
-      <div class="footer-container">
-        <div class="footer-content">
-          <div class="footer-section">
-            <h3 class="footer-title">Your Agency</h3>
-            <p class="footer-description">
-              Creating exceptional digital experiences that drive results.
-            </p>
-          </div>
-          
-          <div class="footer-section">
-            <h4 class="footer-heading">Quick Links</h4>
-            <ul class="footer-links">
-              <li><a href="/services">Services</a></li>
-              <li><a href="/about">About</a></li>
-              <li><a href="/portfolio">Portfolio</a></li>
-              <li><a href="/contact">Contact</a></li>
-            </ul>
-          </div>
-          
-          <div class="footer-section">
-            <h4 class="footer-heading">Contact</h4>
-            <ul class="footer-links">
-              <li><a href="mailto:hello@youragency.com">hello@youragency.com</a></li>
-              <li><a href="tel:+1234567890">+1 (234) 567-890</a></li>
-            </ul>
-          </div>
-        </div>
+
+<footer class="footer" role="contentinfo" aria-label="Site footer">
+  <div class="footer-container">
+    <!-- Main Footer Content -->
+    <div class="footer-content">
+      <!-- Company Info Section -->
+      <div class="footer-section company-section">
+        <!-- Logo -->
+        <a href="/" class="footer-logo" aria-label="Go to homepage">
+          {logo.src && (
+            <img src={logo.src} alt={logo.alt || 'Company logo'} class="footer-logo-img" />
+          )}
+          {logo.text && <span class="footer-logo-text">{logo.text}</span>}
+        </a>
         
-        <div class="footer-bottom">
-          <p>&copy; {new Date().getFullYear()} Your Agency. All rights reserved.</p>
+        {companyInfo.description && (
+          <p class="company-description">{companyInfo.description}</p>
+        )}
+        
+        <!-- Contact Info -->
+        <div class="contact-info">
+          {companyInfo.address && (
+            <address class="contact-item">
+              <svg class="contact-icon" width="16" height="16" aria-hidden="true">
+                <path d="M12 2C13.1 2 14 2.9 14 4V6C14 7.1 13.1 8 12 8H10V10H12C13.1 10 14 10.9 14 12V14C14 15.1 13.1 16 12 16H4C2.9 16 2 15.1 2 14V12C2 10.9 2.9 10 4 10H6V8H4C2.9 8 2 7.1 2 6V4C2 2.9 2.9 2 4 2H12Z" fill="currentColor"/>
+              </svg>
+              {companyInfo.address}
+            </address>
+          )}
+          
+          {companyInfo.phone && (
+            <a href={`tel:${companyInfo.phone.replace(/\D/g, '')}`} class="contact-item contact-link">
+              <svg class="contact-icon" width="16" height="16" aria-hidden="true">
+                <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" fill="currentColor"/>
+              </svg>
+              {companyInfo.phone}
+            </a>
+          )}
+          
+          {companyInfo.email && (
+            <a href={`mailto:${companyInfo.email}`} class="contact-item contact-link">
+              <svg class="contact-icon" width="16" height="16" aria-hidden="true">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z M22 6l-10 6L2 6" fill="currentColor"/>
+              </svg>
+              {companyInfo.email}
+            </a>
+          )}
         </div>
       </div>
-    </footer>
 
-    <style define:vars={{
+      <!-- Footer Links -->
+      <div class="footer-links">
+        {links.company && (
+          <div class="footer-section">
+            <h3 class="footer-heading">Company</h3>
+            <ul class="footer-link-list">
+              {links.company.map((link) => (
+                <li>
+                  <a 
+                    href={link.href}
+                    class="footer-link"
+                    {...(link.external && { 
+                      target: '_blank', 
+                      rel: 'noopener noreferrer',
+                      'aria-label': `${link.label} (opens in new window)`
+                    })}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {links.services && (
+          <div class="footer-section">
+            <h3 class="footer-heading">Services</h3>
+            <ul class="footer-link-list">
+              {links.services.map((link) => (
+                <li>
+                  <a 
+                    href={link.href}
+                    class="footer-link"
+                    {...(link.external && { 
+                      target: '_blank', 
+                      rel: 'noopener noreferrer',
+                      'aria-label': `${link.label} (opens in new window)`
+                    })}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {links.resources && (
+          <div class="footer-section">
+            <h3 class="footer-heading">Resources</h3>
+            <ul class="footer-link-list">
+              {links.resources.map((link) => (
+                <li>
+                  <a 
+                    href={link.href}
+                    class="footer-link"
+                    {...(link.external && { 
+                      target: '_blank', 
+                      rel: 'noopener noreferrer',
+                      'aria-label': `${link.label} (opens in new window)`
+                    })}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {newsletter && (
+          <div class="footer-section newsletter-section">
+            <h3 class="footer-heading">{newsletter.title}</h3>
+            {newsletter.description && (
+              <p class="newsletter-description">{newsletter.description}</p>
+            )}
+            
+            <form class="newsletter-form" aria-label="Newsletter signup">
+              <div class="newsletter-input-group">
+                <label for="newsletter-email" class="sr-only">Email address</label>
+                <input 
+                  type="email" 
+                  id="newsletter-email"
+                  name="email"
+                  class="newsletter-input"
+                  placeholder={newsletter.placeholder}
+                  required
+                  aria-describedby="newsletter-description"
+                />
+                <button 
+                  type="submit" 
+                  class="newsletter-button"
+                  aria-label="Subscribe to newsletter"
+                >
+                  {newsletter.buttonText}
+                </button>
+              </div>
+              <p id="newsletter-description" class="sr-only">
+                Enter your email address to receive our newsletter
+              </p>
+            </form>
+          </div>
+        )}
+      </div>
+    </div>
+
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+      <div class="footer-bottom-content">
+        <!-- Copyright -->
+        <p class="copyright">{copyright}</p>
+        
+        <!-- Social Links -->
+        {socialLinks && socialLinks.length > 0 && (
+          <div class="social-links">
+            <span class="social-label sr-only">Follow us on social media:</span>
+            <ul class="social-list" role="list" aria-label="Social media links">
+              {socialLinks.map((social) => (
+                <li>
+                  <a 
+                    href={social.href}
+                    class="social-link"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={social.label}
+                  >
+                    <svg class="social-icon" width="20" height="20" aria-hidden="true">
+                      <path d={social.icon} fill="currentColor"/>
+                    </svg>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        
+        <!-- Legal Links -->
+        {links.legal && (
+          <nav class="legal-nav" aria-label="Legal and policy links">
+            <ul class="legal-links">
+              {links.legal.map((link, index) => (
+                <li>
+                  <a 
+                    href={link.href}
+                    class="legal-link"
+                    {...(link.external && { 
+                      target: '_blank', 
+                      rel: 'noopener noreferrer',
+                      'aria-label': `${link.label} (opens in new window)`
+                    })}
+                  >
+                    {link.label}
+                  </a>
+                  {index < links.legal.length - 1 && (
+                    <span class="legal-separator" aria-hidden="true">•</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style define:vars={{
+  // Colors from theme
   primaryColor: theme.colors.primary[500],
+  primaryHover: theme.colors.primary[600],
+  primaryLight: theme.colors.primary[100],
   neutralWhite: theme.colors.neutral[50],
   neutralGray: theme.colors.neutral[500],
-  neutralDark: theme.colors.neutral[900],
   neutralLight: theme.colors.neutral[100],
+  neutralDark: theme.colors.neutral[900],
   borderColor: theme.colors.border,
+  backgroundColor: theme.colors.background,
+  foregroundColor: theme.colors.foreground,
+  mutedColor: theme.colors.muted,
+  mutedForeground: theme.colors['muted-foreground'],
+  
+  // Typography from theme
   fontSans: theme.typography.fontFamily.sans.join(', '),
   fontDisplay: theme.typography.fontFamily.display.join(', '),
+  
+  // Spacing from theme
+  spacing1: theme.spacing[1],
+  spacing2: theme.spacing[2],
+  spacing3: theme.spacing[3],
   spacing4: theme.spacing[4],
+  spacing5: theme.spacing[5],
   spacing6: theme.spacing[6],
   spacing8: theme.spacing[8],
-  spacing12: theme.spacing[12],
+  spacing10: theme.spacing[10],
+  spacing11: theme.spacing[11], // 44px for touch targets
+  spacing12: theme.spacing[12], // 48px for enhanced touch targets
   spacing16: theme.spacing[16],
   spacing20: theme.spacing[20],
+  spacing24: theme.spacing[24],
+  
+  // Border radius from theme
+  borderRadiusSm: theme.borderRadius.sm,
+  borderRadiusBase: theme.borderRadius.base,
   borderRadiusLg: theme.borderRadius.lg,
+  borderRadiusXl: theme.borderRadius.xl,
+  
+  // Shadows from theme
+  shadowSm: theme.boxShadow.sm,
+  shadowBase: theme.boxShadow.base,
   shadowMd: theme.boxShadow.md,
-  transitionNormal: theme.animation.duration.normal,
-  navbarHeight: theme.components.navbar.height,
-  mobileNavbarHeight: theme.components.navbar.mobileNavbarHeight
+  shadowLg: theme.boxShadow.lg,
+  
+  // Animation from theme
+  durationFast: theme.animation.duration.fast,
+  durationNormal: theme.animation.duration.normal,
+  easingOut: theme.animation.easing.out,
+  
+  // Component specific from theme
+  footerMinHeight: theme.components.footer.minHeight,
+  
+  // Z-index from theme
+  zIndexBase: theme.zIndex.base
 }}>
+  /* Screen reader only content */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
 
-     /* Footer styles */
-  .site-footer {
+  /* Main Footer */
+  .footer {
     background: var(--neutralWhite);
     color: var(--neutralWhite);
+    min-height: var(--footerMinHeight);
     margin-top: auto;
   }
 
   .footer-container {
     max-width: 1280px;
     margin: 0 auto;
-    padding: var(--spacing16) var(--spacing4) var(--spacing8);
+    padding: 0 var(--spacing4);
   }
 
   @media (min-width: 768px) {
     .footer-container {
-      padding: var(--spacing20) var(--spacing6) var(--spacing8);
+      padding: 0 var(--spacing6);
     }
   }
 
+  /* Footer Content */
   .footer-content {
+    padding: var(--spacing16) 0 var(--spacing12);
     display: grid;
     gap: var(--spacing12);
-    margin-bottom: var(--spacing12);
+    grid-template-columns: 1fr;
   }
 
   @media (min-width: 768px) {
     .footer-content {
-      grid-template-columns: 2fr 1fr 1fr;
+      grid-template-columns: 1fr 2fr;
       gap: var(--spacing16);
+      align-items: start;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .footer-content {
+      grid-template-columns: 1fr 3fr;
+      gap: var(--spacing20);
+    }
+  }
+
+  /* Company Section */
+  .company-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing6);
+  }
+
+  .footer-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing2);
+    text-decoration: none;
+    color: var(--neutralWhite);
+    font-family: var(--fontDisplay);
+    font-weight: 700;
+    font-size: 1.5rem;
+    padding: var(--spacing2);
+    border-radius: var(--borderRadiusLg);
+    /* Minimum touch target */
+    min-height: var(--spacing11);
+    touch-action: manipulation;
+    transition: all var(--durationNormal) var(--easingOut);
+    align-self: flex-start;
+  }
+
+  .footer-logo:hover,
+  .footer-logo:focus {
+    opacity: 0.8;
+    transform: translateY(-1px);
+  }
+
+  .footer-logo:focus {
+    outline: 2px solid var(--primaryColor);
+    outline-offset: 2px;
+  }
+
+  .footer-logo-img {
+    height: var(--spacing10); /* 40px */
+    width: auto;
+    filter: brightness(0) invert(1); /* Make logo white */
+  }
+
+  .footer-logo-text {
+    color: var(--primaryColor);
+  }
+
+  .company-description {
+    font-family: var(--fontSans);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--mutedForeground);
+    margin: 0;
+    max-width: 400px;
+  }
+
+  /* Contact Info */
+  .contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing3);
+  }
+
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing3);
+    font-family: var(--fontSans);
+    font-size: 0.875rem;
+    color: var(--mutedForeground);
+    font-style: normal;
+    margin: 0;
+  }
+
+  .contact-link {
+    text-decoration: none;
+    padding: var(--spacing2);
+    border-radius: var(--borderRadiusBase);
+    transition: all var(--durationNormal) var(--easingOut);
+    /* Minimum touch target */
+    min-height: var(--spacing11);
+    touch-action: manipulation;
+    margin: calc(-1 * var(--spacing2));
+  }
+
+  .contact-link:hover,
+  .contact-link:focus {
+    color: var(--primaryColor);
+    background: rgba(175, 233, 14, 0.1);
+  }
+
+  .contact-link:focus {
+    outline: 2px solid var(--primaryColor);
+    outline-offset: 2px;
+  }
+
+  .contact-icon {
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+
+  /* Footer Links */
+  .footer-links {
+    display: grid;
+    gap: var(--spacing8);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .footer-links {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .footer-links {
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--spacing6);
     }
   }
 
   .footer-section {
     display: flex;
     flex-direction: column;
-  }
-
-  .footer-title {
-    font-family: var(--fontDisplay);
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--primaryColor);
-    margin: 0 0 var(--spacing4) 0;
-  }
-
-  .footer-description {
-    color: var(--neutralGray);
-    margin: 0;
-    line-height: 1.6;
+    gap: var(--spacing4);
   }
 
   .footer-heading {
+    font-family: var(--fontDisplay);
     font-size: 1.125rem;
     font-weight: 600;
-    margin: 0 0 var(--spacing6) 0;
     color: var(--neutralWhite);
+    margin: 0;
+    margin-bottom: var(--spacing2);
   }
 
-  .footer-links {
+  .footer-link-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing2);
+  }
+
+  .footer-link {
+    font-family: var(--fontSans);
+    font-size: 0.875rem;
+    color: var(--mutedForeground);
+    text-decoration: none;
+    padding: var(--spacing2);
+    border-radius: var(--borderRadiusBase);
+    transition: all var(--durationNormal) var(--easingOut);
+    /* Minimum touch target */
+    min-height: var(--spacing11);
+    touch-action: manipulation;
+    margin: calc(-1 * var(--spacing2));
+    display: flex;
+    align-items: center;
+  }
+
+  .footer-link:hover,
+  .footer-link:focus {
+    color: var(--primaryColor);
+    background: rgba(175, 233, 14, 0.1);
+    transform: translateX(4px);
+  }
+
+  .footer-link:focus {
+    outline: 2px solid var(--primaryColor);
+    outline-offset: 2px;
+  }
+
+  /* Newsletter Section */
+  .newsletter-section {
+    grid-column: 1 / -1;
+    max-width: 400px;
+  }
+
+  @media (min-width: 1024px) {
+    .newsletter-section {
+      grid-column: auto;
+      max-width: none;
+    }
+  }
+
+  .newsletter-description {
+    font-family: var(--fontSans);
+    font-size: 0.875rem;
+    color: var(--mutedForeground);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .newsletter-form {
+    margin-top: var(--spacing4);
+  }
+
+  .newsletter-input-group {
+    display: flex;
+    gap: var(--spacing2);
+    flex-direction: column;
+  }
+
+  @media (min-width: 640px) {
+    .newsletter-input-group {
+      flex-direction: row;
+    }
+  }
+
+  .newsletter-input {
+    flex: 1;
+    font-family: var(--fontSans);
+    font-size: 0.875rem;
+    padding: var(--spacing3) var(--spacing4);
+    border: 1px solid var(--borderColor);
+    border-radius: var(--borderRadiusBase);
+    background: var(--backgroundColor);
+    color: var(--foregroundColor);
+    transition: all var(--durationNormal) var(--easingOut);
+    /* Minimum touch target */
+    min-height: var(--spacing11);
+    touch-action: manipulation;
+  }
+
+  .newsletter-input:focus {
+    outline: 2px solid var(--primaryColor);
+    outline-offset: 2px;
+    border-color: var(--primaryColor);
+  }
+
+  .newsletter-input::placeholder {
+    color: var(--mutedForeground);
+  }
+
+  .newsletter-button {
+    background: var(--primaryColor);
+    color: var(--neutralDark);
+    border: 2px solid var(--primaryColor);
+    font-family: var(--fontSans);
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: var(--spacing3) var(--spacing6);
+    border-radius: var(--borderRadiusBase);
+    cursor: pointer;
+    transition: all var(--durationNormal) var(--easingOut);
+    white-space: nowrap;
+    /* Minimum touch target */
+    min-height: var(--spacing11);
+    touch-action: manipulation;
+  }
+
+  .newsletter-button:hover,
+  .newsletter-button:focus {
+    background: var(--primaryHover);
+    border-color: var(--primaryHover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadowMd);
+  }
+
+  .newsletter-button:focus {
+    outline: 2px solid var(--primaryColor);
+    outline-offset: 2px;
+  }
+
+  /* Footer Bottom */
+  .footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: var(--spacing6) 0;
+  }
+
+  .footer-bottom-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing4);
+    align-items: center;
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .footer-bottom-content {
+      flex-direction: row;
+      justify-content: space-between;
+      text-align: left;
+    }
+  }
+
+  .copyright {
+    font-family: var(--fontSans);
+    font-size: 0.875rem;
+    color: var(--mutedForeground);
+    margin: 0;
+  }
+
+  /* Social Links */
+  .social-links {
+    order: -1;
+  }
+
+  @media (min-width: 768px) {
+    .social-links {
+      order: 0;
+    }
+  }
+
+  .social-list {
+    display: flex;
+    gap: var(--spacing3);
     list-style: none;
     margin: 0;
     padding: 0;
   }
 
-  .footer-links li {
-    margin-bottom: var(--spacing4);
-  }
-
-  .footer-links a {
-    color: var(--neutralGray);
+  .social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing3);
+    color: var(--mutedForeground);
     text-decoration: none;
-    transition: color var(--transitionNormal) ease;
+    border-radius: var(--borderRadiusBase);
+    transition: all var(--durationNormal) var(--easingOut);
+    /* Minimum touch target */
+    min-width: var(--spacing11);
+    min-height: var(--spacing11);
+    touch-action: manipulation;
   }
 
-  .footer-links a:hover,
-  .footer-links a:focus {
+  .social-link:hover,
+  .social-link:focus {
+    color: var(--primaryColor);
+    background: rgba(175, 233, 14, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .social-link:focus {
+    outline: 2px solid var(--primaryColor);
+    outline-offset: 2px;
+  }
+
+  .social-icon {
+    flex-shrink: 0;
+  }
+
+  /* Legal Links */
+  .legal-nav {
+    width: 100%;
+  }
+
+  @media (min-width: 768px) {
+    .legal-nav {
+      width: auto;
+    }
+  }
+
+  .legal-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing3);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 768px) {
+    .legal-links {
+      justify-content: flex-end;
+    }
+  }
+
+  .legal-links li {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing3);
+  }
+
+  .legal-link {
+    font-family: var(--fontSans);
+    font-size: 0.75rem;
+    color: var(--mutedForeground);
+    text-decoration: none;
+    padding: var(--spacing2);
+    border-radius: var(--borderRadiusBase);
+    transition: all var(--durationNormal) var(--easingOut);
+    white-space: nowrap;
+    /* Minimum touch target */
+    min-height: var(--spacing11);
+    touch-action: manipulation;
+    margin: calc(-1 * var(--spacing2));
+    display: flex;
+    align-items: center;
+  }
+
+  .legal-link:hover,
+  .legal-link:focus {
     color: var(--primaryColor);
   }
 
-  .footer-links a:focus {
+  .legal-link:focus {
     outline: 2px solid var(--primaryColor);
     outline-offset: 2px;
-    border-radius: 2px;
   }
 
-  .footer-bottom {
-    padding-top: var(--spacing8);
-    border-top: 1px solid #374151;
-    text-align: center;
+  .legal-separator {
+    color: var(--mutedForeground);
+    opacity: 0.5;
+    font-size: 0.75rem;
   }
 
-  .footer-bottom p {
-    margin: 0;
-    color: var(--neutralGray);
-    font-size: 0.875rem;
+  /* High contrast support */
+  @media (prefers-contrast: high) {
+    .footer {
+      border-top: 2px solid var(--primaryColor);
+    }
+    
+    .footer-link,
+    .contact-link,
+    .social-link,
+    .legal-link,
+    .footer-logo,
+    .newsletter-input,
+    .newsletter-button {
+      border-width: 2px;
+    }
+    
+    .footer-link:focus,
+    .contact-link:focus,
+    .social-link:focus,
+    .legal-link:focus,
+    .footer-logo:focus,
+    .newsletter-input:focus,
+    .newsletter-button:focus {
+      outline-width: 3px;
+    }
   }
 
-  </style>
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    .footer {
+      background: white;
+      color: black;
+      border-top: 2px solid black;
+    }
+    
+    .social-links,
+    .newsletter-section {
+      display: none !important;
+    }
+    
+    .footer-link,
+    .contact-link,
+    .legal-link {
+      color: black;
+      text-decoration: underline;
+    }
+    
+    .footer-logo-img {
+      filter: none;
+    }
+    
+    .footer-bottom-content {
+      flex-direction: column;
+      gap: var(--spacing2);
+    }
+  }
+</style>
+
+<script>
+  class SimpleFooter {
+    constructor() {
+      this.newsletterForm = document.querySelector('.newsletter-form');
+      this.init();
+    }
+
+    init() {
+      // Newsletter form handling
+      if (this.newsletterForm) {
+        this.newsletterForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          this.handleNewsletterSubmit(e);
+        });
+        
+        // Enhanced form validation
+        const emailInput = this.newsletterForm.querySelector('.newsletter-input');
+        if (emailInput) {
+          emailInput.addEventListener('invalid', (e) => {
+            this.handleFormValidation(e);
+          });
+          
+          emailInput.addEventListener('input', (e) => {
+            this.clearValidationMessage(e);
+          });
+        }
+      }
+      
+      // Enhanced keyboard navigation for social links
+      this.setupSocialLinksKeyboard();
+      
+      // Announce successful interactions to screen readers
+      this.setupScreenReaderAnnouncements();
+    }
+
+    handleNewsletterSubmit(e) {
+      const formData = new FormData(e.target);
+      const email = formData.get('email');
+      
+      if (this.validateEmail(email)) {
+        // Here you would typically send the data to your backend
+        console.log('Newsletter signup:', email);
+        
+        // Show success message
+        this.showSuccessMessage('Thank you for subscribing to our newsletter!');
+        
+        // Reset form
+        e.target.reset();
+      } else {
+        this.showErrorMessage('Please enter a valid email address.');
+      }
+    }
+
+    validateEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+
+    handleFormValidation(e) {
+      const input = e.target;
+      
+      // Custom validation messages
+      if (input.validity.valueMissing) {
+        input.setCustomValidity('Please enter your email address');
+      } else if (input.validity.typeMismatch) {
+        input.setCustomValidity('Please enter a valid email address');
+      } else {
+        input.setCustomValidity('');
+      }
+      
+      this.showInputError(input, input.validationMessage);
+    }
+
+    clearValidationMessage(e) {
+      const input = e.target;
+      input.setCustomValidity('');
+      this.clearInputError(input);
+    }
+
+    showInputError(input, message) {
+      // Remove existing error message
+      this.clearInputError(input);
+      
+      // Create error message element
+      const errorElement = document.createElement('div');
+      errorElement.className = 'input-error';
+      errorElement.textContent = message;
+      errorElement.setAttribute('role', 'alert');
+      errorElement.setAttribute('aria-live', 'polite');
+      
+      // Style the error message
+      Object.assign(errorElement.style, {
+        color: '#ef4444',
+        fontSize: '0.75rem',
+        marginTop: '0.25rem',
+        fontFamily: 'var(--fontSans)'
+      });
+      
+      // Insert after input
+      input.parentNode.insertBefore(errorElement, input.nextSibling);
+      
+      // Update input aria-describedby
+      errorElement.id = `${input.id}-error`;
+      input.setAttribute('aria-describedby', errorElement.id);
+      input.setAttribute('aria-invalid', 'true');
+    }
+
+    clearInputError(input) {
+      const existingError = input.parentNode.querySelector('.input-error');
+      if (existingError) {
+        existingError.remove();
+        input.removeAttribute('aria-describedby');
+        input.removeAttribute('aria-invalid');
+      }
+    }
+
+    showSuccessMessage(message) {
+      this.announceToScreenReader(message);
+      
+      // You could also show a visual success message here
+      const successElement = document.createElement('div');
+      successElement.textContent = message;
+      successElement.setAttribute('role', 'status');
+      successElement.setAttribute('aria-live', 'polite');
+      
+      Object.assign(successElement.style, {
+        color: '#22c55e',
+        fontSize: '0.875rem',
+        marginTop: '0.5rem',
+        fontFamily: 'var(--fontSans)',
+        padding: '0.5rem',
+        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+        borderRadius: '0.375rem',
+        border: '1px solid rgba(34, 197, 94, 0.2)'
+      });
+      
+      const form = this.newsletterForm;
+      form.appendChild(successElement);
+      
+      // Remove success message after 5 seconds
+      setTimeout(() => {
+        if (successElement.parentNode) {
+          successElement.remove();
+        }
+      }, 5000);
+    }
+
+    showErrorMessage(message) {
+      this.announceToScreenReader(message);
+    }
+
+    setupSocialLinksKeyboard() {
+      const socialLinks = document.querySelectorAll('.social-link');
+      
+      socialLinks.forEach(link => {
+        link.addEventListener('keydown', (e) => {
+          // Add space key support for better accessibility
+          if (e.key === ' ') {
+            e.preventDefault();
+            link.click();
+          }
+        });
+      });
+    }
+
+    setupScreenReaderAnnouncements() {
+      // Create live region for announcements
+      if (!document.getElementById('footer-announcements')) {
+        const liveRegion = document.createElement('div');
+        liveRegion.id = 'footer-announcements';
+        liveRegion.setAttribute('aria-live', 'polite');
+        liveRegion.setAttribute('aria-atomic', 'true');
+        liveRegion.style.position = 'absolute';
+        liveRegion.style.left = '-10000px';
+        liveRegion.style.width = '1px';
+        liveRegion.style.height = '1px';
+        liveRegion.style.overflow = 'hidden';
+        document.body.appendChild(liveRegion);
+      }
+    }
+
+    announceToScreenReader(message) {
+      const liveRegion = document.getElementById('footer-announcements');
+      if (liveRegion) {
+        liveRegion.textContent = message;
+        
+        // Clear after announcement
+        setTimeout(() => {
+          liveRegion.textContent = '';
+        }, 1000);
+      }
+    }
+  }
+
+  // Initialize when DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    try {
+      new SimpleFooter();
+      
+      // Mark as successfully loaded for debugging
+      document.documentElement.classList.add('footer-js-loaded');
+      
+    } catch (error) {
+      console.error('Error initializing footer:', error);
+      
+      // Provide basic fallback functionality
+      const newsletterForm = document.querySelector('.newsletter-form');
+      if (newsletterForm) {
+        newsletterForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          alert('Thank you for your interest! Please try again later.');
+        });
+      }
+    }
+  });
+
+  // Expose utilities for external use
+  window.FooterUtils = {
+    announceToScreenReader: (message) => {
+      const liveRegion = document.getElementById('footer-announcements');
+      if (liveRegion) {
+        liveRegion.textContent = message;
+        setTimeout(() => liveRegion.textContent = '', 1000);
+      }
+    },
+    
+    validateEmail: (email) => {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+  };

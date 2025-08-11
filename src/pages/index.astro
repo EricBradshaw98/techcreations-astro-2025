@@ -15,10 +15,31 @@ import { homeHeroConfig } from '../lib/home';
 
 ---
 
-<Layout  title="Home - Your Agency"
-  description="We create digital solutions that drive results">
+<Layout
+  title="Our Services - Digital Agency"
+  description="Comprehensive digital solutions for modern businesses"
+  ariaDescribedBy="services-description"
+  ariaLabelledBy="services-heading"
+  sitemapUrl="/sitemap.xml"
+  rssFeedUrl="/blog/rss.xml"
+  criticalImages={['/hero-image.webp', '/services-banner.webp']}
+  faqSchema={[
+    {
+      question: "What services do you offer?",
+      answer: "We provide web development, SEO, and digital marketing services."
+    },
+    {
+      question: "How long does a project take?",
+      answer: "Most projects are completed within 4-8 weeks depending on scope."
+    }
+  ]}
+  resourceHints={[
+    { rel: 'preconnect', href: 'https://api.youragency.com' },
+    { rel: 'dns-prefetch', href: '//analytics.google.com' }
+  ]}
+/>
 
- <Hero 
+ <!-- <Hero 
 
   {...homeHeroConfig}
 />
@@ -49,5 +70,5 @@ import { homeHeroConfig } from '../lib/home';
     showGuarantee={true}
     showTestimonial={true}
     showStats={true}
-  />
+  /> -->
 </Layout>

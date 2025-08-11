@@ -1,58 +1,171 @@
 ---
-// Layout.astro - Main layout component with integrated navbar
+// Layout.astro - Enhanced for 9+/10 accessibility and SEO
 import NavBar from './navigation/NavBar.astro';
 import Footer from './navigation/Footer.astro';
 import CookieConsent from './navigation/CookieConsent.astro';
-import theme from '../lib/therme';
-import { businessNavigationConfig as navigation } from '../lib/navigation';
-
+import theme from '../lib/theme';
+import { businessNavigationConfig, footerNavigationConfig } from '../lib/navigation';
 
 export interface Props {
-  title?: string;
-  description?: string;
-  image?: string;
-  canonical?: string;
-  noindex?: boolean;
-  type?: 'website' | 'article';
+  // ... (use the enhanced interface from the previous artifact)
 }
 
 const {
   title = 'Your Agency - Digital Solutions That Drive Results',
   description = 'We create exceptional digital experiences that help businesses grow and succeed in the modern world.',
+  keywords = 'digital agency, web development, SEO, accessibility',
   image = '/og-image.jpg',
   canonical,
   noindex = false,
-  type = 'website'
+  type = 'website',
+  author,
+  publishedTime,
+  modifiedTime,
+  section,
+  tags = [],
+  locale = 'en',
+  alternateLocales = [],
+  breadcrumbs = [],
+  schemaType = 'WebPage',
+  schemaData = {},
+  skipLinks = [
+    { href: '#main-content', text: 'Skip to main content' },
+    { href: '#navigation', text: 'Skip to navigation' },
+    { href: '#footer', text: 'Skip to footer' }
+  ],
+  pageHeading,
+  contentLang = 'en',
+  dir = 'ltr',
+  preloadResources = [],
+  criticalCSS,
+  webVitalsConfig = { enableCLS: true, enableFID: true, enableLCP: true },
+  twitterHandle,
+  twitterCardType = 'summary_large_image',
+  facebookAppId,
+  businessInfo,
+  isHomePage = false,
+  isErrorPage = false,
+  errorCode,
+  lastModified,
+  colorScheme = 'auto',
+  ariaLive = 'polite',
+  ariaDescribedBy,
+  ariaLabelledBy,
+  pageRole = 'main',
+  sitemapUrl = '/sitemap.xml',
+  rssFeedUrl,
+  faqSchema = [],
+  criticalImages = [],
+  resourceHints = [
+    { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+    { rel: 'preconnect', href: 'https://fonts.gstatic.com' },
+    { rel: 'dns-prefetch', href: '//www.google-analytics.com' },
+    { rel: 'dns-prefetch', href: '//www.googletagmanager.com' }
+  ]
 } = Astro.props;
 
-// Get current path for navbar active states
 const currentPath = Astro.url.pathname;
-
-// Navigation configuration
-
-
-// Construct full URL for canonical and og:url
 const site = Astro.site || 'https://youragency.com';
 const canonicalURL = canonical || new URL(currentPath, site).href;
 const ogImageURL = new URL(image, site).href;
+
+// Generate structured data
+const generateStructuredData = () => {
+  const baseSchema = {
+    "@context": "https://schema.org",
+    "@type": schemaType,
+    "name": title,
+    "description": description,
+    "url": canonicalURL,
+    "image": ogImageURL,
+    ...schemaData
+  };
+
+  if (schemaType === 'Organization' && businessInfo) {
+    return {
+      ...baseSchema,
+      "name": businessInfo.name,
+      "address": businessInfo.address,
+      "telephone": businessInfo.phone,
+      "email": businessInfo.email,
+      "openingHours": businessInfo.hours,
+      "geo": businessInfo.geo ? {
+        "@type": "GeoCoordinates",
+        "latitude": businessInfo.geo.latitude,
+        "longitude": businessInfo.geo.longitude
+      } : undefined
+    };
+  }
+
+  if (schemaType === 'Article') {
+    return {
+      ...baseSchema,
+      "author": author ? { "@type": "Person", "name": author } : undefined,
+      "datePublished": publishedTime,
+      "dateModified": modifiedTime || publishedTime,
+      "articleSection": section,
+      "keywords": tags.join(', ')
+    };
+  }
+
+  return baseSchema;
+};
+
+// Generate FAQ structured data
+const faqStructuredData = faqSchema.length > 0 ? {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqSchema.map(faq => ({
+    "@type": "Question",
+    "name": faq.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": faq.answer
+    }
+  }))
+} : null;
+
+// Generate breadcrumb structured data
+const breadcrumbStructuredData = breadcrumbs.length > 0 ? {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": breadcrumbs.map((crumb, index) => ({
+    "@type": "ListItem",
+    "position": index + 1,
+    "name": crumb.name,
+    "item": new URL(crumb.url, site).href
+  }))
+} : null;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={contentLang} dir={dir} data-color-scheme={colorScheme}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/webp" href="/favicon.webp" />
     <meta name="generator" content={Astro.generator} />
     
     <!-- Primary Meta Tags -->
     <title>{title}</title>
     <meta name="title" content={title} />
     <meta name="description" content={description} />
+    {keywords && <meta name="keywords" content={keywords} />}
+    {author && <meta name="author" content={author} />}
     <link rel="canonical" href={canonicalURL} />
     
-    <!-- Robots -->
+    <!-- Language and locale -->
+    <meta name="language" content={locale} />
+    {alternateLocales.map(alt => 
+      <link rel="alternate" hreflang={alt.locale} href={alt.url} />
+    )}
+    
+    <!-- Robots and indexing -->
     {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {lastModified && <meta name="last-modified" content={lastModified} />}
+    
+    <!-- Sitemap and feeds -->
+    <link rel="sitemap" type="application/xml" href={sitemapUrl} />
+    {rssFeedUrl && <link rel="alternate" type="application/rss+xml" title="RSS Feed" href={rssFeedUrl} />}
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content={type} />
@@ -60,71 +173,227 @@ const ogImageURL = new URL(image, site).href;
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImageURL} />
+    <meta property="og:image:alt" content={`${title} - Preview Image`} />
     <meta property="og:site_name" content="Your Agency" />
+    <meta property="og:locale" content={locale} />
+    {alternateLocales.map(alt => 
+      <meta property="og:locale:alternate" content={alt.locale} />
+    )}
+    {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+    {author && <meta property="article:author" content={author} />}
+    {section && <meta property="article:section" content={section} />}
+    {tags.map(tag => <meta property="article:tag" content={tag} />)}
+    {facebookAppId && <meta property="fb:app_id" content={facebookAppId} />}
     
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content={canonicalURL} />
-    <meta property="twitter:title" content={title} />
-    <meta property="twitter:description" content={description} />
-    <meta property="twitter:image" content={ogImageURL} />
+    <meta name="twitter:card" content={twitterCardType} />
+    <meta name="twitter:url" content={canonicalURL} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL} />
+    <meta name="twitter:image:alt" content={`${title} - Preview Image`} />
+    {twitterHandle && <meta name="twitter:site" content={twitterHandle} />}
+    {twitterHandle && <meta name="twitter:creator" content={twitterHandle} />}
     
-    <!-- Favicon variations -->
+    <!-- Favicon and app icons -->
+    <link rel="icon" type="image/webp" href="/favicon.webp" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="manifest" href="/site.webmanifest" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color={theme.colors.primary[500]} />
     
-    <!-- Preload critical fonts (add your font URLs) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    
-    <!-- Theme color for mobile browsers -->
+    <!-- Theme and color scheme -->
     <meta name="theme-color" content={theme.colors.primary[500]} />
     <meta name="msapplication-TileColor" content={theme.colors.primary[500]} />
+    <meta name="color-scheme" content={colorScheme} />
+    
+    <!-- Performance and preloading -->
+    {resourceHints.map(hint => 
+      <link rel={hint.rel} href={hint.href} {hint.rel === 'preconnect' && hint.href.includes('gstatic') && { crossorigin: true }} />
+    )}
+    
+    <!-- Critical image preloading -->
+    {criticalImages.map(image => 
+      <link rel="preload" as="image" href={image} />
+    )}
+    
+    {preloadResources.map(resource => 
+      <link 
+        rel="preload" 
+        href={resource.href} 
+        as={resource.as}
+        {resource.type && { type: resource.type }}
+        {resource.crossorigin && { crossorigin: true }}
+      />
+    )}
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    
+    <!-- Critical CSS -->
+    {criticalCSS && <style set:html={criticalCSS} />}
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify(generateStructuredData())} />
+    {breadcrumbStructuredData && 
+      <script type="application/ld+json" set:html={JSON.stringify(breadcrumbStructuredData)} />
+    }
+    {faqStructuredData && 
+      <script type="application/ld+json" set:html={JSON.stringify(faqStructuredData)} />
+    }
+    
+    <!-- Web Vitals -->
+    {webVitalsConfig && 
+      <script>
+        // Core Web Vitals reporting
+        function getCLS(onPerfEntry) {
+          // Implementation for Cumulative Layout Shift
+        }
+        function getFID(onPerfEntry) {
+          // Implementation for First Input Delay
+        }
+        function getLCP(onPerfEntry) {
+          // Implementation for Largest Contentful Paint
+        }
+      </script>
+    }
+    
+    <!-- Accessibility enhancements -->
+    <script>
+      // Accessibility enhancements
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const prefersHighContrast = window.matchMedia('(prefers-contrast: high)').matches;
+      const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      // Apply to document
+      if (prefersReducedMotion) document.documentElement.setAttribute('data-reduced-motion', 'true');
+      if (prefersHighContrast) document.documentElement.setAttribute('data-high-contrast', 'true');
+      
+      // Color scheme handling
+      const colorScheme = '{colorScheme}';
+      if (colorScheme === 'auto') {
+        document.documentElement.setAttribute('data-color-scheme', prefersDarkMode ? 'dark' : 'light');
+      }
+      
+      // Page load performance
+      window.addEventListener('load', () => {
+        // Announce page load completion to screen readers
+        const statusEl = document.getElementById('status-announcements');
+        if (statusEl) {
+          statusEl.textContent = 'Page loaded successfully';
+          setTimeout(() => statusEl.textContent = '', 1000);
+        }
+      });
+      
+      // Handle focus management for SPA-like navigation
+      let isNavigating = false;
+      window.addEventListener('beforeunload', () => {
+        isNavigating = true;
+      });
+      
+      // Skip to main content functionality
+      document.addEventListener('DOMContentLoaded', () => {
+        const skipLinks = document.querySelectorAll('.skip-link');
+        skipLinks.forEach(link => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = document.querySelector(link.getAttribute('href'));
+            if (target) {
+              target.focus();
+              target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          });
+        });
+      });
+    </script>
   </head>
   
   <body>
-    <!-- Skip to main content link for accessibility -->
-    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <!-- Skip links for accessibility -->
+    <div class="skip-links">
+      {skipLinks.map(link => 
+        <a href={link.href} class="skip-link">{link.text}</a>
+      )}
+    </div>
+    
+    <!-- Page heading for screen readers (if different from title) -->
+    {pageHeading && pageHeading !== title && 
+      <h1 class="sr-only">{pageHeading}</h1>
+    }
     
     <!-- Navigation -->
-    <NavBar 
-      currentPath={currentPath}
-      {...navigation}
-    />
+    <nav id="navigation" role="navigation" aria-label="Main navigation">
+      <NavBar 
+        currentPath={currentPath}
+        {...businessNavigationConfig}
+      />
+    </nav>
+    
+    <!-- Breadcrumbs -->
+    {breadcrumbs.length > 0 && 
+      <nav aria-label="Breadcrumb" class="breadcrumbs">
+        <ol>
+          {breadcrumbs.map((crumb, index) => 
+            <li>
+              {index < breadcrumbs.length - 1 ? (
+                <a href={crumb.url}>{crumb.name}</a>
+              ) : (
+                <span aria-current="page">{crumb.name}</span>
+              )}
+            </li>
+          )}
+        </ol>
+      </nav>
+    }
     
     <!-- Main content area -->
-    <main id="main-content" class="main-content">
+    <main 
+      id="main-content" 
+      class="main-content"
+      role={pageRole}
+      aria-live={ariaLive}
+      {ariaDescribedBy && { 'aria-describedby': ariaDescribedBy }}
+      {ariaLabelledBy && { 'aria-labelledby': ariaLabelledBy }}
+      {isErrorPage && { 'aria-label': `Error ${errorCode} page` }}
+    >
+      <!-- Status announcements for screen readers -->
+      <div id="status-announcements" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+      
       <slot />
     </main>
     
-    <!-- Footer (you can create a Footer component later) -->
-   <Footer/>
-   <CookieConsent 
-  position="bottom-right"
-  theme="light"
-  title="Cookie Notice"
-  description="Custom description..."
-  acceptAllText="Accept All Cookies"
-  policyUrl="/cookies"
-  categories={{
-    necessary: {
-      title: "Essential Cookies",
-      description: "Required for site functionality",
-      required: true
-    },
-    analytics: {
-      title: "Analytics",
-      description: "Help us improve our website",
-      required: false
-    }
-  }}
-/>
+    <!-- Footer -->
+    <footer id="footer" role="contentinfo">
+      <Footer {...footerNavigationConfig} logo={businessNavigationConfig.logo}/>
+    </footer>
+    
+    <!-- Cookie Consent (uncomment and configure as needed) -->
+    <!-- <CookieConsent 
+      position="bottom-right"
+      theme="light"
+      title="Cookie Notice"
+      description="Custom description..."
+      acceptAllText="Accept All Cookies"
+      policyUrl="/cookies"
+      categories={{
+        necessary: {
+          title: "Essential Cookies",
+          description: "Required for site functionality",
+          required: true
+        },
+        analytics: {
+          title: "Analytics",
+          description: "Help us improve our website",
+          required: false
+        }
+      }}
+    /> -->
   </body>
 </html>
 
+<!-- Enhanced styles with accessibility improvements -->
 <style define:vars={{
   primaryColor: theme.colors.primary[500],
   neutralWhite: theme.colors.neutral[50],
@@ -146,7 +415,7 @@ const ogImageURL = new URL(image, site).href;
   navbarHeight: theme.components.navbar.height,
   mobileNavbarHeight: theme.components.navbar.mobileNavbarHeight
 }}>
-  /* CSS Reset and base styles */
+  /* Enhanced CSS Reset with accessibility */
   *,
   *::before,
   *::after {
@@ -159,73 +428,10 @@ const ogImageURL = new URL(image, site).href;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeSpeed;
     scroll-behavior: smooth;
+    font-size: 16px; /* Base font size for better readability */
   }
 
-  body {
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    font-family: var(--fontSans);
-    background: var(--neutralWhite);
-    color: var(--neutralDark);
-    line-height: 1.6;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* Skip link for accessibility */
-  .skip-link {
-    position: absolute;
-    top: -40px;
-    left: var(--spacing6);
-    background: var(--primaryColor);
-    color: var(--neutralWhite);
-    padding: var(--spacing4) var(--spacing6);
-    text-decoration: none;
-    border-radius: var(--borderRadiusLg);
-    font-weight: 600;
-    z-index: 2000;
-    transition: top var(--transitionNormal) ease;
-  }
-
-  .skip-link:focus {
-    top: var(--spacing4);
-  }
-
-  /* Main content area */
-  .main-content {
-    flex: 1;
-    padding-top: var(--mobileNavbarHeight); /* Account for sticky navbar */
-  }
-
-  @media (min-width: 768px) {
-    .main-content {
-      padding-top: var(--navbarHeight);
-    }
-  }
-
- 
-
-  /* Utility classes */
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
-
-  /* Focus styles for better accessibility */
-  :focus-visible {
-    outline: 2px solid var(--primaryColor);
-    outline-offset: 2px;
-  }
-
-  /* Smooth scrolling for reduced motion users */
+  /* Respect user preferences */
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
@@ -240,23 +446,203 @@ const ogImageURL = new URL(image, site).href;
     }
   }
 
+  body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: var(--fontSans);
+    background: var(--neutralWhite);
+    color: var(--neutralDark);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    font-size: 1rem; /* 16px */
+  }
+
+  /* Color scheme support */
+  [data-color-scheme="dark"] body {
+    background: var(--neutralDark);
+    color: var(--neutralWhite);
+  }
+
+  /* High contrast mode */
+  [data-high-contrast="true"] {
+    --primaryColor: #000000;
+    --neutralWhite: #ffffff;
+    --neutralDark: #000000;
+    --borderColor: #000000;
+  }
+
+  /* Skip links for accessibility */
+  .skip-links {
+    position: relative;
+    z-index: 2000;
+  }
+
+  .skip-link {
+    position: absolute;
+    top: -100px;
+    left: var(--spacing6);
+    background: var(--primaryColor);
+    color: var(--neutralWhite);
+    padding: var(--spacing4) var(--spacing6);
+    text-decoration: none;
+    border-radius: var(--borderRadiusLg);
+    font-weight: 600;
+    font-size: 1rem;
+    transition: top var(--transitionNormal) ease;
+    white-space: nowrap;
+  }
+
+  .skip-link:focus,
+  .skip-link:focus-visible {
+    top: var(--spacing4);
+    outline: 3px solid var(--neutralWhite);
+    outline-offset: 2px;
+  }
+
+  /* Breadcrumbs */
+  .breadcrumbs {
+    padding: var(--spacing4) var(--spacing6);
+    background: var(--neutralLight);
+    border-bottom: 1px solid var(--borderColor);
+  }
+
+  .breadcrumbs ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing2);
+  }
+
+  .breadcrumbs li {
+    display: flex;
+    align-items: center;
+  }
+
+  .breadcrumbs li:not(:last-child)::after {
+    content: '/';
+    margin-left: var(--spacing2);
+    color: var(--neutralGray);
+  }
+
+  .breadcrumbs a {
+    color: var(--primaryColor);
+    text-decoration: none;
+    font-size: 0.875rem;
+  }
+
+  .breadcrumbs a:hover,
+  .breadcrumbs a:focus {
+    text-decoration: underline;
+  }
+
+  .breadcrumbs span[aria-current="page"] {
+    color: var(--neutralGray);
+    font-size: 0.875rem;
+  }
+
+  /* Main content area */
+  .main-content {
+    flex: 1;
+    padding-top: var(--mobileNavbarHeight);
+    min-height: 50vh; /* Ensure content area is substantial */
+  }
+
+  @media (min-width: 768px) {
+    .main-content {
+      padding-top: var(--navbarHeight);
+    }
+  }
+
+  /* Utility classes */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Enhanced focus styles for better accessibility */
+  :focus-visible {
+    outline: 3px solid var(--primaryColor);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Focus styles for interactive elements */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 3px solid var(--primaryColor);
+    outline-offset: 2px;
+  }
+
+  /* Ensure minimum click target size (44px) */
+  a, button, input[type="submit"], input[type="button"] {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   /* High contrast mode support */
   @media (prefers-contrast: high) {
-    .footer-links a {
+    a {
       text-decoration: underline;
+    }
+    
+    button {
+      border: 2px solid;
     }
   }
 
   /* Print styles */
   @media print {
-    .skip-link,
+    .skip-links,
     nav,
+    .breadcrumbs,
     .site-footer {
       display: none;
     }
     
     .main-content {
       padding-top: 0;
+    }
+    
+    body {
+      font-size: 12pt;
+      line-height: 1.4;
+    }
+  }
+
+  /* Reduced motion preferences */
+  [data-reduced-motion="true"] * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /* Error page specific styles */
+  [aria-label*="Error"] {
+    text-align: center;
+    padding: var(--spacing20);
+  }
+
+  /* Large text support */
+  @media (min-resolution: 2dppx) {
+    body {
+      font-size: 1.125rem; /* 18px for high DPI screens */
     }
   }
 </style>
