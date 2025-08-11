@@ -1,5 +1,5 @@
 ---
-// SimpleNavbar.astro - WCAG/ARIA/AODA compliant navigation using theme system
+// SimpleNavbar.astro - Enhanced WCAG/ARIA/AODA compliant navigation
 import theme from '../../lib/theme.js';
 
 export interface Props {
@@ -144,70 +144,72 @@ const isActive = (href: string) => {
 
   <!-- Mobile Menu -->
   <div class="mobile-menu mobile-nav" id="mobile-menu" aria-hidden="true">
-    <ul class="mobile-nav-links">
-      {links.map((link) => (
-        <li class="mobile-nav-item">
-          {link.submenu ? (
-            <!-- Mobile Dropdown -->
-            <div class="mobile-dropdown">
-              <button 
-                class={`mobile-nav-link mobile-dropdown-toggle ${isActive(link.href) ? 'active' : ''}`}
-                aria-expanded="false"
+    <div class="mobile-menu-container">
+      <ul class="mobile-nav-links">
+        {links.map((link) => (
+          <li class="mobile-nav-item">
+            {link.submenu ? (
+              <!-- Mobile Dropdown -->
+              <div class="mobile-dropdown">
+                <button 
+                  class={`mobile-nav-link mobile-dropdown-toggle ${isActive(link.href) ? 'active' : ''}`}
+                  aria-expanded="false"
+                >
+                  {link.label}
+                  <svg class="mobile-dropdown-arrow" width="16" height="16" aria-hidden="true">
+                    <path d="M8 11L4 7h8l-4 4z" fill="currentColor"/>
+                  </svg>
+                </button>
+                <ul class="mobile-dropdown-menu">
+                  {link.submenu.map((subLink) => (
+                    <li>
+                      <a 
+                        href={subLink.href}
+                        class={`mobile-dropdown-link ${isActive(subLink.href) ? 'active' : ''}`}
+                        {...(subLink.external && { 
+                          target: '_blank', 
+                          rel: 'noopener noreferrer' 
+                        })}
+                      >
+                        {subLink.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <!-- Regular Mobile Link -->
+              <a 
+                href={link.href}
+                class={`mobile-nav-link ${isActive(link.href) ? 'active' : ''}`}
+                aria-current={isActive(link.href) ? 'page' : undefined}
+                {...(link.external && { 
+                  target: '_blank', 
+                  rel: 'noopener noreferrer' 
+                })}
               >
                 {link.label}
-                <svg class="mobile-dropdown-arrow" width="16" height="16" aria-hidden="true">
-                  <path d="M8 11L4 7h8l-4 4z" fill="currentColor"/>
-                </svg>
-              </button>
-              <ul class="mobile-dropdown-menu">
-                {link.submenu.map((subLink) => (
-                  <li>
-                    <a 
-                      href={subLink.href}
-                      class={`mobile-dropdown-link ${isActive(subLink.href) ? 'active' : ''}`}
-                      {...(subLink.external && { 
-                        target: '_blank', 
-                        rel: 'noopener noreferrer' 
-                      })}
-                    >
-                      {subLink.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : (
-            <!-- Regular Mobile Link -->
+              </a>
+            )}
+          </li>
+        ))}
+        
+        {ctaButton && (
+          <li class="mobile-nav-item">
             <a 
-              href={link.href}
-              class={`mobile-nav-link ${isActive(link.href) ? 'active' : ''}`}
-              aria-current={isActive(link.href) ? 'page' : undefined}
-              {...(link.external && { 
+              href={ctaButton.href}
+              class="mobile-cta-button"
+              {...(ctaButton.external && { 
                 target: '_blank', 
                 rel: 'noopener noreferrer' 
               })}
             >
-              {link.label}
+              {ctaButton.label}
             </a>
-          )}
-        </li>
-      ))}
-      
-      {ctaButton && (
-        <li class="mobile-nav-item">
-          <a 
-            href={ctaButton.href}
-            class="mobile-cta-button"
-            {...(ctaButton.external && { 
-              target: '_blank', 
-              rel: 'noopener noreferrer' 
-            })}
-          >
-            {ctaButton.label}
-          </a>
-        </li>
-      )}
-    </ul>
+          </li>
+        )}
+      </ul>
+    </div>
   </div>
 </nav>
 
@@ -271,19 +273,26 @@ const isActive = (href: string) => {
 }}>
   /* Main navbar */
   .navbar {
-    background: var(--backgroundColor);
-    border-bottom: 1px solid var(--borderColor);
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     position: sticky;
     top: 0;
     z-index: var(--zIndexSticky);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all var(--durationNormal) var(--easingOut);
+  }
+
+  .navbar:hover {
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   }
 
   .navbar-container {
-    max-width: var(--spacing80); /* 1280px equivalent */
+    max-width: 1280px;
     margin: 0 auto;
-    padding: 0 var(--spacing4);
+    padding: 0 var(--spacing6);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -294,26 +303,42 @@ const isActive = (href: string) => {
   @media (min-width: 768px) {
     .navbar-container {
       height: var(--navbarHeight);
-      padding: 0 var(--spacing6);
+      padding: 0 var(--spacing8);
     }
   }
 
-  /* Logo - Ensuring proper touch target */
+  /* Logo - Enhanced styling */
   .logo {
     display: flex;
     align-items: center;
-    gap: var(--spacing2);
+    gap: var(--spacing3);
     text-decoration: none;
     color: var(--foregroundColor);
     font-family: var(--fontDisplay);
-    font-weight: 700;
-    font-size: 1.25rem;
-    padding: var(--spacing3);
-    border-radius: var(--borderRadiusLg);
-    /* Minimum touch target size */
-    min-height: var(--spacing11); /* 44px */
+    font-weight: 800;
+    font-size: 1.375rem;
+    padding: var(--spacing3) var(--spacing4);
+    border-radius: var(--borderRadiusXl);
+    min-height: var(--spacing11);
     touch-action: manipulation;
     transition: all var(--durationNormal) var(--easingOut);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .logo::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .logo:hover::before {
+    left: 100%;
   }
 
   .logo:focus {
@@ -322,19 +347,34 @@ const isActive = (href: string) => {
   }
 
   .logo:hover {
-    opacity: 0.8;
+    transform: translateY(-1px);
+    color: var(--primaryColor);
   }
 
   .logo-img {
-    height: var(--spacing8); /* 32px */
+    height: var(--spacing8);
     width: auto;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    transition: all var(--durationNormal) var(--easingOut);
   }
 
-  /* Desktop Navigation */
+  .logo:hover .logo-img {
+    transform: scale(1.05);
+  }
+
+  .logo-text {
+    background: linear-gradient(135deg, var(--foregroundColor), var(--primaryColor));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: all var(--durationNormal) var(--easingOut);
+  }
+
+  /* Desktop Navigation - Enhanced */
   .nav-links {
     display: flex;
     align-items: center;
-    gap: var(--spacing2);
+    gap: var(--spacing1);
     list-style: none;
     margin: 0;
     padding: 0;
@@ -347,28 +387,48 @@ const isActive = (href: string) => {
   .nav-link {
     display: flex;
     align-items: center;
-    gap: var(--spacing1);
+    gap: var(--spacing2);
     text-decoration: none;
     color: var(--neutralGray);
     font-family: var(--fontSans);
-    font-weight: 500;
+    font-weight: 600;
     font-size: 0.9375rem;
-    padding: var(--spacing3) var(--spacing4);
-    border-radius: var(--borderRadiusLg);
+    padding: var(--spacing3) var(--spacing5);
+    border-radius: var(--borderRadiusXl);
     transition: all var(--durationNormal) var(--easingOut);
     background: none;
     border: none;
     cursor: pointer;
     white-space: nowrap;
-    /* Ensure minimum touch target */
-    min-height: var(--spacing11); /* 44px */
+    min-height: var(--spacing11);
     touch-action: manipulation;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primaryColor), var(--primaryHover));
+    border-radius: var(--borderRadiusXl);
+    transition: width 0.3s var(--easingOut);
+    z-index: -1;
+  }
+
+  .nav-link:hover::before,
+  .nav-link:focus::before {
+    width: 100%;
   }
 
   .nav-link:hover,
   .nav-link:focus {
-    color: var(--primaryColor);
-    background: rgba(175, 233, 14, 0.1); /* Using theme primary with alpha */
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(175, 233, 14, 0.3);
   }
 
   .nav-link:focus {
@@ -378,10 +438,16 @@ const isActive = (href: string) => {
 
   .nav-link.active {
     color: var(--primaryColor);
-    font-weight: 600;
+    background: rgba(175, 233, 14, 0.15);
+    font-weight: 700;
+    border: 1px solid rgba(175, 233, 14, 0.3);
   }
 
-  /* Dropdown */
+  .nav-link.active::before {
+    width: 0;
+  }
+
+  /* Dropdown - Enhanced */
   .dropdown {
     position: relative;
   }
@@ -389,37 +455,40 @@ const isActive = (href: string) => {
   .dropdown-arrow {
     transition: transform var(--durationNormal) var(--easingOut);
     flex-shrink: 0;
+    opacity: 0.7;
   }
 
   .dropdown:hover .dropdown-arrow,
   .dropdown-toggle[aria-expanded="true"] .dropdown-arrow {
     transform: rotate(180deg);
+    opacity: 1;
   }
 
   .dropdown-menu {
     position: absolute;
-    top: calc(100% + var(--spacing2));
+    top: calc(100% + var(--spacing3));
     left: 0;
-    min-width: 200px;
-    background: var(--backgroundColor);
-    border: 1px solid var(--borderColor);
-    border-radius: var(--borderRadiusLg);
-    box-shadow: var(--shadowLg);
+    min-width: 220px;
+    background: rgba(255, 255, 255, 0.98);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: var(--borderRadiusXl);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12), 0 4px 6px rgba(0, 0, 0, 0.05);
     list-style: none;
     margin: 0;
-    padding: var(--spacing2) 0;
+    padding: var(--spacing3);
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-10px);
+    transform: translateY(-15px) scale(0.95);
     transition: all var(--durationNormal) var(--easingOut);
     z-index: var(--zIndexDropdown);
+    backdrop-filter: blur(20px);
   }
 
   .dropdown:hover .dropdown-menu,
   .dropdown-toggle[aria-expanded="true"] + .dropdown-menu {
     opacity: 1;
     visibility: visible;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 
   .dropdown-link {
@@ -428,16 +497,36 @@ const isActive = (href: string) => {
     text-decoration: none;
     color: var(--neutralGray);
     font-family: var(--fontSans);
+    font-weight: 500;
     transition: all var(--durationNormal) var(--easingOut);
-    /* Ensure minimum touch target */
-    min-height: var(--spacing11); /* 44px */
+    min-height: var(--spacing11);
     touch-action: manipulation;
+    border-radius: var(--borderRadiusLg);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .dropdown-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primaryColor), var(--primaryHover));
+    transition: left 0.3s var(--easingOut);
+    z-index: -1;
+  }
+
+  .dropdown-link:hover::before,
+  .dropdown-link:focus::before {
+    left: 0;
   }
 
   .dropdown-link:hover,
   .dropdown-link:focus {
-    background: rgba(175, 233, 14, 0.1);
-    color: var(--primaryColor);
+    color: white;
+    transform: translateX(4px);
   }
 
   .dropdown-link:focus {
@@ -447,34 +536,52 @@ const isActive = (href: string) => {
 
   .dropdown-link.active {
     color: var(--primaryColor);
-    background: rgba(175, 233, 14, 0.1);
+    background: rgba(175, 233, 14, 0.15);
+    font-weight: 600;
   }
 
-  /* CTA Button */
+  /* CTA Button - Enhanced */
   .cta-button {
-    background: var(--primaryColor);
+    background: linear-gradient(135deg, var(--primaryColor), var(--primaryHover));
     color: var(--neutralDark);
     text-decoration: none;
     padding: var(--spacing3) var(--spacing6);
-    border-radius: var(--borderRadiusLg);
+    border-radius: var(--borderRadiusXl);
     font-family: var(--fontSans);
-    font-weight: 600;
+    font-weight: 700;
     font-size: 0.9375rem;
     transition: all var(--durationNormal) var(--easingOut);
-    border: 2px solid var(--primaryColor);
-    /* Ensure minimum touch target */
-    min-height: var(--spacing11); /* 44px */
+    border: 2px solid transparent;
+    min-height: var(--spacing11);
     display: flex;
     align-items: center;
     touch-action: manipulation;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(175, 233, 14, 0.25);
+  }
+
+  .cta-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primaryHover), var(--primaryColor));
+    opacity: 0;
+    transition: opacity 0.3s var(--easingOut);
+  }
+
+  .cta-button:hover::before,
+  .cta-button:focus::before {
+    opacity: 1;
   }
 
   .cta-button:hover,
   .cta-button:focus {
-    background: var(--primaryHover);
-    border-color: var(--primaryHover);
-    transform: translateY(-1px);
-    box-shadow: var(--shadowMd);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(175, 233, 14, 0.4);
   }
 
   .cta-button:focus {
@@ -482,28 +589,51 @@ const isActive = (href: string) => {
     outline-offset: 2px;
   }
 
-  /* Mobile Menu Button */
+  .cta-button span {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Mobile Menu Button - Enhanced */
   .mobile-menu-btn {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    background: none;
-    border: 2px solid transparent;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(175, 233, 14, 0.2);
     cursor: pointer;
     padding: var(--spacing3);
-    border-radius: var(--borderRadiusLg);
+    border-radius: var(--borderRadiusXl);
     transition: all var(--durationNormal) var(--easingOut);
-    /* Ensure proper touch target - using theme spacing */
-    min-width: var(--spacing12); /* 48px for enhanced accessibility */
-    min-height: var(--spacing12); /* 48px */
+    min-width: var(--spacing12);
+    min-height: var(--spacing12);
     touch-action: manipulation;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mobile-menu-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primaryColor), var(--primaryHover));
+    opacity: 0;
+    transition: opacity 0.3s var(--easingOut);
+  }
+
+  .mobile-menu-btn:hover::before,
+  .mobile-menu-btn:focus::before {
+    opacity: 0.1;
   }
 
   .mobile-menu-btn:hover,
   .mobile-menu-btn:focus {
-    background: rgba(175, 233, 14, 0.1);
-    border-color: var(--primaryLight);
+    border-color: var(--primaryColor);
+    transform: scale(1.05);
   }
 
   .mobile-menu-btn:focus {
@@ -513,12 +643,14 @@ const isActive = (href: string) => {
 
   .hamburger {
     display: block;
-    width: var(--spacing6); /* 24px */
+    width: var(--spacing6);
     height: 3px;
     background: var(--foregroundColor);
     transition: all 0.3s var(--easingOut);
     border-radius: 2px;
     margin: 2px 0;
+    position: relative;
+    z-index: 1;
   }
 
   .mobile-menu-btn[aria-expanded="true"] .hamburger:nth-child(1) {
@@ -533,18 +665,19 @@ const isActive = (href: string) => {
     transform: rotate(-45deg) translate(7px, -6px);
   }
 
-  /* Mobile Menu */
+  /* Mobile Menu - Enhanced */
   .mobile-menu {
     position: absolute;
     top: 100%;
     left: 0;
     right: 0;
-    background: var(--backgroundColor);
-    border-bottom: 1px solid var(--borderColor);
-    box-shadow: var(--shadowMd);
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
     max-height: 0;
     overflow: hidden;
-    transition: all 0.3s var(--easingOut);
+    transition: all 0.4s var(--easingOut);
     z-index: var(--zIndexModal);
   }
 
@@ -552,14 +685,20 @@ const isActive = (href: string) => {
     max-height: 100vh;
   }
 
+  .mobile-menu-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 var(--spacing6);
+  }
+
   .mobile-nav-links {
     list-style: none;
     margin: 0;
-    padding: var(--spacing4);
+    padding: var(--spacing6) 0;
   }
 
   .mobile-nav-item {
-    margin-bottom: var(--spacing2);
+    margin-bottom: var(--spacing3);
   }
 
   .mobile-nav-item:last-child {
@@ -574,25 +713,43 @@ const isActive = (href: string) => {
     color: var(--foregroundColor);
     font-family: var(--fontSans);
     font-size: 1.125rem;
-    font-weight: 500;
-    padding: var(--spacing4) var(--spacing3);
-    border-radius: var(--borderRadiusLg);
+    font-weight: 600;
+    padding: var(--spacing4) var(--spacing5);
+    border-radius: var(--borderRadiusXl);
     transition: all var(--durationNormal) var(--easingOut);
     background: none;
     border: 2px solid transparent;
     cursor: pointer;
     width: 100%;
     text-align: left;
-    /* Ensure proper touch targets for mobile */
-    min-height: var(--spacing12); /* 48px for mobile */
+    min-height: var(--spacing12);
     touch-action: manipulation;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mobile-nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primaryColor), var(--primaryHover));
+    transition: left 0.3s var(--easingOut);
+    z-index: -1;
+  }
+
+  .mobile-nav-link:hover::before,
+  .mobile-nav-link:focus::before {
+    left: 0;
   }
 
   .mobile-nav-link:hover,
   .mobile-nav-link:focus {
-    color: var(--primaryColor);
-    background: rgba(175, 233, 14, 0.1);
-    border-color: var(--primaryLight);
+    color: white;
+    border-color: var(--primaryColor);
+    transform: translateX(8px);
   }
 
   .mobile-nav-link:focus {
@@ -602,34 +759,40 @@ const isActive = (href: string) => {
 
   .mobile-nav-link.active {
     color: var(--primaryColor);
-    font-weight: 600;
-    background: rgba(175, 233, 14, 0.1);
+    background: rgba(175, 233, 14, 0.15);
     border-color: var(--primaryColor);
+    font-weight: 700;
   }
 
-  /* Mobile Dropdown */
+  .mobile-nav-link.active::before {
+    left: -100%;
+  }
+
+  /* Mobile Dropdown - Enhanced */
   .mobile-dropdown-arrow {
     transition: transform var(--durationNormal) var(--easingOut);
     flex-shrink: 0;
+    opacity: 0.7;
   }
 
   .mobile-dropdown-toggle[aria-expanded="true"] .mobile-dropdown-arrow {
     transform: rotate(180deg);
+    opacity: 1;
   }
 
   .mobile-dropdown-menu {
     list-style: none;
     margin: 0;
     padding: 0;
-    margin-left: var(--spacing4);
+    margin-left: var(--spacing6);
     max-height: 0;
     overflow: hidden;
-    transition: all 0.3s var(--easingOut);
+    transition: all 0.4s var(--easingOut);
   }
 
   .mobile-dropdown-toggle[aria-expanded="true"] + .mobile-dropdown-menu {
     max-height: 500px;
-    margin-top: var(--spacing2);
+    margin-top: var(--spacing3);
   }
 
   .mobile-dropdown-link {
@@ -637,21 +800,40 @@ const isActive = (href: string) => {
     text-decoration: none;
     color: var(--neutralGray);
     font-family: var(--fontSans);
-    padding: var(--spacing3);
+    font-weight: 500;
+    padding: var(--spacing3) var(--spacing4);
     border-radius: var(--borderRadiusLg);
     transition: all var(--durationNormal) var(--easingOut);
-    margin-bottom: var(--spacing1);
+    margin-bottom: var(--spacing2);
     border: 2px solid transparent;
-    /* Ensure proper mobile touch targets */
-    min-height: var(--spacing11); /* 44px minimum */
+    min-height: var(--spacing11);
     touch-action: manipulation;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mobile-dropdown-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primaryColor), var(--primaryHover));
+    transition: left 0.3s var(--easingOut);
+    z-index: -1;
+  }
+
+  .mobile-dropdown-link:hover::before,
+  .mobile-dropdown-link:focus::before {
+    left: 0;
   }
 
   .mobile-dropdown-link:hover,
   .mobile-dropdown-link:focus {
-    background: rgba(175, 233, 14, 0.1);
-    color: var(--primaryColor);
-    border-color: var(--primaryLight);
+    color: white;
+    border-color: var(--primaryColor);
+    transform: translateX(6px);
   }
 
   .mobile-dropdown-link:focus {
@@ -661,39 +843,20 @@ const isActive = (href: string) => {
 
   .mobile-dropdown-link.active {
     color: var(--primaryColor);
-    background: rgba(175, 233, 14, 0.1);
+    background: rgba(175, 233, 14, 0.15);
     border-color: var(--primaryColor);
-  }
-
-  /* Mobile CTA */
-  .mobile-cta-button {
-    display: block;
-    background: var(--primaryColor);
-    color: var(--neutralDark);
-    text-decoration: none;
-    padding: var(--spacing4);
-    border-radius: var(--borderRadiusLg);
-    font-family: var(--fontSans);
     font-weight: 600;
-    font-size: 1.125rem;
-    text-align: center;
-    transition: all var(--durationNormal) var(--easingOut);
-    margin-top: var(--spacing6);
-    border: 2px solid var(--primaryColor);
-    /* Enhanced mobile touch target */
-    min-height: var(--spacing12); /* 48px */
-    touch-action: manipulation;
   }
 
-  .mobile-cta-button:hover,
-  .mobile-cta-button:focus {
-    background: var(--primaryHover);
-    border-color: var(--primaryHover);
-  }
-
+  /* Mobile CTA - Enhanced */
   .mobile-cta-button:focus {
     outline: 2px solid var(--primaryColor);
     outline-offset: 2px;
+  }
+
+  .mobile-cta-button span {
+    position: relative;
+    z-index: 1;
   }
 
   /* Responsive utilities */
@@ -715,10 +878,66 @@ const isActive = (href: string) => {
     }
   }
 
+  /* Enhanced animations and micro-interactions */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  .nav-item:nth-child(1) { animation-delay: 0.1s; }
+  .nav-item:nth-child(2) { animation-delay: 0.2s; }
+  .nav-item:nth-child(3) { animation-delay: 0.3s; }
+  .nav-item:nth-child(4) { animation-delay: 0.4s; }
+  .nav-item:nth-child(5) { animation-delay: 0.5s; }
+
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark) {
+    .navbar {
+      background: rgba(17, 24, 39, 0.95);
+      border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .navbar:hover {
+      background: rgba(17, 24, 39, 0.98);
+    }
+
+    .mobile-menu {
+      background: rgba(17, 24, 39, 0.98);
+      border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .dropdown-menu {
+      background: rgba(17, 24, 39, 0.98);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .mobile-menu-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(175, 233, 14, 0.3);
+    }
+  }
+
   /* High contrast support */
   @media (prefers-contrast: high) {
     .navbar {
       border-bottom-width: 2px;
+      background: white;
+      backdrop-filter: none;
     }
     
     .nav-link,
@@ -742,6 +961,13 @@ const isActive = (href: string) => {
     .mobile-menu-btn:focus {
       outline-width: 3px;
     }
+
+    .dropdown-menu,
+    .mobile-menu {
+      backdrop-filter: none;
+      background: white;
+      border-width: 2px;
+    }
   }
 
   /* Reduced motion support */
@@ -757,14 +983,27 @@ const isActive = (href: string) => {
     .mobile-dropdown-menu {
       transition: none;
     }
+
+    .nav-link::before,
+    .dropdown-link::before,
+    .mobile-nav-link::before,
+    .mobile-dropdown-link::before,
+    .cta-button::before,
+    .mobile-cta-button::before,
+    .mobile-menu-btn::before,
+    .logo::before {
+      display: none;
+    }
   }
 
   /* Print styles */
   @media print {
     .navbar {
       position: static;
-      background: white;
-      border-bottom: 1px solid black;
+      background: white !important;
+      border-bottom: 2px solid black;
+      backdrop-filter: none;
+      box-shadow: none;
     }
     
     .mobile-menu,
@@ -776,13 +1015,79 @@ const isActive = (href: string) => {
     }
     
     .nav-links {
-      display: flex;
+      display: flex !important;
       flex-wrap: wrap;
     }
     
     .nav-link {
-      color: black;
+      color: black !important;
       text-decoration: underline;
+      background: none !important;
+      border: none !important;
+    }
+
+    .logo {
+      color: black !important;
+    }
+
+    .logo-text {
+      -webkit-text-fill-color: black !important;
+      background: none !important;
+    }
+  }
+
+  /* Focus visible for better keyboard navigation */
+  .nav-link:focus-visible,
+  .mobile-nav-link:focus-visible,
+  .dropdown-link:focus-visible,
+  .mobile-dropdown-link:focus-visible,
+  .logo:focus-visible,
+  .cta-button:focus-visible,
+  .mobile-cta-button:focus-visible,
+  .mobile-menu-btn:focus-visible {
+    outline: 3px solid var(--primaryColor);
+    outline-offset: 2px;
+  }
+
+  /* Enhanced loading states */
+  .navbar.loading {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  .navbar.loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(175, 233, 14, 0.1), transparent);
+    animation: shimmer 2s infinite;
+    background-size: 200% 100%;
+  }
+
+  /* Smooth scroll behavior for anchor links */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Enhanced mobile menu container */
+  @media (max-width: 767px) {
+    .mobile-menu-container {
+      padding: 0 var(--spacing4);
+    }
+
+    .navbar-container {
+      padding: 0 var(--spacing4);
+    }
+  }
+
+  /* Ultra-wide screen support */
+  @media (min-width: 1536px) {
+    .navbar-container,
+    .mobile-menu-container {
+      padding: 0 var(--spacing12);
     }
   }
 </style>
@@ -794,11 +1099,20 @@ const isActive = (href: string) => {
       this.mobileMenu = document.querySelector('.mobile-menu');
       this.dropdownToggles = document.querySelectorAll('.dropdown-toggle');
       this.mobileDropdownToggles = document.querySelectorAll('.mobile-dropdown-toggle');
+      this.navbar = document.querySelector('.navbar');
       
       this.init();
     }
 
     init() {
+      // Add loading class initially
+      this.navbar?.classList.add('loading');
+      
+      // Remove loading class after initialization
+      setTimeout(() => {
+        this.navbar?.classList.remove('loading');
+      }, 100);
+
       // Mobile menu toggle
       if (this.mobileMenuBtn && this.mobileMenu) {
         this.mobileMenuBtn.addEventListener('click', () => {
@@ -818,20 +1132,32 @@ const isActive = (href: string) => {
             this.closeMobileMenu();
           }
         });
+
+        // Prevent scroll when mobile menu is open
+        const mediaQuery = window.matchMedia('(max-width: 767px)');
+        mediaQuery.addListener(() => {
+          if (!mediaQuery.matches && this.mobileMenu.getAttribute('aria-hidden') === 'false') {
+            this.closeMobileMenu();
+          }
+        });
       }
 
-      // Desktop dropdowns
+      // Desktop dropdowns with enhanced interactions
       this.dropdownToggles.forEach(toggle => {
         const dropdown = toggle.closest('.dropdown');
         const menu = toggle.nextElementSibling;
+        let hoverTimeout;
 
-        // Mouse events
+        // Mouse events with delays for better UX
         dropdown.addEventListener('mouseenter', () => {
+          clearTimeout(hoverTimeout);
           this.openDropdown(toggle, menu);
         });
 
         dropdown.addEventListener('mouseleave', () => {
-          this.closeDropdown(toggle, menu);
+          hoverTimeout = setTimeout(() => {
+            this.closeDropdown(toggle, menu);
+          }, 150); // Small delay to prevent accidental closes
         });
 
         // Keyboard events
@@ -846,6 +1172,31 @@ const isActive = (href: string) => {
             this.toggleDropdown(toggle, menu);
           } else if (e.key === 'Escape') {
             this.closeDropdown(toggle, menu);
+            toggle.focus();
+          } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            this.openDropdown(toggle, menu);
+            const firstLink = menu.querySelector('.dropdown-link');
+            if (firstLink) firstLink.focus();
+          }
+        });
+
+        // Enhanced keyboard navigation within dropdown
+        menu.addEventListener('keydown', (e) => {
+          const links = menu.querySelectorAll('.dropdown-link');
+          const currentIndex = Array.from(links).indexOf(document.activeElement);
+
+          if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            const nextIndex = (currentIndex + 1) % links.length;
+            links[nextIndex].focus();
+          } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            const prevIndex = currentIndex > 0 ? currentIndex - 1 : links.length - 1;
+            links[prevIndex].focus();
+          } else if (e.key === 'Escape') {
+            this.closeDropdown(toggle, menu);
+            toggle.focus();
           }
         });
       });
@@ -872,9 +1223,34 @@ const isActive = (href: string) => {
           this.closeAllDropdowns();
         }
       });
+
+      // Enhanced scroll behavior
+      let lastScrollY = window.scrollY;
+      window.addEventListener('scroll', () => {
+        const currentScrollY = window.scrollY;
+        
+        // Add/remove scrolled class for styling
+        if (currentScrollY > 20) {
+          this.navbar?.classList.add('scrolled');
+        } else {
+          this.navbar?.classList.remove('scrolled');
+        }
+
+        lastScrollY = currentScrollY;
+      }, { passive: true });
       
       // Announce navigation state changes to screen readers
       this.setupScreenReaderAnnouncements();
+
+      // Add stagger animation to nav items
+      this.addStaggerAnimation();
+    }
+
+    addStaggerAnimation() {
+      const navItems = document.querySelectorAll('.nav-item');
+      navItems.forEach((item, index) => {
+        item.style.animationDelay = `${index * 0.1}s`;
+      });
     }
 
     toggleMobileMenu() {
@@ -892,6 +1268,13 @@ const isActive = (href: string) => {
       this.mobileMenuBtn.setAttribute('aria-label', 'Close navigation menu');
       this.mobileMenu.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
+      
+      // Add animation class
+      this.mobileMenu.classList.add('opening');
+      setTimeout(() => {
+        this.mobileMenu.classList.remove('opening');
+      }, 400);
+      
       this.announceToScreenReader('Navigation menu opened');
     }
 
@@ -998,7 +1381,7 @@ const isActive = (href: string) => {
     document.body.style.overflow = '';
   });
 
-  // Expose utilities for external use
+  // Enhanced utilities for external use
   window.NavbarUtils = {
     closeAllMenus: () => {
       const mobileMenu = document.querySelector('.mobile-menu');
@@ -1021,5 +1404,16 @@ const isActive = (href: string) => {
         liveRegion.textContent = message;
         setTimeout(() => liveRegion.textContent = '', 1000);
       }
+    },
+
+    toggleTheme: () => {
+      document.documentElement.classList.toggle('dark-theme');
+    },
+
+    addCustomStyles: (styles) => {
+      const styleSheet = document.createElement('style');
+      styleSheet.textContent = styles;
+      document.head.appendChild(styleSheet);
     }
   };
+</script>

@@ -66,6 +66,10 @@ export interface Props {
     height?: number;
   }>;
   trustedByText?: string;
+  
+  // Accessibility props
+  headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
+  skipToContent?: boolean;
 }
 
 const {
@@ -121,17 +125,31 @@ const {
     { src: "/logos/client-4.svg", alt: "Client 4", width: 120, height: 40 },
     { src: "/logos/client-5.svg", alt: "Client 5", width: 120, height: 40 }
   ],
-  trustedByText = "Trusted by industry leaders"
+  trustedByText = "Trusted by industry leaders",
+  headingLevel = 1,
+  skipToContent = true
 } = Astro.props;
+
+// Dynamic heading element based on level
+const HeadingTag = `h${headingLevel}` as any;
+const SubheadingLevel = Math.min(headingLevel + 1, 6);
+const SubheadingTag = `h${SubheadingLevel}` as any;
 ---
+
+{skipToContent && (
+  <a href="#main-content" class="skip-link" aria-label="Skip to main content">
+    Skip to main content
+  </a>
+)}
 
 <section 
   class={`hero hero-${variant}`}
   aria-labelledby="hero-headline"
+  role="banner"
 >
   <!-- Background Elements -->
   {backgroundVideo && (
-    <div class="hero-background">
+    <div class="hero-background" aria-hidden="true">
       <video 
         autoplay 
         muted 
@@ -139,27 +157,30 @@ const {
         playsinline
         class="hero-video"
         aria-hidden="true"
+        preload="metadata"
       >
         <source src={backgroundVideo} type="video/mp4" />
+        <p>Your browser does not support the video tag.</p>
       </video>
       <div class="hero-video-overlay"></div>
     </div>
   )}
   
   {backgroundImage && !backgroundVideo && (
-    <div class="hero-background">
+    <div class="hero-background" aria-hidden="true">
       <img 
         src={backgroundImage} 
         alt="" 
         class="hero-bg-image"
         aria-hidden="true"
+        role="presentation"
       />
       <div class="hero-bg-overlay"></div>
     </div>
   )}
 
   <!-- Animated Background Elements -->
-  <div class="hero-decoration" aria-hidden="true">
+  <div class="hero-decoration" aria-hidden="true" role="presentation">
     <div class="floating-shapes">
       <div class="shape shape-1"></div>
       <div class="shape shape-2"></div>
@@ -173,19 +194,19 @@ const {
       <!-- Text Content -->
       <div class="hero-text">
         {subheadline && (
-          <span class="hero-subheadline" data-animate="fade-up">
+          <p class="hero-subheadline" data-animate="fade-up">
             {subheadline}
-          </span>
+          </p>
         )}
         
-        <h1 
+        <HeadingTag 
           id="hero-headline" 
           class="hero-headline"
           data-animate="fade-up"
           data-delay="100"
         >
           {headline}
-        </h1>
+        </HeadingTag>
         
         <p 
           class="hero-description"
@@ -200,33 +221,41 @@ const {
           class="hero-cta"
           data-animate="fade-up"
           data-delay="300"
+          role="group"
+          aria-label="Call to action buttons"
         >
           <a 
             href={primaryCta.href}
             class="cta-primary"
+            aria-describedby="primary-cta-description"
             {...(primaryCta.external && { 
               target: '_blank', 
-              rel: 'noopener noreferrer' 
+              rel: 'noopener noreferrer',
+              'aria-label': `${primaryCta.text} (opens in new tab)`
             })}
           >
-            {primaryCta.text}
-            <svg class="cta-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <span>{primaryCta.text}</span>
+            <svg class="cta-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true" focusable="false">
               <path d="M4.16667 10H15.8333M15.8333 10L10.8333 5M15.8333 10L10.8333 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </a>
+          <span id="primary-cta-description" class="sr-only">Primary call to action</span>
           
           {secondaryCta && (
             <a 
               href={secondaryCta.href}
               class="cta-secondary"
+              aria-describedby="secondary-cta-description"
               {...(secondaryCta.external && { 
                 target: '_blank', 
-                rel: 'noopener noreferrer' 
+                rel: 'noopener noreferrer',
+                'aria-label': `${secondaryCta.text} (opens in new tab)`
               })}
             >
               {secondaryCta.text}
             </a>
           )}
+          <span id="secondary-cta-description" class="sr-only">Secondary call to action</span>
         </div>
 
         <!-- Stats -->
@@ -235,15 +264,18 @@ const {
             class="hero-stats"
             data-animate="fade-up"
             data-delay="400"
+            role="region"
+            aria-labelledby="stats-heading"
           >
+            <SubheadingTag id="stats-heading" class="sr-only">Company Statistics</SubheadingTag>
             {stats.map((stat, index) => (
               <div class="stat-item" key={index}>
-                <div class="stat-number">
-                  {stat.prefix && <span class="stat-prefix">{stat.prefix}</span>}
-                  <span class="stat-value" data-count-to={stat.number}>0</span>
-                  {stat.suffix && <span class="stat-suffix">{stat.suffix}</span>}
+                <div class="stat-number" aria-labelledby={`stat-${index}-label`}>
+                  {stat.prefix && <span class="stat-prefix" aria-hidden="true">{stat.prefix}</span>}
+                  <span class="stat-value" data-count-to={stat.number} aria-live="polite">0</span>
+                  {stat.suffix && <span class="stat-suffix" aria-hidden="true">{stat.suffix}</span>}
                 </div>
-                <div class="stat-label">{stat.label}</div>
+                <div class="stat-label" id={`stat-${index}-label`}>{stat.label}</div>
               </div>
             ))}
           </div>
@@ -265,22 +297,23 @@ const {
               width="600"
               height="400"
               loading="eager"
+              decoding="async"
             />
             
             <!-- Updated Floating UI Elements for Website Transformation -->
-            <div class="floating-ui floating-ui-1" data-animate="float" data-delay="1000">
+            <div class="floating-ui floating-ui-1" data-animate="float" data-delay="1000" aria-hidden="true" role="presentation">
               <div class="ui-card">
                 <div class="ui-status">
-                  <div class="status-icon">✓</div>
+                  <div class="status-icon" aria-hidden="true">✓</div>
                   <span class="ui-text">Content Received</span>
                 </div>
               </div>
             </div>
             
-            <div class="floating-ui floating-ui-2" data-animate="float" data-delay="1500">
+            <div class="floating-ui floating-ui-2" data-animate="float" data-delay="1500" aria-hidden="true" role="presentation">
               <div class="ui-card">
                 <div class="ui-progress">
-                  <div class="progress-bar">
+                  <div class="progress-bar" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" aria-label="Build progress">
                     <div class="progress-fill" style="width: 85%"></div>
                   </div>
                   <span class="ui-text">Build Progress: 85%</span>
@@ -288,15 +321,15 @@ const {
               </div>
             </div>
             
-            <div class="floating-ui floating-ui-3" data-animate="float" data-delay="2000">
+            <div class="floating-ui floating-ui-3" data-animate="float" data-delay="2000" aria-hidden="true" role="presentation">
               <div class="ui-card">
                 <div class="ui-performance">
                   <div class="performance-change">
                     <span class="before">3.2s</span>
-                    <span class="arrow">→</span>
+                    <span class="arrow" aria-hidden="true">→</span>
                     <span class="after">0.8s</span>
                   </div>
-                  <span class="ui-text">Load Time</span>
+                  <span class="ui-text">Load Time Improvement</span>
                 </div>
               </div>
             </div>
@@ -313,18 +346,18 @@ const {
         >
           <!-- Process Steps -->
           {showProcess && processSteps.length > 0 && (
-            <div class="process-container">
-              <h3 class="process-title">Your Simple Process</h3>
-              <div class="process-steps">
+            <section class="process-container" aria-labelledby="process-heading">
+              <SubheadingTag id="process-heading" class="process-title">Your Simple Process</SubheadingTag>
+              <ol class="process-steps" role="list">
                 {processSteps.map((step, index) => (
-                  <div 
+                  <li 
                     class="process-step"
                     data-animate="fade-up"
                     data-delay={400 + (index * 100)}
                     key={index}
                   >
-                    <div class="step-icon">
-                      <span class="step-emoji">{step.icon}</span>
+                    <div class="step-icon" aria-hidden="true">
+                      <span class="step-emoji" role="img" aria-label={`Step ${step.number} icon`}>{step.icon}</span>
                       <span class="step-number">{step.number}</span>
                     </div>
                     <div class="step-content">
@@ -332,26 +365,26 @@ const {
                       <p class="step-description">{step.description}</p>
                     </div>
                     {index < processSteps.length - 1 && (
-                      <div class="step-connector" aria-hidden="true">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <div class="step-connector" aria-hidden="true" role="presentation">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" focusable="false">
                           <path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                       </div>
                     )}
-                  </div>
+                  </li>
                 ))}
-              </div>
-            </div>
+              </ol>
+            </section>
           )}
 
           <!-- Before/After Comparison -->
           {showBeforeAfter && beforeAfter && (
-            <div class="before-after-container">
-              <h3 class="comparison-title">The Transformation</h3>
+            <section class="before-after-container" aria-labelledby="comparison-heading">
+              <SubheadingTag id="comparison-heading" class="comparison-title">The Transformation</SubheadingTag>
               <div class="comparison-grid">
                 <!-- Before -->
                 <div class="comparison-item before">
-                  <div class="comparison-label">Before</div>
+                  <h4 class="comparison-label">Before</h4>
                   <div class="comparison-image">
                     <img 
                       src={beforeAfter.before.image}
@@ -359,6 +392,7 @@ const {
                       width="300"
                       height="200"
                       loading="lazy"
+                      decoding="async"
                     />
                   </div>
                   <div class="comparison-stats">
@@ -372,15 +406,15 @@ const {
                 </div>
 
                 <!-- Arrow -->
-                <div class="comparison-arrow">
-                  <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                <div class="comparison-arrow" aria-hidden="true" role="presentation">
+                  <svg width="48" height="48" viewBox="0 0 48 48" fill="none" focusable="false">
                     <path d="M8 24h32m-16-16l16 16-16 16" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </div>
 
                 <!-- After -->
                 <div class="comparison-item after">
-                  <div class="comparison-label">After</div>
+                  <h4 class="comparison-label">After</h4>
                   <div class="comparison-image">
                     <img 
                       src={beforeAfter.after.image}
@@ -388,6 +422,7 @@ const {
                       width="300"
                       height="200"
                       loading="lazy"
+                      decoding="async"
                     />
                   </div>
                   <div class="comparison-stats">
@@ -400,7 +435,7 @@ const {
                   </div>
                 </div>
               </div>
-            </div>
+            </section>
           )}
         </div>
       )}
@@ -408,31 +443,33 @@ const {
 
     <!-- Client Logos / Social Proof -->
     {showLogos && clientLogos.length > 0 && (
-      <div 
+      <section 
         class="hero-social-proof"
         data-animate="fade-up"
         data-delay="500"
+        aria-labelledby="social-proof-heading"
       >
-        <p class="social-proof-text">{trustedByText}</p>
-        <div class="client-logos">
+        <SubheadingTag id="social-proof-heading" class="social-proof-text">{trustedByText}</SubheadingTag>
+        <div class="client-logos" role="list" aria-label="Client logos">
           {clientLogos.map((logo, index) => (
-            <div class="logo-item" key={index}>
+            <div class="logo-item" key={index} role="listitem">
               <img 
                 src={logo.src}
                 alt={logo.alt}
                 width={logo.width || 120}
                 height={logo.height || 40}
                 loading="lazy"
+                decoding="async"
               />
             </div>
           ))}
         </div>
-      </div>
+      </section>
     )}
   </div>
 
   <!-- Scroll Indicator -->
-  <div class="scroll-indicator" aria-hidden="true">
+  <div class="scroll-indicator" aria-hidden="true" role="presentation">
     <div class="scroll-mouse">
       <div class="scroll-wheel"></div>
     </div>
@@ -468,6 +505,37 @@ const {
   shadowLg: theme.boxShadow.lg,
   shadow2xl: theme.boxShadow['2xl']
 }}>
+  /* Accessibility Utilities */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: var(--neutralDark);
+    color: var(--neutralWhite);
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    z-index: 9999;
+    transition: top 0.3s ease;
+  }
+
+  .skip-link:focus {
+    top: 6px;
+  }
+
   .hero {
     position: relative;
     min-height: 100vh;
@@ -617,14 +685,14 @@ const {
     max-width: 600px;
   }
 
-  /* Text Content */
+  /* Text Content - Enhanced for Accessibility */
   .hero-text {
     font-family: var(--fontSans);
   }
 
   .hero-subheadline {
     display: inline-block;
-    font-size: 0.875rem;
+    font-size: 1rem; /* Increased from 0.875rem for better readability */
     font-weight: 600;
     color: var(--primaryColor);
     background: var(--primaryLight);
@@ -633,19 +701,31 @@ const {
     margin-bottom: var(--spacing6);
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    line-height: 1.4; /* Added for better readability */
   }
 
   .hero-headline {
     font-family: var(--fontDisplay);
     font-size: 2.5rem;
     font-weight: 800;
-    line-height: 1.1;
+    line-height: 1.2; /* Improved from 1.1 for readability */
     color: var(--neutralDark);
     margin: 0 0 var(--spacing6) 0;
     background: linear-gradient(135deg, var(--neutralDark) 0%, var(--primaryColor) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    /* Fallback for browsers that don't support background-clip */
+    color: var(--neutralDark);
+  }
+
+  /* Ensure text is readable when background-clip isn't supported */
+  @supports not (-webkit-background-clip: text) {
+    .hero-headline {
+      background: none;
+      -webkit-text-fill-color: unset;
+      color: var(--neutralDark);
+    }
   }
 
   @media (min-width: 640px) {
@@ -661,14 +741,14 @@ const {
   }
 
   .hero-description {
-    font-size: 1.125rem;
-    line-height: 1.7;
+    font-size: 1.25rem; /* Increased from 1.125rem */
+    line-height: 1.6; /* Improved for readability */
     color: var(--neutralGray);
     margin: 0 0 var(--spacing8) 0;
     max-width: 600px;
   }
 
-  /* CTA Buttons */
+  /* CTA Buttons - Enhanced Focus States */
   .hero-cta {
     display: flex;
     flex-direction: column;
@@ -698,6 +778,8 @@ const {
     transition: all 0.3s ease;
     box-shadow: var(--shadowLg);
     border: 2px solid var(--primaryColor);
+    min-height: 44px; /* WCAG minimum touch target */
+    justify-content: center;
   }
 
   .cta-primary:hover,
@@ -709,7 +791,16 @@ const {
   }
 
   .cta-primary:focus {
-    outline: 2px solid var(--primaryColor);
+    outline: 3px solid var(--primaryColor);
+    outline-offset: 2px;
+  }
+
+  .cta-primary:focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  .cta-primary:focus-visible {
+    outline: 3px solid var(--primaryColor);
     outline-offset: 2px;
   }
 
@@ -724,6 +815,7 @@ const {
   .cta-secondary {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     font-family: var(--fontSans);
     font-size: 1.125rem;
     font-weight: 600;
@@ -733,6 +825,7 @@ const {
     border-radius: var(--borderRadiusLg);
     transition: all 0.3s ease;
     border: 2px solid transparent;
+    min-height: 44px; /* WCAG minimum touch target */
   }
 
   .cta-secondary:hover,
@@ -742,7 +835,21 @@ const {
     border-color: var(--primaryColor);
   }
 
-  /* Stats */
+  .cta-secondary:focus {
+    outline: 3px solid var(--primaryColor);
+    outline-offset: 2px;
+  }
+
+  .cta-secondary:focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  .cta-secondary:focus-visible {
+    outline: 3px solid var(--primaryColor);
+    outline-offset: 2px;
+  }
+
+  /* Stats - Enhanced Accessibility */
   .hero-stats {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -766,14 +873,15 @@ const {
     font-size: 2rem;
     font-weight: 700;
     color: var(--primaryColor);
-    line-height: 1;
+    line-height: 1.2;
     margin-bottom: var(--spacing2);
   }
 
   .stat-label {
-    font-size: 0.875rem;
+    font-size: 1rem; /* Increased from 0.875rem */
     color: var(--neutralGray);
     font-weight: 500;
+    line-height: 1.4;
   }
 
   /* Hero Visual */
@@ -864,16 +972,18 @@ const {
 
   .progress-bar {
     width: 80px;
-    height: 6px;
+    height: 8px; /* Increased from 6px for better visibility */
     background: #e2e8f0;
-    border-radius: 3px;
+    border-radius: 4px;
     overflow: hidden;
+    position: relative;
   }
 
   .progress-fill {
     height: 100%;
     background: var(--primaryColor);
     transition: width 2s ease;
+    border-radius: 4px;
   }
 
   .ui-performance {
@@ -883,8 +993,9 @@ const {
   .performance-change {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px; /* Increased spacing */
     margin-bottom: var(--spacing2);
+    justify-content: center;
   }
 
   .before {
@@ -896,6 +1007,7 @@ const {
   .arrow {
     color: var(--neutralGray);
     font-weight: 600;
+    font-size: 16px;
   }
 
   .after {
@@ -905,12 +1017,13 @@ const {
   }
 
   .ui-text {
-    font-size: 0.75rem;
+    font-size: 0.875rem; /* Maintained readable size */
     color: var(--neutralGray);
     font-weight: 500;
+    line-height: 1.4;
   }
 
-  /* Process-Focused Variant */
+  /* Process-Focused Variant - Enhanced Headings */
   .hero-visual-process {
     display: flex;
     flex-direction: column;
@@ -926,17 +1039,21 @@ const {
 
   .process-title {
     font-family: var(--fontDisplay);
-    font-size: 1.5rem;
+    font-size: 1.75rem; /* Increased from 1.5rem */
     font-weight: 700;
     color: var(--neutralDark);
     margin-bottom: var(--spacing6);
     text-align: center;
+    line-height: 1.3;
   }
 
   .process-steps {
     display: flex;
     flex-direction: column;
     gap: var(--spacing6);
+    list-style: none;
+    padding: 0;
+    margin: 0;
   }
 
   @media (min-width: 768px) {
@@ -962,7 +1079,7 @@ const {
   }
 
   .step-emoji {
-    font-size: 2rem;
+    font-size: 2.5rem; /* Increased from 2rem */
     margin-bottom: var(--spacing2);
     display: block;
   }
@@ -971,12 +1088,12 @@ const {
     position: absolute;
     bottom: -8px;
     right: -8px;
-    width: 24px;
-    height: 24px;
+    width: 28px; /* Increased from 24px */
+    height: 28px;
     background: var(--primaryColor);
     color: white;
     border-radius: 50%;
-    font-size: 0.75rem;
+    font-size: 0.875rem; /* Increased from 0.75rem */
     font-weight: 600;
     display: flex;
     align-items: center;
@@ -989,14 +1106,15 @@ const {
 
   .step-title {
     font-family: var(--fontSans);
-    font-size: 1.125rem;
+    font-size: 1.25rem; /* Increased from 1.125rem */
     font-weight: 600;
     color: var(--neutralDark);
     margin-bottom: var(--spacing2);
+    line-height: 1.3;
   }
 
   .step-description {
-    font-size: 0.875rem;
+    font-size: 1rem; /* Increased from 0.875rem */
     color: var(--neutralGray);
     line-height: 1.5;
     margin: 0;
@@ -1021,7 +1139,7 @@ const {
     }
   }
 
-  /* Before/After Comparison */
+  /* Before/After Comparison - Proper Heading Hierarchy */
   .before-after-container {
     background: var(--neutralWhite);
     border-radius: var(--borderRadius2xl);
@@ -1031,11 +1149,12 @@ const {
 
   .comparison-title {
     font-family: var(--fontDisplay);
-    font-size: 1.5rem;
+    font-size: 1.75rem; /* Increased from 1.5rem */
     font-weight: 700;
     color: var(--neutralDark);
     margin-bottom: var(--spacing6);
     text-align: center;
+    line-height: 1.3;
   }
 
   .comparison-grid {
@@ -1060,11 +1179,12 @@ const {
   }
 
   .comparison-label {
-    font-size: 0.875rem;
+    font-size: 1rem; /* Increased from 0.875rem */
     font-weight: 600;
     margin-bottom: var(--spacing3);
     padding: var(--spacing2) var(--spacing4);
     border-radius: var(--borderRadiusLg);
+    line-height: 1.4;
   }
 
   .before .comparison-label {
@@ -1139,17 +1259,18 @@ const {
     }
   }
 
-  /* Social Proof */
+  /* Social Proof - Proper Heading */
   .hero-social-proof {
     margin-top: var(--spacing16);
     text-align: center;
   }
 
   .social-proof-text {
-    font-size: 0.875rem;
+    font-size: 1rem; /* Increased from 0.875rem */
     color: var(--neutralGray);
     margin: 0 0 var(--spacing6) 0;
     font-weight: 500;
+    line-height: 1.4;
   }
 
   .client-logos {
@@ -1166,7 +1287,8 @@ const {
     filter: grayscale(100%);
   }
 
-  .logo-item:hover {
+  .logo-item:hover,
+  .logo-item:focus-within {
     opacity: 1;
     filter: grayscale(0%);
   }
@@ -1222,7 +1344,7 @@ const {
   }
 
   .scroll-text {
-    font-size: 0.75rem;
+    font-size: 0.875rem; /* Increased from 0.75rem */
     color: var(--neutralGray);
     font-weight: 500;
   }
@@ -1247,6 +1369,26 @@ const {
     transform: translateX(0);
   }
 
+  /* High Contrast Mode Support */
+  @media (prefers-contrast: high) {
+    .hero-headline {
+      background: none;
+      -webkit-text-fill-color: unset;
+      color: var(--neutralDark);
+    }
+    
+    .cta-primary:focus,
+    .cta-secondary:focus {
+      outline: 3px solid;
+      outline-color: ButtonText;
+    }
+    
+    .logo-item {
+      filter: none;
+      opacity: 1;
+    }
+  }
+
   /* Mobile Optimizations */
   @media (max-width: 640px) {
     .hero {
@@ -1262,7 +1404,7 @@ const {
     }
 
     .stat-number {
-      font-size: 1.5rem;
+      font-size: 1.75rem; /* Increased from 1.5rem */
     }
 
     .scroll-indicator {
@@ -1277,6 +1419,32 @@ const {
     .comparison-grid {
       gap: var(--spacing4);
     }
+
+    .hero-headline {
+      font-size: 2.25rem; /* Improved mobile sizing */
+    }
+
+    .hero-description {
+      font-size: 1.125rem; /* Maintained readability on mobile */
+    }
+  }
+
+  /* Focus Management for Keyboard Navigation */
+  .hero a:focus,
+  .hero button:focus {
+    outline: 3px solid var(--primaryColor);
+    outline-offset: 2px;
+  }
+
+  .hero a:focus:not(:focus-visible),
+  .hero button:focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  .hero a:focus-visible,
+  .hero button:focus-visible {
+    outline: 3px solid var(--primaryColor);
+    outline-offset: 2px;
   }
 
   /* Reduced motion support */
@@ -1293,23 +1461,104 @@ const {
     [data-animate] {
       opacity: 1;
       transform: none;
+      transition: none;
+    }
+    
+    .cta-primary,
+    .cta-secondary {
+      transition: none;
+    }
+    
+    .cta-primary:hover,
+    .cta-secondary:hover {
+      transform: none;
+    }
+  }
+
+  /* Dark Mode Support */
+  @media (prefers-color-scheme: dark) {
+    .hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    }
+    
+    .hero-headline,
+    .process-title,
+    .comparison-title,
+    .step-title {
+      color: var(--neutralWhite);
+    }
+    
+    .hero-description,
+    .step-description,
+    .stat-label,
+    .ui-text,
+    .social-proof-text {
+      color: #cbd5e1;
+    }
+    
+    .ui-card,
+    .process-container,
+    .before-after-container {
+      background: #1e293b;
+      border-color: #334155;
+    }
+    
+    .stat-row {
+      background: #334155;
+    }
+  }
+
+  /* Print Styles */
+  @media print {
+    .hero-decoration,
+    .floating-ui,
+    .scroll-indicator,
+    .hero-video,
+    .hero-bg-image {
+      display: none;
+    }
+    
+    .hero {
+      min-height: auto;
+      background: white;
+      color: black;
+    }
+    
+    .hero-headline {
+      background: none;
+      -webkit-text-fill-color: unset;
+      color: black;
+    }
+    
+    .cta-primary,
+    .cta-secondary {
+      border: 2px solid black;
+      color: black;
+      background: white;
     }
   }
 </style>
 
 <script>
-  // Hero Animation Controller
+  // Hero Animation Controller with Enhanced Accessibility
   class HeroAnimations {
     constructor() {
       this.animatedElements = document.querySelectorAll('[data-animate]');
       this.statElements = document.querySelectorAll('[data-count-to]');
       this.progressBars = document.querySelectorAll('.progress-fill');
       this.hasAnimated = false;
+      this.prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       
       this.init();
     }
 
     init() {
+      // Skip animations if user prefers reduced motion
+      if (this.prefersReducedMotion) {
+        this.showAllElements();
+        return;
+      }
+
       // Initial animation on load
       this.animateOnLoad();
       
@@ -1321,9 +1570,22 @@ const {
       
       // Intersection observer for scroll-triggered animations
       this.setupScrollAnimations();
+      
+      // Keyboard navigation enhancements
+      this.enhanceKeyboardNavigation();
+    }
+
+    showAllElements() {
+      this.animatedElements.forEach(el => {
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+      });
     }
 
     animateOnLoad() {
+      // Announce to screen readers that content is loading
+      this.announceToScreenReader('Page content is loading');
+      
       setTimeout(() => {
         this.animatedElements.forEach((el, index) => {
           const delay = parseInt(el.dataset.delay) || 0;
@@ -1332,7 +1594,12 @@ const {
           }, delay);
         });
         this.hasAnimated = true;
-      }, 500); // Initial delay
+        
+        // Announce completion to screen readers
+        setTimeout(() => {
+          this.announceToScreenReader('Page content loaded');
+        }, 1000);
+      }, 500);
     }
 
     setupCounters() {
@@ -1368,6 +1635,12 @@ const {
             entry.target.style.width = '0%';
             setTimeout(() => {
               entry.target.style.width = targetWidth;
+              // Update aria-valuenow for screen readers
+              const progressBar = entry.target.closest('[role="progressbar"]');
+              if (progressBar) {
+                const value = parseInt(targetWidth);
+                progressBar.setAttribute('aria-valuenow', value);
+              }
             }, 100);
             entry.target.hasAnimated = true;
           }
@@ -1381,11 +1654,10 @@ const {
 
     animateCounter(element) {
       const target = parseInt(element.dataset.countTo);
-      const duration = 2000; // 2 seconds
+      const duration = 2000;
       const stepTime = Math.abs(Math.floor(duration / target));
-      const current = 0;
       
-      let counter = current;
+      let counter = 0;
       const timer = setInterval(() => {
         counter += Math.ceil(target / 50);
         if (counter >= target) {
@@ -1393,14 +1665,19 @@ const {
           clearInterval(timer);
         }
         element.textContent = counter.toLocaleString();
+        
+        // Update aria-live region for screen readers
+        element.setAttribute('aria-label', `${counter.toLocaleString()} ${element.nextElementSibling?.textContent || ''}`);
       }, stepTime);
     }
 
     setupScrollAnimations() {
-      // Parallax effect for floating shapes
+      if (this.prefersReducedMotion) return;
+      
       const shapes = document.querySelectorAll('.shape');
       
-      window.addEventListener('scroll', () => {
+      let ticking = false;
+      const updateParallax = () => {
         const scrolled = window.pageYOffset;
         const parallax = scrolled * 0.5;
         
@@ -1408,7 +1685,52 @@ const {
           const speed = 0.5 + (index * 0.1);
           shape.style.transform = `translateY(${parallax * speed}px) rotate(${scrolled * 0.1}deg)`;
         });
+        
+        ticking = false;
+      };
+      
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          requestAnimationFrame(updateParallax);
+          ticking = true;
+        }
       });
+    }
+
+    enhanceKeyboardNavigation() {
+      // Improve focus management for the hero section
+      const focusableElements = document.querySelectorAll(
+        '.hero a, .hero button, .hero [tabindex]:not([tabindex="-1"])'
+      );
+      
+      // Add skip links functionality
+      const skipLink = document.querySelector('.skip-link');
+      if (skipLink) {
+        skipLink.addEventListener('click', (e) => {
+          e.preventDefault();
+          const target = document.querySelector(skipLink.getAttribute('href')) || 
+                        document.querySelector('#main-content') ||
+                        document.querySelector('main');
+          if (target) {
+            target.focus();
+            target.scrollIntoView({ behavior: 'smooth' });
+          }
+        });
+      }
+    }
+
+    announceToScreenReader(message) {
+      const announcement = document.createElement('div');
+      announcement.setAttribute('aria-live', 'polite');
+      announcement.setAttribute('aria-atomic', 'true');
+      announcement.className = 'sr-only';
+      announcement.textContent = message;
+      
+      document.body.appendChild(announcement);
+      
+      setTimeout(() => {
+        document.body.removeChild(announcement);
+      }, 1000);
     }
   }
 
@@ -1417,8 +1739,14 @@ const {
     new HeroAnimations();
   });
 
-  // Handle reduced motion preference
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    document.documentElement.style.setProperty('--animation-duration', '0ms');
-  }
+  // Listen for reduced motion preference changes
+  window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', (e) => {
+    if (e.matches) {
+      document.documentElement.style.setProperty('--animation-duration', '0ms');
+      // Remove all animations
+      document.querySelectorAll('.shape, .floating-ui, .scroll-indicator').forEach(el => {
+        el.style.animation = 'none';
+      });
+    }
+  });
 </script>

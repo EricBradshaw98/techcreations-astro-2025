@@ -37,38 +37,39 @@ import { homeHeroConfig } from '../lib/home';
     { rel: 'preconnect', href: 'https://api.youragency.com' },
     { rel: 'dns-prefetch', href: '//analytics.google.com' }
   ]}
-/>
+>
 
- <!-- <Hero 
+ <Hero 
 
   {...homeHeroConfig}
 />
   <ServicesOverview/>
-  <WhyChooseUs/>
-   <CaseStudies 
-    variant="featured"
-    maxCases={4}
-    showCta={true}
-    ctaHref="/portfolio"
-  />
- <Testimonials 
+  <!-- <WhyChooseUs/> -->
+
+ <!-- <Testimonials 
     variant="carousel"
     showRatings={true}
     showLogos={true}
     autoplay={true}
-  />
+  /> -->
   <HowWeWork variant="minimal"
     showTimeline={true}
     showCta={true}/>
-     <FAQ 
+     <!-- <FAQ 
     variant="accordion"
     showCta={true}
     maxFaqs={12}
+  /> -->
+     <CaseStudies 
+    variant="featured"
+    maxCases={4}
+    showCta={true}
+    ctaHref="/portfolio"
   />
  <FinalCTA 
     variant="centered"
     showGuarantee={true}
     showTestimonial={true}
     showStats={true}
-  /> -->
+  />
 </Layout>
