@@ -1,0 +1,1137 @@
+---
+import theme from "../../lib/theme";
+
+const performanceMetrics = [
+  {
+    metric: "Page Load Speed",
+    before: "3.2s",
+    after: "0.6s",
+    improvement: "81% faster",
+    icon: "zap",
+    color: "blue",
+    ariaLabel: "Page load speed improved from 3.2 seconds to 0.6 seconds, 81% faster"
+  },
+  {
+    metric: "Core Web Vitals",
+    before: "Poor",
+    after: "Excellent",
+    improvement: "100% green scores",
+    icon: "trending-up",
+    color: "green",
+    ariaLabel: "Core Web Vitals improved from poor to excellent with 100% green scores"
+  },
+  {
+    metric: "Security Incidents",
+    before: "12/year",
+    after: "0/year",
+    improvement: "100% secure",
+    icon: "shield",
+    color: "purple",
+    ariaLabel: "Security incidents reduced from 12 per year to 0 per year, 100% secure"
+  },
+  {
+    metric: "Uptime",
+    before: "98.2%",
+    after: "99.99%",
+    improvement: "Enterprise-grade",
+    icon: "globe",
+    color: "emerald",
+    ariaLabel: "Uptime improved from 98.2% to 99.99%, achieving enterprise-grade reliability"
+  },
+  {
+    metric: "Development Time",
+    before: "8 hrs/update",
+    after: "2 hrs/update",
+    improvement: "75% efficiency",
+    icon: "clock",
+    color: "orange",
+    ariaLabel: "Development time reduced from 8 hours to 2 hours per update, 75% more efficient"
+  },
+  {
+    metric: "Monthly Costs",
+    before: "$850/mo",
+    after: "$450/mo",
+    improvement: "47% savings",
+    icon: "dollar-sign",
+    color: "indigo",
+    ariaLabel: "Monthly costs reduced from $850 to $450, 47% savings achieved"
+  }
+];
+
+const businessImpacts = [
+  {
+    title: "Conversion Rate Increase",
+    value: "+156%",
+    description: "Average improvement in lead generation",
+    trend: "up",
+    ariaLabel: "156% increase in conversion rate"
+  },
+  {
+    title: "SEO Ranking Boost",
+    value: "+73%",
+    description: "Keywords in top 10 positions",
+    trend: "up",
+    ariaLabel: "73% boost in SEO rankings"
+  },
+  {
+    title: "Bounce Rate Reduction",
+    value: "-64%",
+    description: "Users staying longer on site",
+    trend: "down",
+    ariaLabel: "64% reduction in bounce rate"
+  },
+  {
+    title: "Mobile Performance",
+    value: "+89%",
+    description: "PageSpeed Insights score improvement",
+    trend: "up",
+    ariaLabel: "89% improvement in mobile performance"
+  }
+];
+
+const clientStats = [
+  { number: "127", label: "Websites Rebuilt", sublabel: "on our infrastructure", ariaLabel: "127 websites rebuilt on our infrastructure" },
+  { number: "99.99%", label: "Average Uptime", sublabel: "across all sites", ariaLabel: "99.99% average uptime across all sites" },
+  { number: "0", label: "Security Breaches", sublabel: "in 3+ years", ariaLabel: "Zero security breaches in over 3 years" },
+  { number: "2.4s", label: "Average Load Time", sublabel: "improvement achieved", ariaLabel: "2.4 seconds average load time improvement achieved" }
+];
+
+const testimonialHighlight = {
+  quote: "Our website went from embarrassingly slow to lightning fast. More importantly, our leads increased by 200% in the first quarter after the rebuild.",
+  author: "Sarah Chen",
+  title: "Marketing Director",
+  company: "TechFlow Solutions",
+  metrics: ["3.8s → 0.7s load time", "200% lead increase", "Zero downtime"],
+  avatar: "SC"
+};
+
+// Icon component mapping
+const icons = {
+  'zap': `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+  'trending-up': `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22,7 13.5,15.5 8.5,10.5 2,17"/><polyline points="16,7 22,7 22,13"/></svg>`,
+  'shield': `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+  'globe': `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="m5 5 14 14"/><path d="m9 5 5 5"/></svg>`,
+  'clock': `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>`,
+  'dollar-sign': `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,
+  'arrow-up-right': `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7,7 17,7 17,17"/></svg>`,
+  'users': `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`
+};
+
+// Helper function to get theme colors
+function getColorClass(color) {
+  switch(color) {
+    case 'blue': return theme.colors.primary[600];
+    case 'green': return theme.colors.success[600];
+    case 'purple': return theme.colors.secondary[600];
+    case 'emerald': return theme.colors.success[600];
+    case 'orange': return theme.colors.warning[600];
+    case 'indigo': return theme.colors.info[600];
+    default: return theme.colors.primary[600];
+  }
+}
+---
+
+<section class="results-section" role="region" aria-labelledby="results-heading">
+  <div class="container">
+    <!-- Section Header -->
+    <div class="header">
+      <div class="header-content">
+        <div class="badge" role="text" aria-label="Section identifier">PROVEN RESULTS</div>
+        <h2 id="results-heading" class="main-heading">
+          Results That Speak for
+          <span class="accent-text">Themselves</span>
+        </h2>
+        <p class="subtitle">
+          When you rebuild with Astro on our enterprise infrastructure, you don't just get a faster website—you get a complete business transformation that drives real business growth.
+        </p>
+      </div>
+    </div>
+
+    <!-- Performance Metrics Grid -->
+    <div class="metrics-section" role="region" aria-labelledby="metrics-heading">
+      <div class="section-header">
+        <h3 id="metrics-heading" class="section-heading">Performance Transformations</h3>
+        <p class="section-description">Real metrics from actual client rebuilds showing the dramatic impact of modern architecture</p>
+      </div>
+      <div class="metrics-grid" role="list" aria-label="Performance improvement metrics">
+        {performanceMetrics.map((metric, index) => (
+          <div class="metric-card" role="listitem" aria-label={metric.ariaLabel}>
+            <div class="metric-header">
+              <div class="icon-wrapper" style={`color: ${getColorClass(metric.color)}`} role="img" aria-label={`${metric.metric} icon`}>
+                <Fragment set:html={icons[metric.icon]} />
+              </div>
+              <h4 class="metric-title">{metric.metric}</h4>
+            </div>
+            
+            <div class="metric-content">
+              <div class="before-after-container" role="group" aria-label={`Before and after comparison for ${metric.metric}`}>
+                <div class="metric-row">
+                  <span class="label" id={`before-${index}`}>Before:</span>
+                  <span class="before-value" aria-labelledby={`before-${index}`}>{metric.before}</span>
+                </div>
+                <div class="vs-divider" role="img" aria-label="versus">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <polyline points="9,18 15,12 9,6"></polyline>
+                  </svg>
+                </div>
+                <div class="metric-row">
+                  <span class="label" id={`after-${index}`}>After:</span>
+                  <span class="after-value" aria-labelledby={`after-${index}`}>{metric.after}</span>
+                </div>
+              </div>
+              <div class="improvement-section">
+                <div class="improvement-badge" style={`color: ${getColorClass(metric.color)}`} role="status" aria-label={`Improvement: ${metric.improvement}`}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <polyline points="22,12 18,8 18,16"></polyline>
+                    <polyline points="2,12 6,8 6,16"></polyline>
+                  </svg>
+                  {metric.improvement}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Business Impact Numbers -->
+    <div class="impact-section" role="region" aria-labelledby="impact-heading">
+      <div class="section-header">
+        <h3 id="impact-heading" class="section-heading">Real Business Impact</h3>
+        <p class="section-description">Performance improvements translate directly to business growth and competitive advantage</p>
+      </div>
+      <div class="impact-grid" role="list" aria-label="Business impact statistics">
+        {businessImpacts.map((impact) => (
+          <div class="impact-card" role="listitem" aria-label={impact.ariaLabel}>
+            <div class="impact-header">
+              <span class="impact-value" role="text">{impact.value}</span>
+              <div class="arrow-icon" role="img" aria-label="upward trend">
+                <Fragment set:html={icons['arrow-up-right']} />
+              </div>
+            </div>
+            <h4 class="impact-title">{impact.title}</h4>
+            <p class="impact-description">{impact.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Client Stats Bar -->
+    <div class="stats-section" role="region" aria-labelledby="stats-heading">
+      <div class="stats-header">
+        <h3 id="stats-heading" class="stats-heading">Track Record of Excellence</h3>
+        <p class="stats-description">Numbers that prove our commitment to delivering enterprise-grade results</p>
+      </div>
+      <div class="stats-grid" role="list" aria-label="Company statistics">
+        {clientStats.map((stat) => (
+          <div class="stat-item" role="listitem" aria-label={stat.ariaLabel}>
+            <div class="stat-number" role="text">{stat.number}</div>
+            <div class="stat-label">{stat.label}</div>
+            <div class="stat-sublabel">{stat.sublabel}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Featured Testimonial -->
+    <div class="testimonial-section" role="region" aria-labelledby="testimonial-heading">
+      <div class="section-header">
+        <h3 id="testimonial-heading" class="section-heading">Client Success Story</h3>
+        <p class="section-description">Real transformation stories from business leaders who made the switch</p>
+      </div>
+      <div class="testimonial-card" role="article" aria-labelledby="testimonial-author">
+        <div class="testimonial-visual-header">
+          <div class="testimonial-pattern"></div>
+          <div class="testimonial-quote-mark" role="img" aria-label="quotation mark">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 21C3 17.5 4 13 9 11L10 13C6.5 14.5 5 16.5 5 21H3ZM14 21C14 17.5 15 13 20 11L21 13C17.5 14.5 16 16.5 16 21H14Z" fill="currentColor"/>
+            </svg>
+          </div>
+        </div>
+        <div class="testimonial-content">
+          <blockquote class="testimonial-quote">
+            "{testimonialHighlight.quote}"
+          </blockquote>
+          
+          <div class="testimonial-footer">
+            <div class="author-section">
+              <div class="author-avatar" role="img" aria-label={`Avatar for ${testimonialHighlight.author}`}>
+                <span class="avatar-initials">{testimonialHighlight.avatar}</span>
+                <div class="avatar-glow"></div>
+              </div>
+              <div class="author-info">
+                <cite class="author-name" id="testimonial-author">{testimonialHighlight.author}</cite>
+                <div class="author-title">{testimonialHighlight.title}</div>
+                <div class="author-company">{testimonialHighlight.company}</div>
+              </div>
+            </div>
+            
+            <div class="metrics-tags" role="list" aria-label="Client success metrics">
+              {testimonialHighlight.metrics.map((metric, index) => (
+                <span class="metric-tag" role="listitem" key={index}>{metric}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-section" role="region" aria-labelledby="cta-heading">
+      <div class="cta-content">
+        <h3 id="cta-heading" class="cta-heading">Ready to See Your Potential?</h3>
+        <p class="cta-description">Get a comprehensive performance analysis of your current website and see exactly how much you could improve.</p>
+        <button class="cta-button" type="button" aria-describedby="cta-features">
+          Get Your Free Performance Analysis
+          <div class="cta-icon" role="img" aria-label="arrow pointing up and right">
+            <Fragment set:html={icons['arrow-up-right']} />
+          </div>
+        </button>
+        <div class="cta-features" id="cta-features" role="list" aria-label="Free audit features">
+          <span class="feature" role="listitem">✓ Free audit</span>
+          <span class="feature" role="listitem">✓ No obligation</span>
+          <span class="feature" role="listitem">✓ Results in 48 hours</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style define:vars={{
+  // Theme colors
+  primary50: theme.colors.primary[50],
+  primary600: theme.colors.primary[600],
+  primary700: theme.colors.primary[700],
+  neutral50: theme.colors.neutral[50],
+  neutral100: theme.colors.neutral[100],
+  neutral500: theme.colors.neutral[500],
+  neutral600: theme.colors.neutral[600],
+  neutral800: theme.colors.neutral[800],
+  neutral900: theme.colors.neutral[900],
+  background: theme.colors.background,
+  success600: theme.colors.success[600],
+  warning600: theme.colors.warning[600],
+  
+  // Typography
+  h2FontSize: theme.components.heading.h2.fontSize[2],
+  h2LineHeight: theme.components.heading.h2.lineHeight,
+  h2FontWeight: theme.components.heading.h2.fontWeight,
+  h3FontSize: theme.components.heading.h3.fontSize[1],
+  h3FontWeight: theme.components.heading.h3.fontWeight,
+  xlFontSize: theme.typography.fontSize.xl[0],
+  lgFontSize: theme.typography.fontSize.lg[0],
+  baseFontSize: theme.typography.fontSize.base[0],
+  smFontSize: theme.typography.fontSize.sm[0],
+  fontWeightMedium: theme.typography.fontWeight.medium,
+  fontWeightSemibold: theme.typography.fontWeight.semibold,
+  fontWeightBold: theme.typography.fontWeight.bold,
+  
+  // Spacing
+  spacing2: theme.spacing[2],
+  spacing3: theme.spacing[3],
+  spacing4: theme.spacing[4],
+  spacing6: theme.spacing[6],
+  spacing8: theme.spacing[8],
+  spacing12: theme.spacing[12],
+  spacing16: theme.spacing[16],
+  spacing20: theme.spacing[20],
+  spacing24: theme.spacing[24],
+  
+  // Border radius
+  borderRadiusLg: theme.borderRadius.lg,
+  borderRadius2xl: theme.borderRadius['2xl'],
+  borderRadius3xl: theme.borderRadius['3xl'],
+  
+  // Shadows
+  shadowLg: theme.boxShadow.lg,
+  shadow2xl: theme.boxShadow['2xl'],
+}}>
+  .results-section {
+    padding: var(--spacing24) 0;
+    background: linear-gradient(to bottom right, var(--neutral50), var(--background), var(--primary50));
+  }
+
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .container {
+      padding: 0 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container {
+      padding: 0 2rem;
+    }
+  }
+
+  /* Header Styles */
+  .header {
+    margin-bottom: var(--spacing20);
+  }
+
+  .header-content {
+   width: 100%;
+  }
+
+  .badge {
+    display: inline-block;
+    background: var(--primary50);
+    color: var(--primary600);
+    padding: var(--spacing2) var(--spacing4);
+    border-radius: 9999px;
+    font-size: var(--smFontSize);
+    font-weight: var(--fontWeightSemibold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--spacing4);
+  }
+
+  .main-heading {
+    font-size: var(--h2FontSize);
+    line-height: var(--h2LineHeight);
+    font-weight: var(--h2FontWeight);
+    color: var(--neutral900);
+    margin-bottom: var(--spacing6);
+  }
+
+  .accent-text {
+    display: block;
+    color: var(--primary600);
+  }
+
+  .subtitle {
+    font-size: var(--xlFontSize);
+    color: var(--neutral600);
+    line-height: 1.625;
+    max-width: 48rem;
+  }
+
+  /* Section Styles */
+  .section-header {
+    margin-bottom: var(--spacing12);
+  }
+
+  .section-heading {
+    font-size: var(--h3FontSize);
+    font-weight: var(--h3FontWeight);
+    color: var(--neutral900);
+    margin-bottom: var(--spacing3);
+  }
+
+  .section-description {
+    font-size: var(--baseFontSize);
+    color: var(--neutral600);
+    max-width: 48rem;
+  }
+
+  /* Metrics Section */
+  .metrics-section {
+    margin-bottom: var(--spacing20);
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing8);
+  }
+
+  @media (min-width: 768px) {
+    .metrics-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .metrics-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .metric-card {
+    background: var(--background);
+    border-radius: var(--borderRadius2xl);
+    padding: var(--spacing8);
+    box-shadow: var(--shadowLg);
+    border: 1px solid var(--neutral100);
+    transition: all 300ms ease;
+  }
+
+  .metric-card:hover {
+    box-shadow: var(--shadow2xl);
+    transform: translateY(-4px);
+  }
+
+  .metric-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--spacing6);
+  }
+
+  .icon-wrapper {
+    background: var(--neutral50);
+    padding: var(--spacing3);
+    border-radius: var(--borderRadiusLg);
+    margin-right: var(--spacing4);
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .metric-title {
+    font-size: var(--lgFontSize);
+    font-weight: var(--fontWeightSemibold);
+    color: var(--neutral900);
+  }
+
+  .metric-content {
+    margin-bottom: var(--spacing6);
+  }
+
+  .before-after-container {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing4);
+    margin-bottom: var(--spacing4);
+    padding: var(--spacing4);
+    background: var(--neutral50);
+    border-radius: var(--borderRadiusLg);
+  }
+
+  .metric-row {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing2);
+  }
+
+  .vs-divider {
+    color: var(--neutral400);
+    flex-shrink: 0;
+  }
+
+  .label {
+    color: var(--neutral500);
+    font-size: var(--smFontSize);
+    font-weight: var(--fontWeightMedium);
+  }
+
+  .before-value {
+    color: var(--neutral800);
+    font-weight: var(--fontWeightSemibold);
+    font-size: var(--lgFontSize);
+  }
+
+  .after-value {
+    color: var(--primary600);
+    font-weight: var(--fontWeightBold);
+    font-size: var(--lgFontSize);
+  }
+
+  .improvement-section {
+    padding-top: var(--spacing4);
+    border-top: 1px solid var(--neutral100);
+  }
+
+  .improvement-badge {
+    background: var(--primary50);
+    padding: var(--spacing3) var(--spacing4);
+    border-radius: var(--borderRadiusLg);
+    font-weight: var(--fontWeightBold);
+    font-size: var(--smFontSize);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing2);
+    border: 2px solid var(--primary100);
+  }
+
+  /* Impact Section */
+  .impact-section {
+    margin-bottom: var(--spacing20);
+  }
+
+  .impact-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing8);
+  }
+
+  @media (min-width: 768px) {
+    .impact-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .impact-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .impact-card {
+    text-align: center;
+    background: var(--background);
+    border-radius: var(--borderRadius2xl);
+    padding: var(--spacing8);
+    box-shadow: var(--shadowLg);
+    border: 1px solid var(--neutral100);
+  }
+
+  .impact-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing4);
+  }
+
+  .impact-value {
+    font-size: 2.5rem;
+    font-weight: var(--fontWeightBold);
+    color: var(--success600);
+  }
+
+  .arrow-icon {
+    width: 24px;
+    height: 24px;
+    margin-left: var(--spacing2);
+    color: var(--success600);
+  }
+
+  .impact-title {
+    font-size: var(--lgFontSize);
+    font-weight: var(--fontWeightSemibold);
+    color: var(--neutral900);
+    margin-bottom: var(--spacing2);
+  }
+
+  .impact-description {
+    color: var(--neutral600);
+    font-size: var(--smFontSize);
+  }
+
+  /* Stats Section */
+  .stats-section {
+    margin-bottom: var(--spacing20);
+    background: linear-gradient(135deg, var(--primary600), var(--primary700), var(--primary600));
+    border-radius: var(--borderRadius3xl);
+    padding: var(--spacing12);
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stats-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+    z-index: 1;
+  }
+
+  .stats-header {
+    position: relative;
+    z-index: 2;
+    margin-bottom: var(--spacing8);
+  }
+
+  .stats-heading {
+    font-size: var(--h3FontSize);
+    font-weight: var(--h3FontWeight);
+    margin-bottom: var(--spacing3);
+  }
+
+  .stats-description {
+    opacity: 0.9;
+    max-width: 32rem;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing8);
+    position: relative;
+    z-index: 2;
+  }
+
+  @media (min-width: 768px) {
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .stats-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .stat-item {
+    text-align: center;
+  }
+
+  .stat-number {
+    font-size: 3rem;
+    font-weight: var(--fontWeightBold);
+    margin-bottom: var(--spacing2);
+  }
+
+  @media (min-width: 768px) {
+    .stat-number {
+      font-size: 3.5rem;
+    }
+  }
+
+  .stat-label {
+    font-size: var(--xlFontSize);
+    font-weight: var(--fontWeightSemibold);
+    margin-bottom: var(--spacing1);
+    opacity: 0.9;
+  }
+
+  .stat-sublabel {
+    font-size: var(--smFontSize);
+    opacity: 0.8;
+  }
+
+  /* Testimonial Section */
+  .testimonial-section {
+    margin-bottom: var(--spacing16);
+  }
+
+  .testimonial-card {
+    background: linear-gradient(135deg, var(--background) 0%, var(--neutral50) 100%);
+    border-radius: var(--borderRadius3xl);
+    box-shadow: var(--shadow2xl);
+    border: 1px solid var(--neutral100);
+   
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .testimonial-visual-header {
+    position: relative;
+    height: 120px;
+    background: linear-gradient(135deg, var(--primary600), var(--primary700));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .testimonial-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                      radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    background-size: 60px 60px;
+  }
+
+  .testimonial-quote-mark {
+    position: relative;
+    z-index: 2;
+    color: rgba(255, 255, 255, 0.9);
+    transform: scale(1.2);
+  }
+
+  .testimonial-content {
+    padding: var(--spacing12);
+    position: relative;
+  }
+
+  .testimonial-content::before {
+    content: '';
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 60px;
+    background: var(--background);
+    border-radius: 50%;
+    border: 3px solid var(--neutral100);
+    box-shadow: 0 -10px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .testimonial-quote {
+    font-size: 1.375rem;
+    font-weight: var(--fontWeightMedium);
+    color: var(--neutral800);
+    line-height: 1.6;
+    margin: var(--spacing8) 0 var(--spacing12);
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  @media (min-width: 768px) {
+    .testimonial-quote {
+      font-size: 1.625rem;
+    }
+  }
+
+  .testimonial-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing8);
+    padding-top: var(--spacing8);
+    border-top: 1px solid var(--neutral100);
+  }
+
+  @media (min-width: 768px) {
+    .testimonial-footer {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+  }
+
+  .author-section {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing4);
+  }
+
+  .author-avatar {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, var(--primary500), var(--primary600));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 32px rgba(14, 165, 233, 0.3);
+    flex-shrink: 0;
+  }
+
+  .avatar-initials {
+    color: white;
+    font-weight: var(--fontWeightBold);
+    font-size: 1.25rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .avatar-glow {
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    background: linear-gradient(135deg, var(--primary400), var(--primary600));
+    border-radius: 50%;
+    opacity: 0.3;
+    animation: pulse 2s ease-in-out infinite;
+    z-index: 1;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 0.3;
+    }
+    50% {
+      transform: scale(1.1);
+      opacity: 0.5;
+    }
+  }
+
+  .author-info {
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .author-info {
+      text-align: left;
+    }
+  }
+
+  .author-name {
+    font-weight: var(--fontWeightBold);
+    color: var(--neutral900);
+    font-size: var(--lgFontSize);
+    display: block;
+    margin-bottom: var(--spacing1);
+    font-style: normal;
+  }
+
+  .author-title {
+    color: var(--neutral600);
+    font-size: var(--baseFontSize);
+    margin-bottom: 2px;
+  }
+
+  .author-company {
+    color: var(--primary600);
+    font-weight: var(--fontWeightSemibold);
+    font-size: var(--baseFontSize);
+  }
+
+  .author-title {
+    color: var(--neutral600);
+  }
+
+  .author-company {
+    color: var(--primary600);
+    font-weight: var(--fontWeightMedium);
+  }
+
+  .metrics-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing3);
+    justify-content: center;
+  }
+
+  @media (min-width: 768px) {
+    .metrics-tags {
+      justify-content: flex-end;
+    }
+  }
+
+  .metric-tag {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.15));
+    color: var(--success600);
+    padding: var(--spacing2) var(--spacing4);
+    border-radius: 9999px;
+    font-size: var(--smFontSize);
+    font-weight: var(--fontWeightSemibold);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    backdrop-filter: blur(10px);
+    transition: all 300ms ease;
+  }
+
+  .metric-tag:hover {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.2));
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
+  }
+
+  /* Enhanced Focus Styles for Accessibility */
+  .cta-button:focus-visible,
+  .metric-card:focus-within,
+  .impact-card:focus-within,
+  .testimonial-card:focus-within {
+    outline: 3px solid var(--primary600);
+    outline-offset: 2px;
+  }
+
+  /* High Contrast Mode Support */
+  @media (prefers-contrast: high) {
+    .metric-card,
+    .impact-card,
+    .testimonial-card {
+      border-width: 2px;
+      border-color: var(--neutral800);
+    }
+
+    .improvement-badge,
+    .metric-tag {
+      border-width: 2px;
+    }
+
+    .cta-button {
+      border: 2px solid var(--primary700);
+    }
+  }
+
+  /* Reduced Motion Support */
+  @media (prefers-reduced-motion: reduce) {
+    .metric-card,
+    .impact-card,
+    .cta-button,
+    .metric-tag {
+      transition: none;
+    }
+
+    .metric-card:hover,
+    .impact-card:hover,
+    .cta-button:hover,
+    .metric-tag:hover {
+      transform: none;
+    }
+
+    .avatar-glow {
+      animation: none;
+    }
+  }
+
+  /* Screen Reader Only Content */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Skip Links for Keyboard Navigation */
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: var(--primary600);
+    color: white;
+    padding: 8px;
+    text-decoration: none;
+    border-radius: var(--borderRadiusLg);
+    z-index: 1000;
+  }
+
+  .skip-link:focus {
+    top: 6px;
+  }
+
+  /* Enhanced Color Contrast for Text */
+  .section-description,
+  .impact-description,
+  .author-title {
+    color: var(--neutral700); /* Enhanced from neutral-600 */
+  }
+
+  .label {
+    color: var(--neutral600); /* Enhanced from neutral-500 */
+  }
+
+  /* Ensure proper heading hierarchy is visually clear */
+  h2 {
+    margin-top: 0;
+  }
+
+  h3 {
+    margin-top: var(--spacing8);
+  }
+
+  h4 {
+    margin-top: var(--spacing6);
+  }
+
+  /* Touch target sizing for mobile accessibility */
+  @media (max-width: 767px) {
+    .cta-button {
+      min-height: 48px; /* WCAG minimum touch target */
+      padding: var(--spacing4) var(--spacing6);
+    }
+
+    .metric-card,
+    .impact-card {
+      min-height: 48px;
+    }
+  }
+
+  /* Enhanced keyboard navigation */
+  .metric-card:focus-within .improvement-badge,
+  .impact-card:focus-within .impact-value {
+    box-shadow: 0 0 0 2px var(--primary600);
+    border-radius: var(--borderRadiusLg);
+  }
+
+  /* Improved color coding with sufficient contrast */
+  .improvement-badge[style*="color: #0ea5e9"] { /* blue/primary */
+    background: var(--primary50);
+    border-color: var(--primary200);
+  }
+
+  .improvement-badge[style*="color: #16a34a"] { /* green/success */
+    background: var(--success50);
+    border-color: rgba(34, 197, 94, 0.2);
+  }
+
+  .improvement-badge[style*="color: #d946ef"] { /* purple/secondary */
+    background: var(--secondary50);
+    border-color: rgba(217, 70, 239, 0.2);
+  }
+
+  .improvement-badge[style*="color: #d97706"] { /* orange/warning */
+    background: var(--warning50);
+    border-color: rgba(217, 119, 6, 0.2);
+  }
+
+  .improvement-badge[style*="color: #2563eb"] { /* indigo/info */
+    background: var(--info50);
+    border-color: rgba(37, 99, 235, 0.2);
+  }
+
+  /* CTA Section */
+  .cta-section {
+    text-align: center;
+  }
+
+  .cta-content {
+    max-width: 40rem;
+    margin: 0 auto;
+  }
+
+  .cta-heading {
+    font-size: var(--h3FontSize);
+    font-weight: var(--h3FontWeight);
+    color: var(--neutral900);
+    margin-bottom: var(--spacing4);
+  }
+
+  .cta-description {
+    color: var(--neutral600);
+    font-size: var(--baseFontSize);
+    margin-bottom: var(--spacing8);
+    line-height: 1.6;
+  }
+
+  .cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing3);
+    background: var(--primary600);
+    color: white;
+    padding: var(--spacing4) var(--spacing8);
+    border-radius: var(--borderRadius2xl);
+    font-weight: var(--fontWeightSemibold);
+    font-size: var(--lgFontSize);
+    transition: all 300ms ease;
+    border: none;
+    cursor: pointer;
+    margin-bottom: var(--spacing6);
+  }
+
+  .cta-button:hover {
+    background: var(--primary700);
+    transform: translateY(-2px);
+    box-shadow: var(--shadowLg);
+  }
+
+  .cta-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .cta-features {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing6);
+    flex-wrap: wrap;
+  }
+
+  .feature {
+    color: var(--neutral500);
+    font-size: var(--smFontSize);
+    font-weight: var(--fontWeightMedium);
+  }
+</style>

@@ -1,0 +1,439 @@
+---
+// BlogSection.astro
+export interface BlogPost {
+  id: string;
+  title: string;
+  category: string;
+  date: string;
+  image: {
+    src: string;
+    alt: string;
+  };
+  slug: string;
+}
+
+export interface Props {
+  title?: string;
+  subtitle?: string;
+  posts: BlogPost[];
+  className?: string;
+}
+
+const { 
+  title = "Insights. Strategies. Real-world perspectives.",
+  subtitle = "Explore fresh thinking on business strategy, operational excellence, and leadership in times of change. Curated by our consultants — written for decision-makers.",
+  posts,
+  className = ""
+} = Astro.props;
+
+// Format date for accessibility
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return {
+    display: date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    }),
+    iso: date.toISOString().split('T')[0]
+  };
+};
+
+// Generate unique IDs for ARIA relationships
+const sectionId = `blog-section-${Math.random().toString(36).substr(2, 9)}`;
+const titleId = `${sectionId}-title`;
+const subtitleId = `${sectionId}-subtitle`;
+---
+
+<section 
+  id={sectionId}
+  class={`blog-section ${className}`}
+  aria-labelledby={titleId}
+  aria-describedby={subtitleId}
+>
+  <div class="blog-container">
+    <!-- Header -->
+    <header class="blog-header">
+      <p class="blog-label" aria-label="Content category">Our blog</p>
+      <h2 id={titleId} class="blog-title">{title}</h2>
+      <p id={subtitleId} class="blog-subtitle">{subtitle}</p>
+    </header>
+
+    <!-- Blog Posts Grid -->
+    <div 
+      class="blog-grid"
+      role="feed"
+      aria-label="Recent blog posts"
+      aria-busy="false"
+    >
+      {posts.map((post, index) => {
+        const formattedDate = formatDate(post.date);
+        const articleId = `article-${post.id}`;
+        const imageId = `image-${post.id}`;
+        
+        return (
+          <article 
+            id={articleId}
+            class="blog-card"
+            role="article"
+            aria-labelledby={`title-${post.id}`}
+            tabindex="0"
+          >
+            <a 
+              href={`/blog/${post.slug}`}
+              class="blog-card-link"
+              aria-describedby={`meta-${post.id}`}
+            >
+              <div class="blog-card-image-wrapper">
+                <img 
+                  id={imageId}
+                  src={post.image.src}
+                  alt={post.image.alt}
+                  class="blog-card-image"
+                  loading={index < 3 ? "eager" : "lazy"}
+                  decoding="async"
+                  width="400"
+                  height="250"
+                />
+              </div>
+              
+              <div class="blog-card-content">
+                <div 
+                  id={`meta-${post.id}`}
+                  class="blog-card-meta"
+                  aria-label={`Posted in ${post.category} on ${formattedDate.display}`}
+                >
+                  <span class="blog-card-category" aria-label="Category">
+                    {post.category}
+                  </span>
+                  <time 
+                    datetime={formattedDate.iso}
+                    class="blog-card-date"
+                    aria-label={`Published on ${formattedDate.display}`}
+                  >
+                    {formattedDate.display}
+                  </time>
+                </div>
+                
+                <h3 
+                  id={`title-${post.id}`}
+                  class="blog-card-title"
+                >
+                  {post.title}
+                </h3>
+              </div>
+            </a>
+          </article>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Base styles with CSS custom properties from theme */
+  .blog-section {
+    --color-primary: #0ea5e9;
+    --color-neutral-50: #fafafa;
+    --color-neutral-100: #f5f5f5;
+    --color-neutral-200: #e5e5e5;
+    --color-neutral-400: #a3a3a3;
+    --color-neutral-500: #6b7280;
+    --color-neutral-600: #4b5563;
+    --color-neutral-700: #374151;
+    --color-neutral-800: #1f2937;
+    --color-neutral-900: #111827;
+    --font-family-display: 'Poppins', 'Inter', system-ui, sans-serif;
+    --font-family-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    --spacing-4: 1rem;
+    --spacing-6: 1.5rem;
+    --spacing-8: 2rem;
+    --spacing-12: 3rem;
+    --spacing-16: 4rem;
+    --spacing-20: 5rem;
+    --spacing-24: 6rem;
+    --border-radius-lg: 0.5rem;
+    --border-radius-xl: 0.75rem;
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.12), 0 2px 4px -2px rgb(0 0 0 / 0.12);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.12), 0 4px 6px -4px rgb(0 0 0 / 0.12);
+    --focus-ring: 0 0 0 3px rgb(14 165 233 / 0.4);
+    --touch-target-min: 2.75rem;
+    
+    padding: var(--spacing-20) var(--spacing-4);
+    background-color: var(--color-neutral-50);
+    font-family: var(--font-family-sans);
+  }
+
+  .blog-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-4);
+  }
+
+  /* Header styles */
+  .blog-header {
+    text-align: center;
+    margin-bottom: var(--spacing-16);
+  }
+
+  .blog-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-neutral-600);
+    margin: 0 0 var(--spacing-4) 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .blog-title {
+    font-family: var(--font-family-display);
+    font-size: 2.25rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--color-neutral-900);
+    margin: 0 0 var(--spacing-6) 0;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .blog-subtitle {
+    font-size: 1.125rem;
+    line-height: 1.75;
+    color: var(--color-neutral-600);
+    margin: 0;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Grid styles */
+  .blog-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-8);
+  }
+
+  /* Card styles */
+  .blog-card {
+    background: white;
+    border-radius: var(--border-radius-xl);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+  }
+
+  .blog-card:hover,
+  .blog-card:focus-within {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+  }
+
+  .blog-card:focus {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .blog-card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    height: 100%;
+    min-height: var(--touch-target-min);
+    position: relative;
+  }
+
+  .blog-card-link:focus {
+    outline: none;
+  }
+
+  .blog-card-link::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--border-radius-xl);
+    transition: box-shadow 0.25s ease;
+  }
+
+  .blog-card-link:focus-visible::before {
+    box-shadow: var(--focus-ring);
+  }
+
+  /* Image styles */
+  .blog-card-image-wrapper {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background-color: var(--color-neutral-100);
+  }
+
+  .blog-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .blog-card:hover .blog-card-image {
+    transform: scale(1.05);
+  }
+
+  /* Content styles */
+  .blog-card-content {
+    padding: var(--spacing-6);
+  }
+
+  .blog-card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-4);
+    font-size: 0.875rem;
+    gap: var(--spacing-4);
+  }
+
+  .blog-card-category {
+    font-weight: 500;
+    color: var(--color-neutral-600);
+    background-color: var(--color-neutral-100);
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    flex-shrink: 0;
+  }
+
+  .blog-card-date {
+    color: var(--color-neutral-500);
+    font-weight: 400;
+    flex-shrink: 0;
+  }
+
+  .blog-card-title {
+    font-family: var(--font-family-display);
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--color-neutral-900);
+    margin: 0;
+  }
+
+  /* Responsive design */
+  @media (min-width: 768px) {
+    .blog-section {
+      padding: var(--spacing-24) var(--spacing-8);
+    }
+
+    .blog-title {
+      font-size: 2.75rem;
+    }
+
+    .blog-subtitle {
+      font-size: 1.25rem;
+    }
+
+    .blog-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--spacing-12);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .blog-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-16);
+      align-items: start;
+      text-align: left;
+      margin-bottom: var(--spacing-20);
+    }
+
+    .blog-label {
+      grid-column: 1 / -1;
+      margin-bottom: var(--spacing-6);
+    }
+
+    .blog-title {
+      margin-left: 0;
+      margin-right: 0;
+      margin-bottom: 0;
+    }
+
+    .blog-subtitle {
+      margin-left: 0;
+      margin-right: 0;
+      align-self: center;
+    }
+
+    .blog-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .blog-card-title {
+      font-size: 1.375rem;
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .blog-card {
+      border: 2px solid var(--color-neutral-800);
+    }
+
+    .blog-card-category {
+      border: 1px solid var(--color-neutral-400);
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .blog-card,
+    .blog-card-image,
+    .blog-card-link::before {
+      transition: none;
+    }
+
+    .blog-card:hover .blog-card-image {
+      transform: none;
+    }
+
+    .blog-card:hover {
+      transform: none;
+    }
+  }
+
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark) {
+    .blog-section {
+      --color-neutral-50: #030712;
+      --color-neutral-100: #1f2937;
+      --color-neutral-200: #374151;
+      --color-neutral-400: #9ca3af;
+      --color-neutral-500: #9ca3af;
+      --color-neutral-600: #d1d5db;
+      --color-neutral-700: #e5e7eb;
+      --color-neutral-800: #f3f4f6;
+      --color-neutral-900: #f9fafb;
+      --color-primary: #38bdf8;
+      
+      background-color: var(--color-neutral-50);
+    }
+
+    .blog-card {
+      background: var(--color-neutral-100);
+      border: 1px solid var(--color-neutral-200);
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    .blog-section {
+      background: white;
+      color: black;
+    }
+
+    .blog-card {
+      box-shadow: none;
+      border: 1px solid #ccc;
+      page-break-inside: avoid;
+    }
+  }
+</style>

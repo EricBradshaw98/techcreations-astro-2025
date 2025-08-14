@@ -1,6 +1,6 @@
 ---
-// CaseStudies.astro - Case studies and portfolio section
-import theme from '../../lib/theme';
+// CaseStudies.astro - Case studies and portfolio section with left-aligned headers
+import { theme, themeUtils } from '../../lib/theme';
 
 export interface Props {
   // Content props
@@ -137,20 +137,25 @@ const displayCases = caseStudies
 
 const featuredCase = displayCases.find(cs => cs.featured);
 const regularCases = displayCases.filter(cs => !cs.featured);
+
+// Generate CSS custom properties from theme
+const cssVars = themeUtils.createCSSVars();
 ---
 
 <section class="case-studies" aria-labelledby="case-studies-headline">
   <div class="case-studies-container">
     
-    <!-- Section Header -->
+    <!-- Section Header - Left Aligned -->
     <div class="section-header" data-animate="fade-up">
-      <span class="section-eyebrow">{eyebrow}</span>
-      <h2 id="case-studies-headline" class="section-headline">
-        {headline}
-      </h2>
-      <p class="section-description">
-        {description}
-      </p>
+      <div class="header-content">
+        <span class="section-eyebrow">{eyebrow}</span>
+        <h2 id="case-studies-headline" class="section-headline">
+          {headline}
+        </h2>
+        <p class="section-description">
+          {description}
+        </p>
+      </div>
     </div>
 
     <!-- Featured Case Study -->
@@ -405,18 +410,36 @@ const regularCases = displayCases.filter(cs => !cs.featured);
 </section>
 
 <style define:vars={{
+  // Primary colors from your theme
   primaryColor: theme.colors.primary[500],
   primaryHover: theme.colors.primary[600],
   primaryLight: theme.colors.primary[100],
+  primaryDark: theme.colors.primary[700],
+  
+  // Secondary colors
   secondaryColor: theme.colors.secondary[500],
   successColor: theme.colors.success[500],
+  
+  // Neutral colors with enhanced contrast
   neutralWhite: theme.colors.neutral[50],
-  neutralGray: theme.colors.neutral[500],
+  neutralGray: theme.colors.neutral[600],
   neutralDark: theme.colors.neutral[900],
   neutralLight: theme.colors.neutral[100],
+  neutralMuted: theme.colors.neutral[500],
+  
+  // Semantic colors
+  backgroundColor: theme.colors.background,
+  foregroundColor: theme.colors.foreground,
+  mutedColor: theme.colors.muted,
   borderColor: theme.colors.border,
+  
+  // Typography
   fontSans: theme.typography.fontFamily.sans.join(', '),
   fontDisplay: theme.typography.fontFamily.display.join(', '),
+  
+  // Spacing using your 8pt grid
+  spacing2: theme.spacing[2],
+  spacing3: theme.spacing[3],
   spacing4: theme.spacing[4],
   spacing6: theme.spacing[6],
   spacing8: theme.spacing[8],
@@ -425,21 +448,47 @@ const regularCases = displayCases.filter(cs => !cs.featured);
   spacing20: theme.spacing[20],
   spacing24: theme.spacing[24],
   spacing32: theme.spacing[32],
+  
+  // Border radius
+  borderRadiusBase: theme.borderRadius.base,
   borderRadiusLg: theme.borderRadius.lg,
   borderRadius2xl: theme.borderRadius['2xl'],
+  
+  // Shadows with enhanced contrast
+  shadowSm: theme.boxShadow.sm,
   shadowMd: theme.boxShadow.md,
   shadowLg: theme.boxShadow.lg,
-  shadow2xl: theme.boxShadow['2xl']
+  shadow2xl: theme.boxShadow['2xl'],
+  shadowFocus: theme.boxShadow.focus,
+  
+  // Touch targets for accessibility
+  touchTargetMin: theme.accessibility.touchTarget.min,
+  touchTargetComfortable: theme.accessibility.touchTarget.comfortable,
+  
+  // Focus styles
+  focusWidth: theme.accessibility.focus.width,
+  focusColor: theme.accessibility.focus.color,
+  focusOffset: theme.accessibility.focus.offset,
+  
+  // Component heights
+  buttonHeightMd: theme.components.button.height.md,
+  buttonHeightLg: theme.components.button.height.lg,
+  
+  // Container constraints
+  containerMaxWidth: theme.layout.container.xl,
+  proseMaxWidth: theme.layout.maxWidth.prose
 }}>
+  /* Base Section Styles */
   .case-studies {
     position: relative;
     padding: var(--spacing24) 0;
-    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    background: linear-gradient(180deg, var(--backgroundColor) 0%, var(--mutedColor) 100%);
     overflow: hidden;
+    color: var(--foregroundColor);
   }
 
   .case-studies-container {
-    max-width: 1280px;
+    max-width: var(--containerMaxWidth);
     margin: 0 auto;
     padding: 0 var(--spacing4);
     position: relative;
@@ -452,13 +501,15 @@ const regularCases = displayCases.filter(cs => !cs.featured);
     }
   }
 
-  /* Section Header */
+  /* Left-Aligned Section Header */
   .section-header {
-    text-align: center;
     margin-bottom: var(--spacing20);
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
+    max-width: none; /* Remove center constraint */
+  }
+
+  .header-content {
+    max-width: var(--proseMaxWidth);
+    text-align: left; /* Left align the content */
   }
 
   .section-eyebrow {
@@ -472,6 +523,7 @@ const regularCases = displayCases.filter(cs => !cs.featured);
     margin-bottom: var(--spacing6);
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    font-family: var(--fontSans);
   }
 
   .section-headline {
@@ -479,8 +531,9 @@ const regularCases = displayCases.filter(cs => !cs.featured);
     font-size: 2.5rem;
     font-weight: 700;
     line-height: 1.2;
-    color: var(--neutralDark);
+    color: var(--foregroundColor);
     margin: 0 0 var(--spacing6) 0;
+    letter-spacing: -0.025em;
   }
 
   @media (min-width: 768px) {
@@ -489,16 +542,23 @@ const regularCases = displayCases.filter(cs => !cs.featured);
     }
   }
 
+  @media (min-width: 1024px) {
+    .section-headline {
+      font-size: 3.25rem;
+    }
+  }
+
   .section-description {
     font-size: 1.125rem;
     line-height: 1.7;
     color: var(--neutralGray);
     margin: 0;
+    font-family: var(--fontSans);
   }
 
   /* Featured Case Study */
   .featured-case {
-    background: var(--neutralWhite);
+    background: var(--backgroundColor);
     border-radius: var(--borderRadius2xl);
     box-shadow: var(--shadow2xl);
     border: 1px solid var(--borderColor);
@@ -549,24 +609,27 @@ const regularCases = displayCases.filter(cs => !cs.featured);
     font-size: 1rem;
     font-weight: 600;
     color: var(--primaryColor);
+    font-family: var(--fontSans);
   }
 
   .industry-tag {
     font-size: 0.875rem;
-    color: var(--neutralGray);
+    color: var(--neutralMuted);
     background: var(--neutralLight);
     padding: 2px var(--spacing3);
     border-radius: var(--borderRadiusLg);
+    font-family: var(--fontSans);
   }
 
   .featured-badge {
     font-size: 0.75rem;
     font-weight: 600;
-    color: var(--neutralWhite);
+    color: var(--backgroundColor);
     background: var(--primaryColor);
     padding: var(--spacing2) var(--spacing3);
     border-radius: var(--borderRadiusLg);
     margin-left: auto;
+    font-family: var(--fontSans);
   }
 
   /* Case Content */
@@ -574,9 +637,10 @@ const regularCases = displayCases.filter(cs => !cs.featured);
     font-family: var(--fontDisplay);
     font-size: 2rem;
     font-weight: 600;
-    color: var(--neutralDark);
+    color: var(--foregroundColor);
     margin: 0 0 var(--spacing4) 0;
     line-height: 1.3;
+    letter-spacing: -0.0125em;
   }
 
   .case-description {
@@ -584,6 +648,7 @@ const regularCases = displayCases.filter(cs => !cs.featured);
     line-height: 1.7;
     color: var(--neutralGray);
     margin: 0 0 var(--spacing8) 0;
+    font-family: var(--fontSans);
   }
 
   /* Case Details */
@@ -610,7 +675,7 @@ const regularCases = displayCases.filter(cs => !cs.featured);
     font-family: var(--fontDisplay);
     font-size: 1rem;
     font-weight: 600;
-    color: var(--neutralDark);
+    color: var(--foregroundColor);
     margin: 0 0 var(--spacing3) 0;
   }
 
@@ -619,6 +684,7 @@ const regularCases = displayCases.filter(cs => !cs.featured);
     line-height: 1.6;
     color: var(--neutralGray);
     margin: 0;
+    font-family: var(--fontSans);
   }
 
   /* Results */
@@ -630,7 +696,7 @@ const regularCases = displayCases.filter(cs => !cs.featured);
     font-family: var(--fontDisplay);
     font-size: 1.125rem;
     font-weight: 600;
-    color: var(--neutralDark);
+    color: var(--foregroundColor);
     margin: 0 0 var(--spacing4) 0;
   }
 
@@ -649,9 +715,13 @@ const regularCases = displayCases.filter(cs => !cs.featured);
   .result-item {
     text-align: center;
     padding: var(--spacing4);
-    background: var(--neutralWhite);
+    background: var(--backgroundColor);
     border-radius: var(--borderRadiusLg);
     border: 1px solid var(--borderColor);
+    min-height: var(--touchTargetMin);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   .result-value {
@@ -676,6 +746,7 @@ const regularCases = displayCases.filter(cs => !cs.featured);
     font-size: 0.875rem;
     color: var(--neutralGray);
     font-weight: 500;
+    font-family: var(--fontSans);
   }
 
   /* Tags */
@@ -693,9 +764,10 @@ const regularCases = displayCases.filter(cs => !cs.featured);
     background: var(--primaryLight);
     padding: var(--spacing2) var(--spacing3);
     border-radius: var(--borderRadiusLg);
+    font-family: var(--fontSans);
   }
 
-  /* Case CTA */
+  /* Case CTA with proper accessibility */
   .case-cta {
     display: inline-flex;
     align-items: center;
@@ -703,25 +775,28 @@ const regularCases = displayCases.filter(cs => !cs.featured);
     font-family: var(--fontSans);
     font-size: 1rem;
     font-weight: 600;
-    color: var(--neutralWhite);
+    color: var(--backgroundColor);
     background: var(--primaryColor);
     text-decoration: none;
     padding: var(--spacing3) var(--spacing6);
     border-radius: var(--borderRadiusLg);
     transition: all 0.3s ease;
     box-shadow: var(--shadowMd);
+    min-height: var(--touchTargetMin);
+    border: 2px solid var(--primaryColor);
   }
 
   .case-cta:hover,
   .case-cta:focus {
     background: var(--primaryHover);
+    border-color: var(--primaryHover);
     transform: translateY(-2px);
     box-shadow: var(--shadowLg);
   }
 
   .case-cta:focus {
-    outline: 2px solid var(--primaryColor);
-    outline-offset: 2px;
+    outline: var(--focusWidth) solid var(--focusColor);
+    outline-offset: var(--focusOffset);
   }
 
   .cta-arrow {
@@ -781,8 +856,9 @@ const regularCases = displayCases.filter(cs => !cs.featured);
     flex-direction: column;
     align-items: center;
     gap: var(--spacing2);
-    color: var(--neutralWhite);
+    color: var(--backgroundColor);
     font-weight: 600;
+    font-family: var(--fontSans);
   }
 
   .play-icon {
@@ -822,7 +898,7 @@ const regularCases = displayCases.filter(cs => !cs.featured);
   /* Case Cards */
   .case-card {
     position: relative;
-    background: var(--neutralWhite);
+    background: var(--backgroundColor);
     border-radius: var(--borderRadius2xl);
     box-shadow: var(--shadowMd);
     border: 1px solid var(--borderColor);
@@ -839,7 +915,7 @@ const regularCases = displayCases.filter(cs => !cs.featured);
 
   .case-card.featured {
     border-color: var(--primaryColor);
-    background: linear-gradient(135deg, var(--neutralWhite) 0%, var(--primaryLight) 100%);
+    background: linear-gradient(135deg, var(--backgroundColor) 0%, var(--primaryLight) 100%);
   }
 
   .card-image {
@@ -878,9 +954,10 @@ const regularCases = displayCases.filter(cs => !cs.featured);
   }
 
   .overlay-text {
-    color: var(--neutralWhite);
+    color: var(--backgroundColor);
     font-weight: 600;
     font-size: 1rem;
+    font-family: var(--fontSans);
   }
 
   .card-content {
@@ -899,9 +976,10 @@ const regularCases = displayCases.filter(cs => !cs.featured);
     font-family: var(--fontDisplay);
     font-size: 1.25rem;
     font-weight: 600;
-    color: var(--neutralDark);
+    color: var(--foregroundColor);
     margin: 0 0 var(--spacing3) 0;
     line-height: 1.3;
+    letter-spacing: -0.0125em;
   }
 
   .card-description {
@@ -909,6 +987,7 @@ const regularCases = displayCases.filter(cs => !cs.featured);
     line-height: 1.6;
     color: var(--neutralGray);
     margin: 0 0 var(--spacing4) 0;
+    font-family: var(--fontSans);
   }
 
   .card-results {
@@ -943,6 +1022,7 @@ const regularCases = displayCases.filter(cs => !cs.featured);
     color: var(--neutralGray);
     font-weight: 500;
     margin-top: 2px;
+    font-family: var(--fontSans);
   }
 
   .card-tags {
@@ -961,8 +1041,8 @@ const regularCases = displayCases.filter(cs => !cs.featured);
   }
 
   .card-link:focus {
-    outline: 2px solid var(--primaryColor);
-    outline-offset: 2px;
+    outline: var(--focusWidth) solid var(--focusColor);
+    outline-offset: var(--focusOffset);
   }
 
   /* Section CTA */
@@ -970,7 +1050,7 @@ const regularCases = displayCases.filter(cs => !cs.featured);
     text-align: center;
     margin-top: var(--spacing20);
     padding: var(--spacing12);
-    background: linear-gradient(135deg, var(--primaryLight) 0%, var(--neutralWhite) 100%);
+    background: linear-gradient(135deg, var(--primaryLight) 0%, var(--backgroundColor) 100%);
     border-radius: var(--borderRadius2xl);
     border: 1px solid var(--borderColor);
   }
@@ -984,8 +1064,9 @@ const regularCases = displayCases.filter(cs => !cs.featured);
     font-family: var(--fontDisplay);
     font-size: 1.875rem;
     font-weight: 600;
-    color: var(--neutralDark);
+    color: var(--foregroundColor);
     margin: 0 0 var(--spacing4) 0;
+    letter-spacing: -0.0125em;
   }
 
   .cta-description {
@@ -993,6 +1074,7 @@ const regularCases = displayCases.filter(cs => !cs.featured);
     line-height: 1.7;
     color: var(--neutralGray);
     margin: 0 0 var(--spacing8) 0;
+    font-family: var(--fontSans);
   }
 
   .cta-button {
@@ -1002,7 +1084,7 @@ const regularCases = displayCases.filter(cs => !cs.featured);
     font-family: var(--fontSans);
     font-size: 1.125rem;
     font-weight: 600;
-    color: var(--neutralWhite);
+    color: var(--backgroundColor);
     background: var(--primaryColor);
     text-decoration: none;
     padding: var(--spacing4) var(--spacing8);
@@ -1010,6 +1092,7 @@ const regularCases = displayCases.filter(cs => !cs.featured);
     transition: all 0.3s ease;
     box-shadow: var(--shadowLg);
     border: 2px solid var(--primaryColor);
+    min-height: var(--buttonHeightLg);
   }
 
   .cta-button:hover,
@@ -1021,8 +1104,8 @@ const regularCases = displayCases.filter(cs => !cs.featured);
   }
 
   .cta-button:focus {
-    outline: 2px solid var(--primaryColor);
-    outline-offset: 2px;
+    outline: var(--focusWidth) solid var(--focusColor);
+    outline-offset: var(--focusOffset);
   }
 
   .cta-button .cta-arrow {
@@ -1131,6 +1214,25 @@ const regularCases = displayCases.filter(cs => !cs.featured);
     .featured-visual {
       min-height: 250px;
     }
+
+    .cta-title {
+      font-size: 1.5rem;
+    }
+  }
+
+  /* High Contrast Mode Support */
+  @media (prefers-contrast: high) {
+    .case-card,
+    .featured-case,
+    .section-cta {
+      border-width: 2px;
+    }
+
+    .tag,
+    .industry-tag,
+    .featured-badge {
+      border: 1px solid currentColor;
+    }
   }
 
   /* Reduced Motion */
@@ -1138,7 +1240,10 @@ const regularCases = displayCases.filter(cs => !cs.featured);
     .case-card,
     .cta-button,
     .pattern-dot,
-    .card-image img {
+    .card-image img,
+    .play-icon,
+    .cta-arrow,
+    [data-animate] {
       animation: none;
       transition: none;
     }
@@ -1148,24 +1253,89 @@ const regularCases = displayCases.filter(cs => !cs.featured);
       transform: none;
     }
   }
+
+  /* Dark Mode Support */
+  @media (prefers-color-scheme: dark) {
+    .case-studies {
+      background: linear-gradient(180deg, var(--neutralDark) 0%, var(--neutralDark) 100%);
+    }
+
+    .section-headline,
+    .case-title,
+    .card-title,
+    .cta-title,
+    .detail-title,
+    .results-title {
+      color: var(--neutralWhite);
+    }
+
+    .case-description,
+    .card-description,
+    .cta-description,
+    .detail-text,
+    .result-label {
+      color: var(--neutralLight);
+    }
+
+    .featured-case,
+    .case-card,
+    .result-item {
+      background: var(--neutralDark);
+      border-color: var(--neutralGray);
+    }
+
+    .detail-section {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .industry-tag {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--neutralLight);
+    }
+  }
+
+  /* Print Styles */
+  @media print {
+    .case-studies {
+      background: white;
+      color: black;
+    }
+
+    .background-decoration,
+    .image-overlay,
+    .card-overlay {
+      display: none;
+    }
+
+    .case-card,
+    .featured-case {
+      break-inside: avoid;
+      box-shadow: none;
+      border: 1px solid #ccc;
+    }
+  }
 </style>
 
 <script>
-  // Case Studies Animation Controller
+  // Case Studies Animation Controller with Enhanced Accessibility
   class CaseStudiesAnimations {
     constructor() {
       this.animatedElements = document.querySelectorAll('.case-studies [data-animate]');
       this.statElements = document.querySelectorAll('.case-studies [data-count-to]');
       this.caseCards = document.querySelectorAll('.case-card');
+      this.prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       
       this.init();
     }
 
     init() {
-      this.setupScrollAnimations();
-      this.setupCounters();
+      if (!this.prefersReducedMotion) {
+        this.setupScrollAnimations();
+        this.setupCounters();
+      }
       this.setupCardInteractions();
       this.setupImageLazyLoading();
+      this.setupAccessibilityFeatures();
     }
 
     setupScrollAnimations() {
@@ -1212,7 +1382,7 @@ const regularCases = displayCases.filter(cs => !cs.featured);
     }
 
     animateCounter(element) {
-      const target = parseInt(element.dataset.countTo);
+      const target = parseFloat(element.dataset.countTo);
       const isDecimal = element.dataset.countTo.includes('.');
       const duration = 2000;
       
@@ -1231,13 +1401,21 @@ const regularCases = displayCases.filter(cs => !cs.featured);
           element.textContent = Math.floor(counter).toLocaleString();
         }
       }, duration / 50);
+
+      // Announce completion to screen readers
+      setTimeout(() => {
+        element.setAttribute('aria-live', 'polite');
+        element.setAttribute('aria-label', `Result: ${element.textContent}${element.nextElementSibling?.textContent || ''} ${element.parentElement.querySelector('.result-label')?.textContent || ''}`);
+      }, duration + 100);
     }
 
     setupCardInteractions() {
       this.caseCards.forEach(card => {
         // Enhanced hover effects
         card.addEventListener('mouseenter', () => {
-          card.style.setProperty('--hover-intensity', '1');
+          if (!this.prefersReducedMotion) {
+            card.style.setProperty('--hover-intensity', '1');
+          }
         });
 
         card.addEventListener('mouseleave', () => {
@@ -1248,11 +1426,18 @@ const regularCases = displayCases.filter(cs => !cs.featured);
         card.addEventListener('click', (e) => {
           if (e.target.closest('.card-link')) {
             const title = card.querySelector('.card-title')?.textContent;
+            // Analytics event
+            if (typeof gtag !== 'undefined') {
+              gtag('event', 'case_study_click', {
+                'case_study_title': title,
+                'event_category': 'engagement'
+              });
+            }
             console.log(`Case study clicked: ${title}`);
           }
         });
 
-        // Keyboard navigation
+        // Enhanced keyboard navigation
         const cardLink = card.querySelector('.card-link');
         if (cardLink) {
           cardLink.addEventListener('keydown', (e) => {
@@ -1261,12 +1446,20 @@ const regularCases = displayCases.filter(cs => !cs.featured);
               cardLink.click();
             }
           });
+
+          // Focus management
+          cardLink.addEventListener('focus', () => {
+            card.classList.add('focused');
+          });
+
+          cardLink.addEventListener('blur', () => {
+            card.classList.remove('focused');
+          });
         }
       });
     }
 
     setupImageLazyLoading() {
-      // Enhanced lazy loading with intersection observer
       const imageObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
@@ -1278,10 +1471,54 @@ const regularCases = displayCases.filter(cs => !cs.featured);
             }
           }
         });
+      }, {
+        rootMargin: '50px'
       });
 
       const lazyImages = document.querySelectorAll('img[data-src]');
       lazyImages.forEach(img => imageObserver.observe(img));
+    }
+
+    setupAccessibilityFeatures() {
+      // Enhance focus management for better screen reader experience
+      const focusableElements = document.querySelectorAll('.case-studies a, .case-studies button');
+      
+      focusableElements.forEach(element => {
+        element.addEventListener('focus', (e) => {
+          // Ensure focused elements are visible
+          if (!this.isElementInViewport(e.target)) {
+            e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        });
+      });
+
+      // Add skip link functionality for better navigation
+      this.addSkipLinkSupport();
+    }
+
+    isElementInViewport(el) {
+      const rect = el.getBoundingClientRect();
+      return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+      );
+    }
+
+    addSkipLinkSupport() {
+      // Add skip to content functionality
+      const skipLink = document.querySelector('a[href="#case-studies-headline"]');
+      if (skipLink) {
+        skipLink.addEventListener('click', (e) => {
+          e.preventDefault();
+          const target = document.getElementById('case-studies-headline');
+          if (target) {
+            target.focus();
+            target.scrollIntoView({ behavior: 'smooth' });
+          }
+        });
+      }
     }
   }
 
@@ -1290,10 +1527,23 @@ const regularCases = displayCases.filter(cs => !cs.featured);
     new CaseStudiesAnimations();
   });
 
+  // Handle prefers-reduced-motion changes
+  window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', (e) => {
+    if (e.matches) {
+      // Disable animations
+      document.documentElement.style.setProperty('--animation-duration', '0s');
+      document.documentElement.style.setProperty('--transition-duration', '0s');
+    } else {
+      // Re-enable animations
+      document.documentElement.style.removeProperty('--animation-duration');
+      document.documentElement.style.removeProperty('--transition-duration');
+    }
+  });
+
   // Performance optimization
   if ('requestIdleCallback' in window) {
     requestIdleCallback(() => {
-      console.log('Case studies animations optimized');
+      console.log('Case studies component optimized and accessible');
     });
   }
 </script>

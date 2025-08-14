@@ -9,8 +9,11 @@ import Testimonials from '../components/home/Testimonials.astro';
 import HowWeWork from '../components/home/HowWeWork.astro';
 import FAQ from '../components/home/FAQ.astro';
 import FinalCTA from '../components/home/FinalCTA.astro';
+import ResultsThatSpeak from '../components/home/ResultsThatSpeak.astro'
 
 import { homeHeroConfig } from '../lib/home';
+import { servicesOverviewConfig } from '../lib/services';
+import caseStudiesData from '../lib/home';
 
 
 ---
@@ -43,7 +46,7 @@ import { homeHeroConfig } from '../lib/home';
 
   {...homeHeroConfig}
 />
-  <ServicesOverview/>
+  <ServicesOverview {...servicesOverviewConfig}/>
   <!-- <WhyChooseUs/> -->
 
  <!-- <Testimonials 
@@ -65,7 +68,10 @@ import { homeHeroConfig } from '../lib/home';
     maxCases={4}
     showCta={true}
     ctaHref="/portfolio"
+    caseStudies={caseStudiesData.featured}
+/>
   />
+  <ResultsThatSpeak/>
  <FinalCTA 
     variant="centered"
     showGuarantee={true}

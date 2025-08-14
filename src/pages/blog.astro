@@ -1,0 +1,148 @@
+---
+import BlogSection from "../components/blog/BlogSection.astro";
+import TestimonialsBanner from "../components/blog/TestimonialsBanner.astro";
+import AboutTeamSection from "../components/about/AboutTeamSection.astro";
+import Layout from "../layouts/Layout.astro";
+import AboutHeroBanner from "../components/about/AboutHeroBanner.astro"
+
+const testimonials = [
+  {
+    id: 'testimonial-1',
+    quote: 'Working with this team transformed our business strategy completely. Their insights into market dynamics and operational efficiency helped us increase revenue by 40% within six months.',
+    author: {
+      name: 'Sarah Chen',
+      title: 'Chief Executive Officer',
+      company: 'TechFlow Solutions',
+      avatar: '/images/testimonials/sarah-chen.jpg'
+    },
+    rating: 5,
+    featured: true
+  },
+  {
+    id: 'testimonial-2',
+    quote: 'The level of expertise and attention to detail exceeded our expectations. They didn\'t just deliver a solution; they delivered a partnership that continues to drive our success.',
+    author: {
+      name: 'Michael Rodriguez',
+      title: 'VP of Operations',
+      company: 'Global Manufacturing Inc.',
+      avatar: '/images/testimonials/michael-rodriguez.jpg'
+    },
+    rating: 5
+  },
+  {
+    id: 'testimonial-3',
+    quote: 'Their innovative approach to digital transformation helped us stay ahead of the competition. The ROI was evident within the first quarter of implementation.',
+    author: {
+      name: 'Emily Johnson',
+      title: 'Chief Technology Officer',
+      company: 'InnovateCorp',
+      avatar: '/images/testimonials/emily-johnson.jpg'
+    },
+    rating: 5
+  },
+  {
+    id: 'testimonial-4',
+    quote: 'Professional, insightful, and results-driven. This consultation was exactly what our leadership team needed to navigate the challenges of scaling our business.',
+    author: {
+      name: 'David Park',
+      title: 'Founder & Managing Director',
+      company: 'StartupVentures LLC',
+      avatar: '/images/testimonials/david-park.jpg'
+    },
+    rating: 5
+  }
+];
+
+
+const blogPosts = [
+  {
+    id: '1',
+    title: 'Innovative Marketing Strategies for Small Businesses',
+    category: 'Inspiration',
+    date: 'Feb 21, 2024',
+    image: {
+      src: '/framer1.avif',
+      alt: 'Two business professionals collaborating at a laptop, discussing marketing strategies in a modern office setting'
+    },
+    slug: 'innovative-marketing-strategies-small-businesses'
+  },
+  {
+    id: '2',
+    title: 'The Importance of Diversity and Inclusion in Today\'s Workplace',
+    category: 'Creative',
+    date: 'Feb 18, 2024',
+    image: {
+       src: '/framer1.avif',
+      alt: 'Person using laptop and smartphone simultaneously, representing digital workplace diversity and modern work practices'
+    },
+    slug: 'importance-diversity-inclusion-workplace'
+  },
+  {
+    id: '3',
+    title: 'Mastering Time Management: Tips for Busy Professionals',
+    category: 'Innovation',
+    date: 'Feb 15, 2024',
+    image: {
+       src: '/framer1.avif',
+      alt: 'Hands organizing colorful sticky notes on a desk, demonstrating time management and organizational techniques'
+    },
+    slug: 'mastering-time-management-busy-professionals'
+  }
+];
+
+const teamMembers = [
+  {
+    id: 'sophia-bennett',
+    name: 'Sophia Bennett',
+    role: 'Managing Partner',
+    image: {
+      src: '/framer1.avif',
+      alt: 'Sophia Bennett, Managing Partner - Professional headshot of a woman with long brown hair wearing a dark blazer'
+    },
+    bio: 'Sophia brings over 15 years of strategic consulting experience, specializing in digital transformation and organizational change management.',
+    linkedinUrl: 'https://linkedin.com/in/sophia-bennett',
+    email: 'sophia.bennett@company.com'
+  },
+  {
+    id: 'liam-chen',
+    name: 'Liam Chen',
+    role: 'Director of Operations',
+    image: {
+      src: '/framer1.avif',
+      alt: 'Liam Chen, Director of Operations - Professional headshot of a man in a business suit standing confidently'
+    },
+    bio: 'Liam leads our operational excellence initiatives with a focus on process optimization and performance improvement across diverse industries.',
+    linkedinUrl: 'https://linkedin.com/in/liam-chen',
+    email: 'liam.chen@company.com'
+  },
+  {
+    id: 'isabelle-moreau',
+    name: 'Isabelle Moreau',
+    role: 'Principal Consultant',
+    image: {
+      src: '/framer1.avif',
+      alt: 'Isabelle Moreau, Principal Consultant - Professional headshot of a woman with dark hair in business attire holding documents'
+    },
+    bio: 'Isabelle specializes in strategic planning and market analysis, helping clients navigate complex business challenges with data-driven insights.',
+    linkedinUrl: 'https://linkedin.com/in/isabelle-moreau',
+    email: 'isabelle.moreau@company.com'
+  }
+];
+---
+
+<Layout title="About Us - Your Agency"
+  description="Learn more about your future strategic partner."
+  type="website">
+<BlogSection posts={blogPosts}/>
+<TestimonialsBanner 
+  testimonials={testimonials}
+  autoSlide={true}
+  slideInterval={6000}
+  showRating={true}
+  showNavigation={true}
+  showPagination={true}
+/>
+<AboutTeamSection teamMembers={teamMembers}
+      showSocialLinks={true}/>
+      <AboutHeroBanner/>
+</Layout>

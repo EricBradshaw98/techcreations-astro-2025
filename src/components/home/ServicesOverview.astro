@@ -1,6 +1,6 @@
 ---
-// ServicesOverview.astro - Services overview section for agency landing page
-import theme from '../../lib/theme';
+// ServicesOverview.astro - Enhanced services overview section with comprehensive theme integration
+import theme, { themeUtils } from '../../lib/theme';
 
 export interface Props {
   // Content props
@@ -10,7 +10,7 @@ export interface Props {
   ctaText?: string;
   ctaHref?: string;
   
-  // Services data
+  // Services data - enhanced with new properties
   services?: Array<{
     icon: string;
     title: string;
@@ -18,12 +18,25 @@ export interface Props {
     features: string[];
     href?: string;
     highlighted?: boolean;
+    stats?: {
+      primary: string;
+      secondary: string;
+    };
+    metrics?: {
+      [key: string]: string;
+    };
+    businessBenefits?: string[];
+    processStep?: number;
+    timeframe?: string;
   }>;
   
   // Layout props
-  variant?: 'grid' | 'cards' | 'minimal';
+  variant?: 'grid' | 'cards' | 'minimal' | 'process';
   showCta?: boolean;
   maxServices?: number;
+  
+  // Accessibility props
+  headingLevel?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 }
 
 const {
@@ -35,6 +48,7 @@ const {
   variant = "cards",
   showCta = true,
   maxServices = 6,
+  headingLevel = "h2",
   services = [
     {
       icon: "🎨",
@@ -89,66 +103,133 @@ const {
 
 // Limit services if specified
 const displayServices = services.slice(0, maxServices);
+
+// Generate heading component dynamically
+const HeadingComponent = headingLevel;
 ---
 
-<section class="services-overview" aria-labelledby="services-headline">
+<section 
+  class={`services-overview services-${variant}`} 
+  aria-labelledby="services-headline"
+  role="region"
+>
   <div class="services-container">
     <!-- Section Header -->
-    <div class="services-header" data-animate="fade-up">
-      <span class="services-eyebrow">{eyebrow}</span>
-      <h2 id="services-headline" class="services-headline">
+    <header class="services-header" data-animate="fade-up">
+      {eyebrow && (
+        <span class="services-eyebrow" role="doc-subtitle">
+          {eyebrow}
+        </span>
+      )}
+      <HeadingComponent id="services-headline" class="services-headline">
         {headline}
-      </h2>
-      <p class="services-description">
-        {description}
-      </p>
-    </div>
+      </HeadingComponent>
+      {description && (
+        <p class="services-description">
+          {description}
+        </p>
+      )}
+    </header>
 
     <!-- Services Grid -->
     <div 
-      class={`services-grid services-${variant}`}
+      class="services-grid"
       data-animate="fade-up"
       data-delay="200"
+      role="list"
     >
       {displayServices.map((service, index) => (
         <article 
-          class={`service-card ${service.highlighted ? 'highlighted' : ''}`}
+          class={`service-card ${service.highlighted ? 'highlighted' : ''} ${variant === 'process' && service.processStep ? 'process-step' : ''}`}
           data-animate="fade-up"
           data-delay={300 + (index * 100)}
           key={index}
+          role="listitem"
+          aria-labelledby={`service-${index}-title`}
         >
           <div class="service-content">
+            <!-- Process Step Number (for process variant) -->
+            {variant === 'process' && service.processStep && (
+              <div class="process-step-number" aria-label={`Step ${service.processStep}`}>
+                <span class="step-number">{service.processStep}</span>
+              </div>
+            )}
+
             <!-- Icon -->
-            <div class="service-icon">
-              <span class="icon-emoji" role="img" aria-hidden="true">
+            <div class="service-icon" aria-hidden="true">
+              <span class="icon-emoji" role="img">
                 {service.icon}
               </span>
             </div>
 
             <!-- Content -->
             <div class="service-text">
-              <h3 class="service-title">{service.title}</h3>
+              <h3 id={`service-${index}-title`} class="service-title">
+                {service.title}
+              </h3>
+              
+              {service.timeframe && (
+                <div class="service-timeframe" aria-label="Timeline">
+                  <svg class="timeframe-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="2"/>
+                    <path d="M8 4v4l3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                  <span>{service.timeframe}</span>
+                </div>
+              )}
+              
               <p class="service-description">{service.description}</p>
               
               <!-- Features List -->
               <ul class="service-features" aria-label={`${service.title} features`}>
                 {service.features.map((feature, featureIndex) => (
                   <li class="feature-item" key={featureIndex}>
-                    <svg class="feature-check" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <svg class="feature-check" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                       <path d="M13.5 4.5L6 12L2.5 8.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
-                    {feature}
+                    <span>{feature}</span>
                   </li>
                 ))}
               </ul>
+
+              <!-- Stats/Metrics -->
+              {service.stats && (
+                <div class="service-stats" aria-label="Key statistics">
+                  <div class="stat-item">
+                    <span class="stat-value">{service.stats.primary}</span>
+                    <span class="stat-label">{service.stats.secondary}</span>
+                  </div>
+                </div>
+              )}
+
+              <!-- Business Benefits -->
+              {service.businessBenefits && service.businessBenefits.length > 0 && (
+                <div class="business-benefits">
+                  <h4 class="benefits-title">Business Benefits:</h4>
+                  <ul class="benefits-list" aria-label="Business benefits">
+                    {service.businessBenefits.map((benefit, benefitIndex) => (
+                      <li class="benefit-item" key={benefitIndex}>
+                        <svg class="benefit-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                          <path d="M10 3L4.5 8.5L2 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>{benefit}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
 
             <!-- CTA -->
             {service.href && (
               <div class="service-cta">
-                <a href={service.href} class="service-link">
-                  Learn More
-                  <svg class="link-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <a 
+                  href={service.href} 
+                  class="service-link"
+                  aria-describedby={`service-${index}-title`}
+                >
+                  <span>Learn More</span>
+                  <svg class="link-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                     <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </a>
@@ -158,8 +239,17 @@ const displayServices = services.slice(0, maxServices);
 
           <!-- Highlight Badge -->
           {service.highlighted && (
-            <div class="highlight-badge">
+            <div class="highlight-badge" role="banner">
               <span>Most Popular</span>
+            </div>
+          )}
+
+          <!-- Process Connector (for process variant) -->
+          {variant === 'process' && index < displayServices.length - 1 && (
+            <div class="process-connector" aria-hidden="true">
+              <svg class="connector-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
             </div>
           )}
 
@@ -176,9 +266,9 @@ const displayServices = services.slice(0, maxServices);
         data-animate="fade-up"
         data-delay="600"
       >
-        <a href={ctaHref} class="cta-button">
-          {ctaText}
-          <svg class="cta-arrow" width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <a href={ctaHref} class="cta-button" role="button">
+          <span>{ctaText}</span>
+          <svg class="cta-arrow" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
             <path d="M4.16667 10H15.8333M15.8333 10L10.8333 5M15.8333 10L10.8333 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </a>
@@ -200,18 +290,28 @@ const displayServices = services.slice(0, maxServices);
 </section>
 
 <style define:vars={{
+  // Colors using enhanced theme
   primaryColor: theme.colors.primary[500],
   primaryHover: theme.colors.primary[600],
   primaryLight: theme.colors.primary[100],
   secondaryColor: theme.colors.secondary[500],
   successColor: theme.colors.success[500],
+  warningColor: theme.colors.warning[500],
   neutralWhite: theme.colors.neutral[50],
   neutralGray: theme.colors.neutral[500],
+  neutralMuted: theme.colors.neutral[600],
   neutralDark: theme.colors.neutral[900],
   neutralLight: theme.colors.neutral[100],
   borderColor: theme.colors.border,
+  
+  // Typography
   fontSans: theme.typography.fontFamily.sans.join(', '),
   fontDisplay: theme.typography.fontFamily.display.join(', '),
+  
+  // Spacing using 8pt grid
+  spacing1: theme.spacing[1],
+  spacing2: theme.spacing[2],
+  spacing3: theme.spacing[3],
   spacing4: theme.spacing[4],
   spacing6: theme.spacing[6],
   spacing8: theme.spacing[8],
@@ -219,11 +319,28 @@ const displayServices = services.slice(0, maxServices);
   spacing16: theme.spacing[16],
   spacing20: theme.spacing[20],
   spacing24: theme.spacing[24],
+  spacing32: theme.spacing[32],
+  
+  // Border radius
   borderRadiusLg: theme.borderRadius.lg,
   borderRadius2xl: theme.borderRadius['2xl'],
+  
+  // Shadows with enhanced contrast
   shadowMd: theme.boxShadow.md,
   shadowLg: theme.boxShadow.lg,
-  shadow2xl: theme.boxShadow['2xl']
+  shadow2xl: theme.boxShadow['2xl'],
+  shadowFocus: theme.boxShadow.focus,
+  
+  // Accessibility
+  touchTargetMin: theme.accessibility.touchTarget.min,
+  focusWidth: theme.accessibility.focus.width,
+  focusOffset: theme.accessibility.focus.offset,
+  focusColor: theme.accessibility.focus.color,
+  
+  // Animation
+  transitionNormal: theme.animation.duration.normal,
+  transitionSlow: theme.animation.duration.slow,
+  easingInOut: theme.animation.easing['in-out']
 }}>
   .services-overview {
     position: relative;
@@ -239,7 +356,7 @@ const displayServices = services.slice(0, maxServices);
   }
 
   .services-container {
-    max-width: 1280px;
+    max-width: var(--layout-container-xl, 1280px);
     margin: 0 auto;
     padding: 0 var(--spacing4);
     position: relative;
@@ -252,7 +369,7 @@ const displayServices = services.slice(0, maxServices);
     }
   }
 
-  /* Section Header */
+  /* Section Header with enhanced typography */
   .services-header {
     text-align: center;
     margin-bottom: var(--spacing16);
@@ -263,7 +380,7 @@ const displayServices = services.slice(0, maxServices);
 
   .services-eyebrow {
     display: inline-block;
-    font-size: 0.875rem;
+    font-size: var(--font-size-sm, 0.875rem);
     font-weight: 600;
     color: var(--primaryColor);
     background: var(--primaryLight);
@@ -272,92 +389,116 @@ const displayServices = services.slice(0, maxServices);
     margin-bottom: var(--spacing6);
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    line-height: 1.2;
   }
 
   .services-headline {
     font-family: var(--fontDisplay);
-    font-size: 2.25rem;
+    font-size: var(--font-size-3xl, 1.875rem);
     font-weight: 700;
-    line-height: 1.2;
+    line-height: var(--line-height-tight, 1.25);
     color: var(--neutralDark);
     margin: 0 0 var(--spacing6) 0;
+    max-width: 65ch; /* Optimal reading width */
+    margin-left: auto;
+    margin-right: auto;
   }
 
   @media (min-width: 768px) {
     .services-headline {
-      font-size: 3rem;
+      font-size: var(--font-size-4xl, 2.25rem);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .services-headline {
+      font-size: var(--font-size-5xl, 3rem);
     }
   }
 
   .services-description {
-    font-size: 1.125rem;
-    line-height: 1.7;
+    font-size: var(--font-size-lg, 1.125rem);
+    line-height: var(--line-height-relaxed, 1.625);
     color: var(--neutralGray);
     margin: 0;
+    max-width: 65ch;
+    margin-left: auto;
+    margin-right: auto;
   }
 
-  /* Services Grid */
+  /* Enhanced Services Grid */
   .services-grid {
     display: grid;
-    gap: var(--spacing8);
+    gap: var(--spacing12); /* Good vertical gap for mobile */
     margin-bottom: var(--spacing16);
-  }
-
-  /* Grid Variants */
-  .services-cards {
     grid-template-columns: 1fr;
+    padding: var(--spacing2); /* Minimal padding to prevent edge overflow */
   }
 
-  @media (min-width: 768px) {
-    .services-cards {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .services-cards {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .services-grid {
-    grid-template-columns: 1fr;
-  }
-
+  /* Grid Variants with better responsive behavior */
   @media (min-width: 640px) {
     .services-grid {
       grid-template-columns: repeat(2, 1fr);
+      gap: var(--spacing12) var(--spacing6); /* 48px vertical, 24px horizontal */
     }
   }
 
   @media (min-width: 1024px) {
     .services-grid {
       grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing12) var(--spacing8); /* 48px vertical, 32px horizontal */
     }
   }
 
-  .services-minimal {
-    gap: var(--spacing12);
+  /* Process variant - horizontal layout on desktop */
+  .services-process .services-grid {
+    gap: var(--spacing12) var(--spacing12); /* Equal spacing but room for arrows */
+    padding: var(--spacing4);
   }
 
-  /* Service Cards */
+  @media (min-width: 1024px) {
+    .services-process .services-grid {
+      grid-template-columns: repeat(3, 1fr);
+      align-items: start;
+      gap: var(--spacing12) var(--spacing16); /* Extra horizontal space for arrows */
+    }
+  }
+
+  .services-minimal .services-grid {
+    gap: var(--spacing12); /* Good vertical spacing */
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: var(--spacing2);
+  }
+
+  /* Enhanced Service Cards with accessibility */
   .service-card {
     position: relative;
     background: var(--neutralWhite);
     border: 1px solid var(--borderColor);
     border-radius: var(--borderRadius2xl);
     padding: var(--spacing8);
-    transition: all 0.3s ease;
-    overflow: hidden;
+    transition: all var(--transitionNormal) var(--easingInOut);
+    overflow: visible; /* Changed from hidden to prevent clipping */
     display: flex;
     flex-direction: column;
     height: 100%;
+    min-height: var(--touchTargetMin);
+    cursor: pointer;
+    transform-origin: center; /* Ensure proper transform origin */
   }
 
   .service-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-6px) scale(1.01); /* Minimal scale to prevent overlap */
     box-shadow: var(--shadow2xl);
     border-color: var(--primaryColor);
+    z-index: 10; /* Ensure hovered card appears above others */
+  }
+
+  .service-card:focus-within {
+    outline: var(--focusWidth) solid var(--focusColor);
+    outline-offset: var(--focusOffset);
   }
 
   .service-card.highlighted {
@@ -373,7 +514,25 @@ const displayServices = services.slice(0, maxServices);
     z-index: 2;
   }
 
-  /* Service Icon */
+  /* Process Step Number */
+  .process-step-number {
+    position: absolute;
+    top: var(--spacing4);
+    left: var(--spacing4);
+    width: 32px;
+    height: 32px;
+    background: var(--primaryColor);
+    color: var(--neutralWhite);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: var(--font-size-sm);
+    z-index: 3;
+  }
+
+  /* Service Icon with enhanced accessibility */
   .service-icon {
     display: flex;
     align-items: center;
@@ -383,7 +542,8 @@ const displayServices = services.slice(0, maxServices);
     background: var(--primaryLight);
     border-radius: var(--borderRadius2xl);
     margin-bottom: var(--spacing6);
-    transition: all 0.3s ease;
+    transition: all var(--transitionNormal) var(--easingInOut);
+    flex-shrink: 0;
   }
 
   .service-card:hover .service-icon {
@@ -393,35 +553,53 @@ const displayServices = services.slice(0, maxServices);
 
   .icon-emoji {
     font-size: 2rem;
-    transition: all 0.3s ease;
+    transition: all var(--transitionNormal) var(--easingInOut);
+    line-height: 1;
   }
 
   .service-card:hover .icon-emoji {
     transform: scale(1.1);
   }
 
-  /* Service Text */
+  /* Service Text with enhanced readability */
   .service-text {
     flex: 1;
+    display: flex;
+    flex-direction: column;
   }
 
   .service-title {
     font-family: var(--fontDisplay);
-    font-size: 1.5rem;
+    font-size: var(--font-size-xl, 1.25rem);
     font-weight: 600;
     color: var(--neutralDark);
     margin: 0 0 var(--spacing4) 0;
-    line-height: 1.3;
+    line-height: var(--line-height-snug, 1.375);
+  }
+
+  .service-timeframe {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing2);
+    color: var(--warningColor);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    margin-bottom: var(--spacing3);
+  }
+
+  .timeframe-icon {
+    flex-shrink: 0;
   }
 
   .service-description {
-    font-size: 1rem;
-    line-height: 1.6;
+    font-size: var(--font-size-base, 1rem);
+    line-height: var(--line-height-relaxed, 1.625);
     color: var(--neutralGray);
     margin: 0 0 var(--spacing6) 0;
+    flex-grow: 1;
   }
 
-  /* Features List */
+  /* Enhanced Features List */
   .service-features {
     list-style: none;
     padding: 0;
@@ -430,21 +608,86 @@ const displayServices = services.slice(0, maxServices);
 
   .feature-item {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: var(--spacing2);
     margin-bottom: var(--spacing2);
-    font-size: 0.875rem;
-    color: var(--neutralGray);
+    font-size: var(--font-size-sm, 0.875rem);
+    color: var(--neutralMuted);
+    line-height: var(--line-height-relaxed);
   }
 
   .feature-check {
     color: var(--successColor);
     flex-shrink: 0;
+    margin-top: 2px; /* Align with text baseline */
   }
 
-  /* Service CTA */
+  /* Service Stats */
+  .service-stats {
+    margin: var(--spacing4) 0;
+    padding: var(--spacing3);
+    background: var(--neutralLight);
+    border-radius: var(--borderRadiusLg);
+    text-align: center;
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .stat-value {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    color: var(--primaryColor);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: var(--font-size-sm);
+    color: var(--neutralGray);
+    margin-top: var(--spacing1);
+  }
+
+  /* Business Benefits */
+  .business-benefits {
+    margin-top: var(--spacing4);
+    padding-top: var(--spacing4);
+    border-top: 1px solid var(--borderColor);
+  }
+
+  .benefits-title {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing3) 0;
+  }
+
+  .benefits-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .benefit-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing2);
+    margin-bottom: var(--spacing2);
+    font-size: var(--font-size-sm);
+    color: var(--primaryColor);
+    font-weight: 500;
+  }
+
+  .benefit-icon {
+    flex-shrink: 0;
+  }
+
+  /* Enhanced Service CTA with proper touch targets */
   .service-cta {
     margin-top: auto;
+    padding-top: var(--spacing4);
   }
 
   .service-link {
@@ -454,31 +697,57 @@ const displayServices = services.slice(0, maxServices);
     font-weight: 600;
     color: var(--primaryColor);
     text-decoration: none;
-    font-size: 0.875rem;
-    transition: all 0.3s ease;
+    font-size: var(--font-size-sm, 0.875rem);
+    transition: all var(--transitionNormal) var(--easingInOut);
+    padding: var(--spacing2);
+    border-radius: var(--borderRadiusLg);
+    min-height: var(--touchTargetMin);
+    min-width: var(--touchTargetMin);
+    justify-content: center;
   }
 
   .service-link:hover,
   .service-link:focus {
     color: var(--primaryHover);
     gap: var(--spacing4);
+    background: var(--primaryLight);
   }
 
   .service-link:focus {
-    outline: 2px solid var(--primaryColor);
-    outline-offset: 2px;
-    border-radius: var(--spacing2);
+    outline: var(--focusWidth) solid var(--focusColor);
+    outline-offset: var(--focusOffset);
   }
 
   .link-arrow {
-    transition: transform 0.3s ease;
+    transition: transform var(--transitionNormal) var(--easingInOut);
   }
 
   .service-link:hover .link-arrow {
     transform: translateX(4px);
   }
 
-  /* Highlight Badge */
+  /* Process Connector */
+  .process-connector {
+    display: none;
+    position: absolute;
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primaryColor);
+    z-index: 4;
+  }
+
+  @media (min-width: 1024px) {
+    .services-process .service-card .process-connector {
+      display: block;
+    }
+    
+    .services-process .service-card:last-child .process-connector {
+      display: none;
+    }
+  }
+
+  /* Enhanced Highlight Badge */
   .highlight-badge {
     position: absolute;
     top: var(--spacing4);
@@ -487,9 +756,10 @@ const displayServices = services.slice(0, maxServices);
     color: var(--neutralWhite);
     padding: var(--spacing2) var(--spacing4);
     border-radius: var(--borderRadiusLg);
-    font-size: 0.75rem;
+    font-size: var(--font-size-xs, 0.75rem);
     font-weight: 600;
     z-index: 3;
+    line-height: 1.2;
   }
 
   /* Service Background Effect */
@@ -501,7 +771,7 @@ const displayServices = services.slice(0, maxServices);
     bottom: 0;
     background: linear-gradient(135deg, transparent 0%, var(--primaryLight) 100%);
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity var(--transitionNormal) var(--easingInOut);
     border-radius: var(--borderRadius2xl);
   }
 
@@ -509,27 +779,29 @@ const displayServices = services.slice(0, maxServices);
     opacity: 0.5;
   }
 
-  /* Section CTA */
+  /* Enhanced Section CTA */
   .services-cta {
     text-align: center;
-    margin-top: var(--spacing12);
+    margin-top: var(--spacing16);
   }
 
   .cta-button {
     display: inline-flex;
     align-items: center;
-    gap: var(--spacing2);
+    gap: var(--spacing3);
     font-family: var(--fontSans);
-    font-size: 1.125rem;
+    font-size: var(--font-size-lg, 1.125rem);
     font-weight: 600;
     color: var(--neutralWhite);
     background: var(--primaryColor);
     text-decoration: none;
     padding: var(--spacing4) var(--spacing8);
     border-radius: var(--borderRadiusLg);
-    transition: all 0.3s ease;
+    transition: all var(--transitionNormal) var(--easingInOut);
     box-shadow: var(--shadowLg);
     border: 2px solid var(--primaryColor);
+    min-height: var(--touchTargetMin);
+    line-height: 1.2;
   }
 
   .cta-button:hover,
@@ -541,12 +813,12 @@ const displayServices = services.slice(0, maxServices);
   }
 
   .cta-button:focus {
-    outline: 2px solid var(--primaryColor);
-    outline-offset: 2px;
+    outline: var(--focusWidth) solid var(--focusColor);
+    outline-offset: var(--focusOffset);
   }
 
   .cta-arrow {
-    transition: transform 0.3s ease;
+    transition: transform var(--transitionNormal) var(--easingInOut);
   }
 
   .cta-button:hover .cta-arrow {
@@ -593,11 +865,11 @@ const displayServices = services.slice(0, maxServices);
     50% { opacity: 1; transform: scale(1.2); }
   }
 
-  /* Animations */
+  /* Enhanced Animations */
   [data-animate] {
     opacity: 0;
     transform: translateY(30px);
-    transition: all 0.8s ease;
+    transition: all 0.8s var(--easingInOut);
   }
 
   [data-animate].animate {
@@ -612,25 +884,64 @@ const displayServices = services.slice(0, maxServices);
     }
 
     .services-headline {
-      font-size: 2rem;
+      font-size: var(--font-size-2xl, 1.5rem);
     }
 
     .service-card {
       padding: var(--spacing6);
     }
 
+    .service-icon {
+      width: 48px;
+      height: 48px;
+      margin-bottom: var(--spacing4);
+    }
+
+    .icon-emoji {
+      font-size: 1.5rem;
+    }
+
     .decoration-grid {
       display: none;
     }
+
+    .process-step-number {
+      width: 28px;
+      height: 28px;
+      font-size: var(--font-size-xs);
+    }
   }
 
-  /* Reduced Motion */
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .service-card {
+      border-width: 2px;
+    }
+    
+    .service-card:hover {
+      border-width: 3px;
+    }
+    
+    .cta-button {
+      border-width: 3px;
+    }
+    
+    .feature-check,
+    .benefit-icon {
+      stroke-width: 3;
+    }
+  }
+
+  /* Reduced Motion Support */
   @media (prefers-reduced-motion: reduce) {
     .service-card,
     .service-icon,
     .service-link,
     .cta-button,
-    .grid-dot {
+    .grid-dot,
+    .icon-emoji,
+    .link-arrow,
+    .cta-arrow {
       transition: none;
       animation: none;
     }
@@ -638,22 +949,82 @@ const displayServices = services.slice(0, maxServices);
     .service-card:hover {
       transform: none;
     }
+    
+    [data-animate] {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    .services-overview {
+      background: white;
+      padding: 0;
+    }
+    
+    .services-decoration,
+    .service-bg {
+      display: none;
+    }
+    
+    .service-card {
+      border: 1px solid #000;
+      break-inside: avoid;
+      margin-bottom: var(--spacing4);
+    }
+    
+    .cta-button {
+      display: none;
+    }
+  }
+
+  /* Dark mode support (if implemented) */
+  @media (prefers-color-scheme: dark) {
+    .services-overview {
+      background: var(--color-dark-background, #030712);
+    }
+    
+    .service-card {
+      background: var(--color-dark-muted, #1f2937);
+      border-color: var(--color-dark-border, #374151);
+    }
+    
+    .services-headline,
+    .service-title {
+      color: var(--color-dark-foreground, #f9fafb);
+    }
+    
+    .services-description,
+    .service-description {
+      color: var(--color-dark-muted-foreground, #9ca3af);
+    }
   }
 </style>
 
 <script>
-  // Services Animation Controller
+  // Enhanced Services Animation Controller with accessibility considerations
   class ServicesAnimations {
     constructor() {
       this.animatedElements = document.querySelectorAll('.services-overview [data-animate]');
       this.serviceCards = document.querySelectorAll('.service-card');
+      this.prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       
       this.init();
     }
 
     init() {
+      // Skip animations if user prefers reduced motion
+      if (this.prefersReducedMotion) {
+        this.animatedElements.forEach(el => {
+          el.classList.add('animate');
+        });
+        return;
+      }
+
       this.setupScrollAnimations();
       this.setupCardInteractions();
+      this.setupKeyboardNavigation();
     }
 
     setupScrollAnimations() {
@@ -680,39 +1051,145 @@ const displayServices = services.slice(0, maxServices);
     }
 
     setupCardInteractions() {
-      this.serviceCards.forEach(card => {
-        // Add ripple effect on click
+      this.serviceCards.forEach((card, index) => {
+        // Enhanced click handling for better accessibility
         card.addEventListener('click', (e) => {
-          if (e.target.closest('.service-link')) return;
+          // Don't trigger if clicking on a link or button
+          if (e.target.closest('.service-link, button, a')) return;
           
           const link = card.querySelector('.service-link');
           if (link) {
+            // Announce to screen readers
+            this.announceAction(`Opening ${link.textContent.trim()}`);
             link.click();
           }
         });
 
-        // Enhanced hover tracking
+        // Enhanced hover tracking with ARIA updates
         card.addEventListener('mouseenter', () => {
           card.style.setProperty('--hover-scale', '1.02');
+          card.setAttribute('aria-expanded', 'true');
         });
 
         card.addEventListener('mouseleave', () => {
           card.style.setProperty('--hover-scale', '1');
+          card.setAttribute('aria-expanded', 'false');
+        });
+
+        // Focus management
+        card.addEventListener('focusin', () => {
+          card.classList.add('focused');
+        });
+
+        card.addEventListener('focusout', () => {
+          card.classList.remove('focused');
         });
       });
     }
+
+    setupKeyboardNavigation() {
+      this.serviceCards.forEach((card, index) => {
+        // Make cards focusable
+        card.setAttribute('tabindex', '0');
+        
+        card.addEventListener('keydown', (e) => {
+          const link = card.querySelector('.service-link');
+          
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            if (link) {
+              this.announceAction(`Opening ${link.textContent.trim()}`);
+              link.click();
+            }
+          }
+          
+          // Arrow key navigation between cards
+          if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+            e.preventDefault();
+            const nextCard = this.serviceCards[index + 1];
+            if (nextCard) {
+              nextCard.focus();
+            }
+          }
+          
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            const prevCard = this.serviceCards[index - 1];
+            if (prevCard) {
+              prevCard.focus();
+            }
+          }
+        });
+      });
+    }
+
+    announceAction(message) {
+      // Create a live region announcement for screen readers
+      const announcement = document.createElement('div');
+      announcement.setAttribute('aria-live', 'polite');
+      announcement.setAttribute('aria-atomic', 'true');
+      announcement.className = 'sr-only';
+      announcement.textContent = message;
+      
+      document.body.appendChild(announcement);
+      
+      // Remove after announcement
+      setTimeout(() => {
+        document.body.removeChild(announcement);
+      }, 1000);
+    }
+
+    // Method to handle dynamic content updates
+    updateServices(newServices) {
+      // Re-initialize if services are updated dynamically
+      this.serviceCards = document.querySelectorAll('.service-card');
+      this.setupCardInteractions();
+      this.setupKeyboardNavigation();
+    }
   }
 
-  // Initialize when DOM is loaded
+  // Enhanced initialization with error handling
   document.addEventListener('DOMContentLoaded', () => {
-    new ServicesAnimations();
+    try {
+      new ServicesAnimations();
+    } catch (error) {
+      console.warn('Services animations could not be initialized:', error);
+      // Ensure content is still visible even if animations fail
+      document.querySelectorAll('[data-animate]').forEach(el => {
+        el.classList.add('animate');
+      });
+    }
   });
 
   // Performance optimization: lazy load non-critical animations
   if ('requestIdleCallback' in window) {
     requestIdleCallback(() => {
-      // Initialize additional non-critical animations
-      console.log('Services animations loaded');
+      // Initialize additional non-critical animations or features
+      console.log('Services animations fully loaded');
     });
+  }
+
+  // Handle dynamic imports for enhanced features
+  if ('IntersectionObserver' in window) {
+    // Enhanced intersection observer features can be loaded here
+  }
+
+  // Handle viewport changes for responsive behavior
+  let resizeTimeout;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      // Recalculate animations or layouts if needed
+      const cards = document.querySelectorAll('.service-card');
+      cards.forEach(card => {
+        // Reset any transform states on resize
+        card.style.removeProperty('--hover-scale');
+      });
+    }, 250);
+  });
+
+  // Export for potential external usage
+  if (typeof window !== 'undefined') {
+    window.ServicesAnimations = ServicesAnimations;
   }
 </script>

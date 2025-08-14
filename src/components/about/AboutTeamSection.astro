@@ -1,0 +1,880 @@
+---
+// AboutSection.astro
+import { theme, themeUtils } from '../../lib/theme';
+
+export interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  image: {
+    src: string;
+    alt: string;
+  };
+  bio?: string;
+  linkedinUrl?: string;
+  email?: string;
+  phone?: string;
+}
+
+export interface Props {
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  ctaText?: string;
+  ctaUrl?: string;
+  teamMembers: TeamMember[];
+  className?: string;
+  showSocialLinks?: boolean;
+}
+
+const {
+  title = "Experts Who Think Strategically and Deliver Practically",
+  subtitle = "Our teams",
+  description = "We bring together sharp business thinking, real-world leadership, and a hands-on approach to help our clients achieve measurable results.",
+  ctaText = "Learn more",
+  ctaUrl = "/about",
+  teamMembers,
+  className = "",
+  showSocialLinks = true
+} = Astro.props;
+
+// Generate CSS custom properties from theme
+const cssVars = themeUtils.createCSSVars();
+
+// Generate unique IDs for ARIA relationships
+const sectionId = `about-section-${Math.random().toString(36).substr(2, 9)}`;
+const titleId = `${sectionId}-title`;
+const subtitleId = `${sectionId}-subtitle`;
+const descriptionId = `${sectionId}-description`;
+const teamGridId = `${sectionId}-team-grid`;
+
+// Generate structured data for SEO
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Our Team",
+  "description": description,
+  "employee": teamMembers.map(member => ({
+    "@type": "Person",
+    "name": member.name,
+    "jobTitle": member.role,
+    "image": member.image.src,
+    ...(member.bio && { "description": member.bio }),
+    ...(member.linkedinUrl && { "sameAs": [member.linkedinUrl] })
+  }))
+};
+---
+
+<section 
+  id={sectionId}
+  class={`about-section ${className}`}
+  aria-labelledby={titleId}
+  aria-describedby={descriptionId}
+  role="region"
+>
+  <!-- Structured data for SEO -->
+  <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  
+  <div class="about-section__container">
+    <!-- Header -->
+    <header class="about-section__header">
+      <p 
+        id={subtitleId}
+        class="about-section__subtitle" 
+        aria-label="Section category"
+      >
+        {subtitle}
+      </p>
+      <h2 id={titleId} class="about-section__title">
+        {title}
+      </h2>
+      <p 
+        id={descriptionId}
+        class="about-section__description"
+      >
+        {description}
+      </p>
+    </header>
+
+    <!-- Content Grid -->
+    <div class="about-section__content">
+      <!-- Description Card -->
+      <div class="about-section__description-card">
+        <div class="about-section__card-content">
+          <p class="about-section__card-text">
+            Our team brings a unique blend of industry experience, cultural fluency, and business insight to every engagement. Together, we solve complex problems and help our clients grow with purpose.
+          </p>
+          
+          {ctaUrl && (
+            <a 
+              href={ctaUrl}
+              class="about-section__cta-button"
+              aria-describedby={descriptionId}
+            >
+              <span class="about-section__cta-text">{ctaText}</span>
+              <svg 
+                class="about-section__cta-arrow" 
+                width="20" 
+                height="20" 
+                viewBox="0 0 20 20" 
+                fill="none"
+                aria-hidden="true"
+              >
+                <path 
+                  d="M4.16667 10H15.8333M15.8333 10L10.8333 5M15.8333 10L10.8333 15" 
+                  stroke="currentColor" 
+                  stroke-width="1.5" 
+                  stroke-linecap="round" 
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+          )}
+        </div>
+      </div>
+
+      <!-- Team Grid -->
+      <div 
+        id={teamGridId}
+        class="about-section__team-grid"
+        role="group"
+        aria-label="Team members"
+      >
+        {teamMembers.map((member, index) => {
+          const cardId = `team-member-${member.id}`;
+          const imageId = `image-${member.id}`;
+          const nameId = `name-${member.id}`;
+          
+          return (
+            <article
+              id={cardId}
+              class="about-section__team-card"
+              role="article"
+              aria-labelledby={nameId}
+              tabindex="0"
+              itemscope
+              itemtype="https://schema.org/Person"
+            >
+              <div class="about-section__team-card-inner">
+                <!-- Image Container -->
+                <div class="about-section__team-image-wrapper">
+                  <img 
+                    id={imageId}
+                    src={member.image.src}
+                    alt={member.image.alt}
+                    class="about-section__team-image"
+                    loading={index < 3 ? "eager" : "lazy"}
+                    decoding="async"
+                    width="300"
+                    height="350"
+                    itemprop="image"
+                  />
+                  
+                  <!-- Social Link Overlay -->
+                  {showSocialLinks && member.linkedinUrl && (
+                    <div class="about-section__social-overlay">
+                      <a 
+                        href={member.linkedinUrl}
+                        class="about-section__social-link"
+                        aria-label={`Connect with ${member.name} on LinkedIn`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <svg 
+                          class="about-section__linkedin-icon" 
+                          width="24" 
+                          height="24" 
+                          viewBox="0 0 24 24" 
+                          fill="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                        </svg>
+                      </a>
+                    </div>
+                  )}
+                </div>
+                
+                <!-- Member Info -->
+                <div class="about-section__team-info">
+                  <h3 
+                    id={nameId}
+                    class="about-section__team-name"
+                    itemprop="name"
+                  >
+                    {member.name}
+                  </h3>
+                  <p 
+                    class="about-section__team-role"
+                    itemprop="jobTitle"
+                  >
+                    {member.role}
+                  </p>
+                  
+                  {member.bio && (
+                    <p 
+                      class="about-section__team-bio sr-only"
+                      itemprop="description"
+                    >
+                      {member.bio}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style define:vars={{
+  // Colors using enhanced theme
+  primaryColor: theme.colors.primary[500],
+  primaryHover: theme.colors.primary[600],
+  primaryLight: theme.colors.primary[100],
+  secondaryColor: theme.colors.secondary[500],
+  successColor: theme.colors.success[500],
+  successLight: theme.colors.success[50],
+  successDark: theme.colors.success[600],
+  successDarker: theme.colors.success[700],
+  warningColor: theme.colors.warning[500],
+  neutralWhite: theme.colors.neutral[50],
+  neutralGray: theme.colors.neutral[500],
+  neutralMuted: theme.colors.neutral[600],
+  neutralDark: theme.colors.neutral[900],
+  neutralLight: theme.colors.neutral[100],
+  neutralBorder: theme.colors.neutral[200],
+  neutralMedium: theme.colors.neutral[300],
+  borderColor: theme.colors.border,
+  
+  // Typography
+  fontSans: theme.typography.fontFamily.sans.join(', '),
+  fontDisplay: theme.typography.fontFamily.display.join(', '),
+  fontSizeSm: theme.typography.fontSize.sm[0],
+  fontSizeBase: theme.typography.fontSize.base[0],
+  fontSizeLg: theme.typography.fontSize.lg[0],
+  fontSizeXl: theme.typography.fontSize.xl[0],
+  fontSize2xl: theme.typography.fontSize['2xl'][0],
+  fontSize3xl: theme.typography.fontSize['3xl'][0],
+  fontSize4xl: theme.typography.fontSize['4xl'][0],
+  fontSize5xl: theme.typography.fontSize['5xl'][0],
+  fontSize6xl: theme.typography.fontSize['6xl'][0],
+  lineHeightTight: theme.typography.lineHeight.tight,
+  lineHeightSnug: theme.typography.lineHeight.snug,
+  lineHeightNormal: theme.typography.lineHeight.normal,
+  lineHeightRelaxed: theme.typography.lineHeight.relaxed,
+  
+  // Spacing using 8pt grid
+  spacing1: theme.spacing[1],
+  spacing2: theme.spacing[2],
+  spacing3: theme.spacing[3],
+  spacing4: theme.spacing[4],
+  spacing6: theme.spacing[6],
+  spacing8: theme.spacing[8],
+  spacing12: theme.spacing[12],
+  spacing16: theme.spacing[16],
+  spacing20: theme.spacing[20],
+  spacing24: theme.spacing[24],
+  spacing32: theme.spacing[32],
+  
+  // Border radius
+  borderRadiusLg: theme.borderRadius.lg,
+  borderRadiusXl: theme.borderRadius.xl,
+  borderRadius2xl: theme.borderRadius['2xl'],
+  borderRadiusFull: theme.borderRadius.full,
+  
+  // Shadows with enhanced contrast
+  shadowMd: theme.boxShadow.md,
+  shadowLg: theme.boxShadow.lg,
+  shadowXl: theme.boxShadow.xl,
+  shadow2xl: theme.boxShadow['2xl'],
+  shadowFocus: theme.boxShadow.focus,
+  
+  // Accessibility
+  touchTargetMin: theme.accessibility.touchTarget.min,
+  focusWidth: theme.accessibility.focus.width,
+  focusOffset: theme.accessibility.focus.offset,
+  focusColor: theme.accessibility.focus.color,
+  
+  // Animation
+  transitionNormal: theme.animation.duration.normal,
+  transitionSlow: theme.animation.duration.slow,
+  easingInOut: theme.animation.easing['in-out'],
+  
+  // Dark mode colors
+  darkBackground: theme.colors.dark.background,
+  darkForeground: theme.colors.dark.foreground,
+  darkMuted: theme.colors.dark.muted,
+  darkMutedForeground: theme.colors.dark['muted-foreground'],
+  darkBorder: theme.colors.dark.border,
+  darkRing: theme.colors.dark.ring
+}}>
+  /* Apply theme-based CSS custom properties */
+  .about-section {
+    padding: var(--spacing20) 0;
+    background: var(--neutralWhite);
+    font-family: var(--fontSans);
+  }
+
+  /* Container */
+  .about-section__container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 var(--spacing4);
+  }
+
+  /* Header styles */
+  .about-section__header {
+    text-align: center;
+    margin-bottom: var(--spacing16);
+  }
+
+  .about-section__subtitle {
+    font-size: var(--fontSizeSm);
+    font-weight: 500;
+    color: var(--neutralMuted);
+    margin: 0 0 var(--spacing4) 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    position: relative;
+    padding-bottom: var(--spacing3);
+  }
+
+  .about-section__subtitle::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 2px;
+    background: var(--primaryColor);
+  }
+
+  .about-section__title {
+    font-family: var(--fontDisplay);
+    font-size: var(--fontSize4xl);
+    font-weight: 700;
+    line-height: var(--lineHeightTight);
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing6) 0;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .about-section__description {
+    font-size: var(--fontSizeLg);
+    line-height: var(--lineHeightRelaxed);
+    color: var(--neutralMuted);
+    margin: 0;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Content grid */
+  .about-section__content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing8);
+    align-items: start;
+  }
+
+  /* Description card */
+  .about-section__description-card {
+    background: var(--successLight);
+    border-radius: var(--borderRadius2xl);
+    padding: var(--spacing8);
+    order: 2;
+    border: 2px solid var(--successColor);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .about-section__card-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+  }
+
+  .about-section__card-text {
+    font-size: var(--fontSizeBase);
+    line-height: var(--lineHeightRelaxed);
+    color: var(--successDarker);
+    margin: 0 0 var(--spacing6) 0;
+    flex: 1;
+  }
+
+  /* CTA Button */
+  .about-section__cta-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing2);
+    background: var(--successDark);
+    color: white;
+    padding: var(--spacing3) var(--spacing6);
+    border-radius: var(--borderRadiusLg);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: var(--fontSizeSm);
+    transition: all var(--transitionNormal) var(--easingInOut);
+    min-height: var(--touchTargetMin);
+    width: 100%;
+  }
+
+  .about-section__cta-button:hover {
+    background: var(--successDarker);
+    transform: translateY(-1px);
+  }
+
+  .about-section__cta-button:focus {
+    outline: none;
+    box-shadow: var(--shadowFocus);
+  }
+
+  .about-section__cta-arrow {
+    transition: transform var(--transitionNormal) var(--easingInOut);
+  }
+
+  .about-section__cta-button:hover .about-section__cta-arrow {
+    transform: translateX(2px);
+  }
+
+  /* Team grid */
+  .about-section__team-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing6);
+    order: 1;
+  }
+
+  /* Team card */
+  .about-section__team-card {
+    background: white;
+    border-radius: var(--borderRadiusXl);
+    overflow: hidden;
+    box-shadow: var(--shadowLg);
+    transition: all var(--transitionNormal) var(--easingInOut);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .about-section__team-card:hover {
+    box-shadow: var(--shadowXl);
+    transform: translateY(-2px);
+  }
+
+  .about-section__team-card:focus {
+    outline: 3px solid var(--primaryColor);
+    outline-offset: 2px;
+  }
+
+  .about-section__team-card-inner {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* Team image */
+  .about-section__team-image-wrapper {
+    position: relative;
+    aspect-ratio: 6 / 7;
+    overflow: hidden;
+    background: var(--neutralLight);
+    flex: 1;
+  }
+
+  .about-section__team-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transitionSlow) var(--easingInOut);
+  }
+
+  .about-section__team-card:hover .about-section__team-image {
+    transform: scale(1.05);
+  }
+
+  /* Social overlay */
+  .about-section__social-overlay {
+    position: absolute;
+    top: var(--spacing4);
+    right: var(--spacing4);
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all var(--transitionNormal) var(--easingInOut);
+  }
+
+  .about-section__team-card:hover .about-section__social-overlay,
+  .about-section__team-card:focus-within .about-section__social-overlay {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .about-section__social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--touchTargetMin);
+    height: var(--touchTargetMin);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border-radius: var(--borderRadiusLg);
+    text-decoration: none;
+    transition: all var(--transitionNormal) var(--easingInOut);
+  }
+
+  .about-section__social-link:hover {
+    background: var(--primaryHover);
+    transform: scale(1.1);
+  }
+
+  .about-section__social-link:focus {
+    outline: none;
+    box-shadow: var(--shadowFocus);
+  }
+
+  /* Team info */
+  .about-section__team-info {
+    position: absolute;
+    bottom: var(--spacing4);
+    left: var(--spacing4);
+    right: var(--spacing4);
+    padding: var(--spacing4);
+    background: white;
+    text-align: left;
+    border-radius: var(--borderRadiusLg);
+    box-shadow: var(--shadowMd);
+  }
+
+  .about-section__team-name {
+    font-family: var(--fontDisplay);
+    font-size: var(--fontSizeXl);
+    font-weight: 600;
+    color: var(--neutralDark);
+    margin: 0 0 var(--spacing2) 0;
+    line-height: var(--lineHeightSnug);
+  }
+
+  .about-section__team-role {
+    font-size: var(--fontSizeSm);
+    color: var(--neutralMuted);
+    margin: 0;
+    font-weight: 500;
+  }
+
+  /* Screen reader only content */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Responsive design */
+  @media (min-width: 768px) {
+    .about-section {
+      padding: var(--spacing24) 0;
+    }
+
+    .about-section__title {
+      font-size: var(--fontSize5xl);
+    }
+
+    .about-section__description {
+      font-size: var(--fontSizeXl);
+    }
+
+    .about-section__team-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--spacing8);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .about-section__header {
+      text-align: left;
+      margin-bottom: var(--spacing20);
+    }
+
+    .about-section__subtitle::after {
+      left: 0;
+    }
+
+    .about-section__title {
+      margin-left: 0;
+      margin-right: 0;
+      font-size: var(--fontSize6xl);
+    }
+
+    .about-section__description {
+      margin-left: 0;
+      margin-right: 0;
+    }
+
+    .about-section__content {
+      grid-template-columns: 1fr 2fr;
+      gap: var(--spacing8);
+      align-items: stretch;
+    }
+
+    .about-section__description-card {
+      order: 1;
+      height: auto;
+      position: static;
+    }
+
+    .about-section__team-grid {
+      grid-template-columns: repeat(3, 1fr);
+      order: 2;
+    }
+
+    .about-section__card-text {
+      font-size: var(--fontSizeLg);
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .about-section__team-grid {
+      gap: var(--spacing8);
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .about-section__team-card {
+      border: 2px solid var(--neutralDark);
+    }
+
+    .about-section__description-card {
+      border: 3px solid var(--successDark);
+    }
+
+    .about-section__cta-button {
+      border: 2px solid var(--successDark);
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .about-section__team-card,
+    .about-section__team-image,
+    .about-section__social-overlay,
+    .about-section__social-link,
+    .about-section__cta-button,
+    .about-section__cta-arrow {
+      transition: none;
+    }
+
+    .about-section__team-card:hover {
+      transform: none;
+    }
+
+    .about-section__team-card:hover .about-section__team-image {
+      transform: none;
+    }
+
+    .about-section__social-overlay {
+      opacity: 1;
+      transform: none;
+    }
+
+    .about-section__cta-button:hover {
+      transform: none;
+    }
+
+    .about-section__cta-button:hover .about-section__cta-arrow {
+      transform: none;
+    }
+  }
+
+  /* Dark mode support using theme */
+  @media (prefers-color-scheme: dark) {
+    .about-section {
+      background: var(--darkBackground);
+    }
+
+    .about-section__title {
+      color: var(--darkForeground);
+    }
+
+    .about-section__subtitle {
+      color: var(--darkMutedForeground);
+    }
+
+    .about-section__description {
+      color: var(--darkMutedForeground);
+    }
+
+    .about-section__team-card {
+      background: var(--darkMuted);
+      border: 1px solid var(--darkBorder);
+    }
+
+    .about-section__team-info {
+      background: var(--darkMuted);
+    }
+
+    .about-section__team-name {
+      color: var(--darkForeground);
+    }
+
+    .about-section__team-role {
+      color: var(--darkMutedForeground);
+    }
+
+    .about-section__description-card {
+      background: var(--successDark);
+      color: var(--successLight);
+    }
+
+    .about-section__card-text {
+      color: var(--successLight);
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    .about-section {
+      background: white;
+      color: black;
+    }
+
+    .about-section__social-overlay {
+      display: none;
+    }
+
+    .about-section__team-card {
+      box-shadow: none;
+      border: 1px solid var(--neutralMedium);
+      page-break-inside: avoid;
+      margin-bottom: 1rem;
+    }
+
+    .about-section__description-card {
+      background: var(--neutralLight);
+      color: var(--neutralDark);
+      border: 1px solid var(--neutralMedium);
+    }
+
+    .about-section__card-text {
+      color: var(--neutralDark);
+    }
+
+    .about-section__cta-button {
+      background: var(--neutralDark);
+      color: white;
+    }
+  }__team-card,
+    .about-section__team-image,
+    .about-section__social-overlay,
+    .about-section__social-link,
+    .about-section__cta-button,
+    .about-section__cta-arrow {
+      transition: none;
+    }
+
+    .about-section__team-card:hover {
+      transform: none;
+    }
+
+    .about-section__team-card:hover .about-section__team-image {
+      transform: none;
+    }
+
+    .about-section__social-overlay {
+      opacity: 1;
+      transform: none;
+    }
+
+    .about-section__cta-button:hover {
+      transform: none;
+    }
+
+    .about-section__cta-button:hover .about-section__cta-arrow {
+      transform: none;
+    }
+  }
+
+  /* Dark mode support using theme */
+  @media (prefers-color-scheme: dark) {
+    .about-section {
+      /* Use theme dark mode colors */
+      --color-neutral-50: var(--color-dark-background);
+      --color-neutral-100: var(--color-dark-muted);
+      --color-neutral-200: var(--color-dark-border);
+      --color-neutral-500: var(--color-dark-muted-foreground);
+      --color-neutral-600: #d1d5db;
+      --color-neutral-700: #e5e7eb;
+      --color-neutral-800: #f3f4f6;
+      --color-neutral-900: var(--color-dark-foreground);
+      
+      background: var(--color-dark-background);
+    }
+
+    .about-section__team-card {
+      background: var(--color-dark-muted);
+      border: 1px solid var(--color-dark-border);
+    }
+
+    .about-section__team-info {
+      background: var(--color-dark-muted);
+    }
+
+    .about-section__description-card {
+      background: var(--color-success-600);
+      color: var(--color-success-50);
+    }
+
+    .about-section__card-text {
+      color: var(--color-success-50);
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    .about-section {
+      background: white;
+      color: black;
+    }
+
+    .about-section__social-overlay {
+      display: none;
+    }
+
+    .about-section__team-card {
+      box-shadow: none;
+      border: 1px solid #ccc;
+      page-break-inside: avoid;
+      margin-bottom: 1rem;
+    }
+
+    .about-section__description-card {
+      background: var(--color-neutral-100);
+      color: var(--color-neutral-900);
+      border: 1px solid var(--color-neutral-300);
+    }
+
+    .about-section__card-text {
+      color: var(--color-neutral-900);
+    }
+
+    .about-section__cta-button {
+      background: var(--color-neutral-800);
+      color: white;
+    }
+  }
+</style>

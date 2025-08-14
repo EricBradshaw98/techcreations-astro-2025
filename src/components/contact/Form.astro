@@ -1,561 +1,462 @@
 ---
-// Contact.astro - Complete contact page with Netlify Forms integration
+// Contact.astro - Simplified contact landing page with reCAPTCHA
 import theme from '../../lib/theme';
 
 export interface Props {
-  // Page content
+  // Hero content
   headline?: string;
-  description?: string;
+  subheadline?: string;
+  guarantee?: string;
+  
+  // reCAPTCHA configuration
+  recaptchaSiteKey?: string;
+  
+  // Services section
+  services?: Array<{
+    title: string;
+    description: string;
+    bestFor: string;
+  }>;
+  
+  // Testimonials
+  testimonials?: Array<{
+    quote: string;
+    author: string;
+    title: string;
+    company: string;
+    avatar?: string;
+  }>;
   
   // Contact methods
   contactMethods?: Array<{
-    id: string;
     title: string;
-    description: string;
     value: string;
     href: string;
-    icon: string;
-    available?: string;
+    available: string;
   }>;
-  
-  // Office locations (if applicable)
-  offices?: Array<{
-    id: string;
-    city: string;
-    address: string;
-    phone?: string;
-    email?: string;
-    timezone: string;
-  }>;
-  
-  // Response expectations
-  responseInfo?: {
-    title: string;
-    description: string;
-    timeframe: string;
-  };
 }
 
 const {
-  headline = "Let's Build Something Amazing Together",
-  description = "Ready to transform your digital presence? Get in touch and let's discuss how we can help your business achieve exceptional growth and results.",
+  headline = "Ready to Transform Your Website?",
+  subheadline = "Let's start with a conversation",
+  guarantee = "Free consultation • No obligation • 24-hour response guaranteed",
+  recaptchaSiteKey = "YOUR_RECAPTCHA_SITE_KEY", // Replace with your actual site key
+  services = [
+    {
+      title: "WordPress Migration",
+      description: "Seamless migration with zero downtime and performance optimization",
+      bestFor: "Sites moving from old hosting or outdated WordPress versions"
+    },
+    {
+      title: "Performance Audit", 
+      description: "Complete analysis of speed, SEO, and user experience issues",
+      bestFor: "Slow sites needing optimization and better search rankings"
+    },
+    {
+      title: "Hosting Consultation",
+      description: "Find the perfect hosting solution for your traffic and budget",
+      bestFor: "Growing businesses outgrowing current hosting limitations"
+    },
+    {
+      title: "Ongoing Support",
+      description: "Monthly maintenance, updates, security, and performance monitoring",
+      bestFor: "Busy business owners who want peace of mind and reliable uptime"
+    }
+  ],
+  testimonials = [
+    {
+      quote: "The migration was flawless and our site is 3x faster now. Best investment we made this year.",
+      author: "Sarah Chen",
+      title: "Marketing Director",
+      company: "TechGear Pro"
+    },
+    {
+      quote: "They delivered exactly what they promised, on time and within budget. Highly recommend.",
+      author: "Mike Rodriguez", 
+      title: "CEO",
+      company: "Local Fitness Co"
+    }
+  ],
   contactMethods = [
     {
-      id: "consultation",
-      title: "Free Consultation",
-      description: "Schedule a 30-minute strategy call to discuss your project and goals.",
-      value: "Book Now",
+      title: "Schedule Free Consultation",
+      value: "Book 30-min strategy call",
       href: "https://calendly.com/youragency/consultation",
-      icon: "📅",
-      available: "Mon-Fri, 9AM-5PM EST"
+      available: "Available Mon-Fri, 9AM-5PM EST"
     },
     {
-      id: "email",
-      title: "Email Us",
-      description: "Send us your project details and we'll respond within 24 hours.",
+      title: "Email Us Directly",
       value: "hello@youragency.com",
-      href: "mailto:hello@youragency.com",
-      icon: "📧",
-      available: "24/7"
+      href: "mailto:hello@youragency.com", 
+      available: "24-hour response guaranteed"
     },
     {
-      id: "phone",
       title: "Call Us",
-      description: "Speak directly with our team for immediate assistance.",
       value: "+1 (555) 123-4567",
       href: "tel:+15551234567",
-      icon: "📞",
       available: "Mon-Fri, 9AM-6PM EST"
     }
-  ],
-  offices = [
-    {
-      id: "main",
-      city: "Toronto",
-      address: "123 Innovation Drive, Suite 400\nToronto, ON M5V 3A8",
-      phone: "+1 (416) 555-0123",
-      email: "toronto@youragency.com",
-      timezone: "EST"
-    }
-  ],
-  responseInfo = {
-    title: "What happens next?",
-    description: "After you submit your inquiry, here's what you can expect from our team.",
-    timeframe: "We typically respond within 4 hours during business days"
-  }
+  ]
 } = Astro.props;
 ---
 
-<section class="contact-page">
-  <div class="contact-container">
-    
-    <!-- Page Header -->
-    <div class="contact-header" data-animate="fade-up">
-      <h1 class="contact-headline">{headline}</h1>
-      <p class="contact-description">{description}</p>
-    </div>
+<!-- reCAPTCHA Script -->
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
-    <!-- Main Contact Section -->
-    <div class="contact-main">
-      
-      <!-- Contact Form -->
-      <div class="contact-form-section" data-animate="fade-up" data-delay="200">
-        <div class="form-header">
-          <h2 class="form-title">Tell Us About Your Project</h2>
-          <p class="form-subtitle">The more details you provide, the better we can help you achieve your goals.</p>
-        </div>
-
-        <!-- Netlify Form -->
-        <form 
-          name="contact" 
-          method="POST" 
-          data-netlify="true" 
-          data-netlify-honeypot="bot-field"
-          class="contact-form"
-          id="contact-form"
-        >
-          <!-- Hidden fields for Netlify -->
-          <input type="hidden" name="form-name" value="contact" />
-          <div class="sr-only">
-            <label>Don't fill this out if you're human: <input name="bot-field" /></label>
-          </div>
-
-          <!-- Form Fields -->
-          <div class="form-grid">
-            <!-- Personal Information -->
-            <div class="form-section">
-              <h3 class="section-title">
-                <span class="section-icon">👤</span>
-                Contact Information
-              </h3>
-              
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="firstName" class="form-label">First Name *</label>
-                  <input 
-                    type="text" 
-                    id="firstName" 
-                    name="firstName" 
-                    class="form-input" 
-                    required 
-                    autocomplete="given-name"
-                  />
-                </div>
-                
-                <div class="form-group">
-                  <label for="lastName" class="form-label">Last Name *</label>
-                  <input 
-                    type="text" 
-                    id="lastName" 
-                    name="lastName" 
-                    class="form-input" 
-                    required 
-                    autocomplete="family-name"
-                  />
-                </div>
-              </div>
-
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="email" class="form-label">Email Address *</label>
-                  <input 
-                    type="email" 
-                    id="email" 
-                    name="email" 
-                    class="form-input" 
-                    required 
-                    autocomplete="email"
-                  />
-                </div>
-                
-                <div class="form-group">
-                  <label for="phone" class="form-label">Phone Number</label>
-                  <input 
-                    type="tel" 
-                    id="phone" 
-                    name="phone" 
-                    class="form-input" 
-                    autocomplete="tel"
-                  />
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="company" class="form-label">Company Name</label>
-                <input 
-                  type="text" 
-                  id="company" 
-                  name="company" 
-                  class="form-input" 
-                  autocomplete="organization"
-                />
-              </div>
-
-              <div class="form-group">
-                <label for="website" class="form-label">Current Website (if any)</label>
-                <input 
-                  type="url" 
-                  id="website" 
-                  name="website" 
-                  class="form-input" 
-                  placeholder="https://"
-                />
-              </div>
-            </div>
-
-            <!-- Project Information -->
-            <div class="form-section">
-              <h3 class="section-title">
-                <span class="section-icon">🚀</span>
-                Project Details
-              </h3>
-
-              <div class="form-group">
-                <label for="projectType" class="form-label">Project Type *</label>
-                <select id="projectType" name="projectType" class="form-select" required>
-                  <option value="">Select a service</option>
-                  <option value="web-development">Web Development</option>
-                  <option value="mobile-app">Mobile App Development</option>
-                  <option value="branding">Brand Strategy & Design</option>
-                  <option value="digital-marketing">Digital Marketing</option>
-                  <option value="cloud-solutions">Cloud Solutions</option>
-                  <option value="maintenance">Maintenance & Support</option>
-                  <option value="consultation">Strategy Consultation</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="budget" class="form-label">Project Budget</label>
-                <select id="budget" name="budget" class="form-select">
-                  <option value="">Select budget range</option>
-                  <option value="under-25k">Under $25,000</option>
-                  <option value="25k-50k">$25,000 - $50,000</option>
-                  <option value="50k-100k">$50,000 - $100,000</option>
-                  <option value="100k-250k">$100,000 - $250,000</option>
-                  <option value="250k-plus">$250,000+</option>
-                  <option value="not-sure">Not sure yet</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="timeline" class="form-label">Desired Timeline</label>
-                <select id="timeline" name="timeline" class="form-select">
-                  <option value="">Select timeline</option>
-                  <option value="asap">ASAP (Rush project)</option>
-                  <option value="1-3-months">1-3 months</option>
-                  <option value="3-6-months">3-6 months</option>
-                  <option value="6-12-months">6-12 months</option>
-                  <option value="flexible">Flexible</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="projectDescription" class="form-label">Project Description *</label>
-                <textarea 
-                  id="projectDescription" 
-                  name="projectDescription" 
-                  rows="6" 
-                  class="form-textarea" 
-                  placeholder="Tell us about your project goals, challenges, and what you're hoping to achieve..."
-                  required
-                ></textarea>
-                <div class="form-hint">Please be as detailed as possible to help us provide the best recommendations.</div>
-              </div>
-
-              <div class="form-group">
-                <label for="currentChallenges" class="form-label">Current Challenges</label>
-                <textarea 
-                  id="currentChallenges" 
-                  name="currentChallenges" 
-                  rows="4" 
-                  class="form-textarea" 
-                  placeholder="What specific challenges or pain points are you facing that this project should address?"
-                ></textarea>
-              </div>
-
-              <div class="form-group">
-                <label for="successMetrics" class="form-label">Success Metrics</label>
-                <textarea 
-                  id="successMetrics" 
-                  name="successMetrics" 
-                  rows="3" 
-                  class="form-textarea" 
-                  placeholder="How will you measure the success of this project? (e.g., increased sales, better user engagement, etc.)"
-                ></textarea>
-              </div>
-            </div>
-
-            <!-- Additional Information -->
-            <div class="form-section full-width">
-              <h3 class="section-title">
-                <span class="section-icon">💡</span>
-                Additional Information
-              </h3>
-
-              <div class="form-row">
-                <div class="form-group">
-                  <label class="form-label">How did you hear about us?</label>
-                  <div class="checkbox-group">
-                    <label class="checkbox-label">
-                      <input type="checkbox" name="referralSource" value="google" class="form-checkbox" />
-                      <span class="checkbox-custom"></span>
-                      Google Search
-                    </label>
-                    <label class="checkbox-label">
-                      <input type="checkbox" name="referralSource" value="social-media" class="form-checkbox" />
-                      <span class="checkbox-custom"></span>
-                      Social Media
-                    </label>
-                    <label class="checkbox-label">
-                      <input type="checkbox" name="referralSource" value="referral" class="form-checkbox" />
-                      <span class="checkbox-custom"></span>
-                      Referral
-                    </label>
-                    <label class="checkbox-label">
-                      <input type="checkbox" name="referralSource" value="linkedin" class="form-checkbox" />
-                      <span class="checkbox-custom"></span>
-                      LinkedIn
-                    </label>
-                    <label class="checkbox-label">
-                      <input type="checkbox" name="referralSource" value="other" class="form-checkbox" />
-                      <span class="checkbox-custom"></span>
-                      Other
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">Additional Services of Interest</label>
-                <div class="checkbox-group">
-                  <label class="checkbox-label">
-                    <input type="checkbox" name="additionalServices" value="ongoing-support" class="form-checkbox" />
-                    <span class="checkbox-custom"></span>
-                    Ongoing Support & Maintenance
-                  </label>
-                  <label class="checkbox-label">
-                    <input type="checkbox" name="additionalServices" value="seo" class="form-checkbox" />
-                    <span class="checkbox-custom"></span>
-                    SEO & Digital Marketing
-                  </label>
-                  <label class="checkbox-label">
-                    <input type="checkbox" name="additionalServices" value="hosting" class="form-checkbox" />
-                    <span class="checkbox-custom"></span>
-                    Managed Hosting
-                  </label>
-                  <label class="checkbox-label">
-                    <input type="checkbox" name="additionalServices" value="training" class="form-checkbox" />
-                    <span class="checkbox-custom"></span>
-                    Team Training
-                  </label>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="additionalComments" class="form-label">Anything else we should know?</label>
-                <textarea 
-                  id="additionalComments" 
-                  name="additionalComments" 
-                  rows="4" 
-                  class="form-textarea" 
-                  placeholder="Share any additional details, questions, or specific requirements..."
-                ></textarea>
-              </div>
-            </div>
-          </div>
-
-          <!-- Form Footer -->
-          <div class="form-footer">
-            <div class="privacy-notice">
-              <label class="checkbox-label required">
-                <input type="checkbox" name="privacyConsent" value="yes" class="form-checkbox" required />
-                <span class="checkbox-custom"></span>
-                I agree to the <a href="/privacy-policy" target="_blank">Privacy Policy</a> and consent to being contacted about this inquiry. *
-              </label>
-            </div>
-
-            <button type="submit" class="form-submit" id="submit-btn">
-              <span class="submit-text">Send My Project Details</span>
-              <svg class="submit-arrow" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M4.16667 10H15.8333M15.8333 10L10.8333 5M15.8333 10L10.8333 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              <svg class="submit-loading" width="20" height="20" viewBox="0 0 20 20" fill="none" style="display: none;">
-                <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="50.265" stroke-dashoffset="50.265">
-                  <animateTransform attributeName="transform" type="rotate" values="0 10 10;360 10 10" dur="1s" repeatCount="indefinite"/>
-                </circle>
-              </svg>
-            </button>
-          </div>
-        </form>
-
-        <!-- Success Message -->
-        <div class="form-success" id="form-success" style="display: none;">
-          <div class="success-content">
-            <div class="success-icon">
-              <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                <circle cx="24" cy="24" r="24" fill="#10B981"/>
-                <path d="M16 24L22 30L32 18" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <h3 class="success-title">Thank You!</h3>
-            <p class="success-message">We've received your project details and will get back to you within 4 hours during business days.</p>
-            <div class="success-next-steps">
-              <h4>What happens next?</h4>
-              <ul>
-                <li>We'll review your project requirements</li>
-                <li>Schedule a consultation call if needed</li>
-                <li>Provide a detailed project proposal</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Contact Methods Sidebar -->
-      <div class="contact-sidebar" data-animate="fade-left" data-delay="400">
+<main class="contact-page">
+  <!-- Hero Banner -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <h1 class="headline">{headline}</h1>
+        <p class="subheadline">{subheadline}</p>
+        <div class="guarantee">{guarantee}</div>
         
-        <!-- Contact Methods -->
-        <div class="contact-methods">
-          <h3 class="sidebar-title">Other Ways to Reach Us</h3>
-          
-          {contactMethods.map((method) => (
-            <a href={method.href} class="contact-method" key={method.id}>
-              <div class="method-icon">
-                <span role="img" aria-hidden="true">{method.icon}</span>
-              </div>
-              <div class="method-content">
-                <h4 class="method-title">{method.title}</h4>
-                <p class="method-description">{method.description}</p>
-                <div class="method-value">{method.value}</div>
-                {method.available && (
-                  <div class="method-availability">{method.available}</div>
-                )}
-              </div>
-            </a>
-          ))}
+        <div class="hero-cta">
+          <a href="#contact-form" class="btn btn-primary">Start Free Consultation</a>
+          <a href="#audit-form" class="btn btn-secondary">Get Free Website Audit</a>
         </div>
+      </div>
+    </div>
+  </section>
 
-        <!-- Response Information -->
-        <div class="response-info">
-          <h3 class="sidebar-title">{responseInfo.title}</h3>
-          <p class="response-description">{responseInfo.description}</p>
-          
-          <div class="response-steps">
-            <div class="response-step">
-              <div class="step-number">1</div>
-              <div class="step-content">
-                <h4>Immediate Confirmation</h4>
-                <p>You'll receive an automatic confirmation email right away.</p>
-              </div>
-            </div>
-            
-            <div class="response-step">
-              <div class="step-number">2</div>
-              <div class="step-content">
-                <h4>Personal Response</h4>
-                <p>Our team will review your details and respond personally within {responseInfo.timeframe.toLowerCase()}.</p>
-              </div>
-            </div>
-            
-            <div class="response-step">
-              <div class="step-number">3</div>
-              <div class="step-content">
-                <h4>Strategy Call</h4>
-                <p>We'll schedule a consultation to discuss your project in detail.</p>
-              </div>
+  <!-- How We Can Help -->
+  <section class="services">
+    <div class="container">
+      <h2 class="section-title">How We Can Help You</h2>
+      
+      <div class="services-grid">
+        {services.map((service, index) => (
+          <div class="service-card" key={index}>
+            <h3 class="service-title">{service.title}</h3>
+            <p class="service-description">{service.description}</p>
+            <div class="best-for">
+              <strong>Best for:</strong> {service.bestFor}
             </div>
           </div>
-        </div>
+        ))}
+      </div>
+    </div>
+  </section>
 
-        <!-- Office Locations -->
-        {offices.length > 0 && (
-          <div class="office-locations">
-            <h3 class="sidebar-title">Our Location</h3>
-            
-            {offices.map((office) => (
-              <div class="office-item" key={office.id}>
-                <h4 class="office-city">{office.city}</h4>
-                <div class="office-address">
-                  {office.address.split('\n').map((line, index) => (
-                    <div key={index}>{line}</div>
-                  ))}
-                </div>
-                {office.phone && (
-                  <a href={`tel:${office.phone}`} class="office-contact">
-                    📞 {office.phone}
-                  </a>
-                )}
-                {office.email && (
-                  <a href={`mailto:${office.email}`} class="office-contact">
-                    📧 {office.email}
-                  </a>
-                )}
-                <div class="office-timezone">
-                  Timezone: {office.timezone}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <!-- Trust Signals -->
-        <div class="trust-signals">
-          <h3 class="sidebar-title">Why Choose Us?</h3>
-          
-          <div class="trust-items">
-            <div class="trust-item">
-              <div class="trust-icon">🚀</div>
-              <div class="trust-content">
-                <h4>Fast Response</h4>
-                <p>Typically respond within 4 hours</p>
-              </div>
-            </div>
-            
-            <div class="trust-item">
-              <div class="trust-icon">🎯</div>
-              <div class="trust-content">
-                <h4>Custom Solutions</h4>
-                <p>Tailored to your specific needs</p>
-              </div>
-            </div>
-            
-            <div class="trust-item">
-              <div class="trust-icon">🏆</div>
-              <div class="trust-content">
-                <h4>Proven Results</h4>
-                <p>150+ successful projects delivered</p>
-              </div>
-            </div>
+  <!-- Testimonial -->
+  <section class="testimonial-section">
+    <div class="container">
+      <div class="testimonial">
+        <blockquote class="quote">"{testimonials[0].quote}"</blockquote>
+        <div class="author">
+          <div class="author-info">
+            <div class="name">{testimonials[0].author}</div>
+            <div class="title">{testimonials[0].title}, {testimonials[0].company}</div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Background Decoration -->
-  <div class="contact-background" aria-hidden="true">
-    <div class="bg-shapes">
-      <div class="bg-shape shape-1"></div>
-      <div class="bg-shape shape-2"></div>
-      <div class="bg-shape shape-3"></div>
+  <!-- Free Website Audit Form -->
+  <section class="audit-section" id="audit-form">
+    <div class="container">
+      <div class="audit-content">
+        <div class="audit-text">
+          <h2>Start Here: Free Website Audit</h2>
+          <p>Get your performance score and migration roadmap in 48 hours</p>
+          <ul class="audit-benefits">
+            <li>Performance analysis and speed recommendations</li>
+            <li>SEO audit with improvement opportunities</li>
+            <li>Security scan and vulnerability report</li>
+            <li>Custom migration strategy if needed</li>
+          </ul>
+        </div>
+        
+        <form class="audit-form" name="website-audit" method="POST" action="/api/audit-form">
+          
+          <div class="form-group">
+            <label for="website-url" class="form-label">Your Website URL *</label>
+            <input 
+              type="url" 
+              id="website-url" 
+              name="websiteUrl" 
+              class="form-input" 
+              placeholder="https://yourwebsite.com"
+              required 
+            />
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="audit-name" class="form-label">Name *</label>
+              <input 
+                type="text" 
+                id="audit-name" 
+                name="name" 
+                class="form-input" 
+                required 
+              />
+            </div>
+            
+            <div class="form-group">
+              <label for="audit-email" class="form-label">Email *</label>
+              <input 
+                type="email" 
+                id="audit-email" 
+                name="email" 
+                class="form-input" 
+                required 
+              />
+            </div>
+          </div>
+          
+          <!-- reCAPTCHA -->
+          <div class="form-group">
+            <div class="g-recaptcha" data-sitekey={recaptchaSiteKey}></div>
+          </div>
+          
+          <button type="submit" class="btn btn-primary full-width">
+            Get My Free Audit Report
+          </button>
+          
+          <p class="form-note">We'll email your detailed report within 48 hours</p>
+        </form>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
+
+  <!-- Contact Methods -->
+  <section class="contact-methods">
+    <div class="container">
+      <h2 class="section-title">Get in Touch</h2>
+      
+      <div class="methods-grid">
+        {contactMethods.map((method, index) => (
+          <a href={method.href} class="method-card" key={index}>
+            <h3 class="method-title">{method.title}</h3>
+            <div class="method-value">{method.value}</div>
+            <div class="method-available">{method.available}</div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Contact Form -->
+  <section class="contact-form-section" id="contact-form">
+    <div class="container">
+      <div class="form-content">
+        <div class="form-text">
+          <h2>Tell Us About Your Project</h2>
+          <p>The more details you provide, the better we can help you achieve your goals.</p>
+        </div>
+
+        <form class="contact-form" name="contact" method="POST" data-netlify="true">
+          <input type="hidden" name="form-name" value="contact" />
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="first-name" class="form-label">First Name *</label>
+              <input 
+                type="text" 
+                id="first-name" 
+                name="firstName" 
+                class="form-input" 
+                required 
+              />
+            </div>
+            
+            <div class="form-group">
+              <label for="last-name" class="form-label">Last Name *</label>
+              <input 
+                type="text" 
+                id="last-name" 
+                name="lastName" 
+                class="form-input" 
+                required 
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email" class="form-label">Email *</label>
+              <input 
+                type="email" 
+                id="email" 
+                name="email" 
+                class="form-input" 
+                required 
+              />
+            </div>
+            
+            <div class="form-group">
+              <label for="phone" class="form-label">Phone</label>
+              <input 
+                type="tel" 
+                id="phone" 
+                name="phone" 
+                class="form-input" 
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="current-website" class="form-label">Current Website</label>
+            <input 
+              type="url" 
+              id="current-website" 
+              name="currentWebsite" 
+              class="form-input" 
+              placeholder="https://"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="project-type" class="form-label">What do you need help with? *</label>
+            <select id="project-type" name="projectType" class="form-select" required>
+              <option value="">Select a service</option>
+              <option value="wordpress-migration">WordPress Migration</option>
+              <option value="performance-optimization">Performance Optimization</option>
+              <option value="hosting-consultation">Hosting Consultation</option>
+              <option value="ongoing-support">Ongoing Support & Maintenance</option>
+              <option value="website-redesign">Website Redesign</option>
+              <option value="seo-audit">SEO Audit & Optimization</option>
+              <option value="consultation">General Consultation</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="budget" class="form-label">Budget Range</label>
+              <select id="budget" name="budget" class="form-select">
+                <option value="">Select budget</option>
+                <option value="under-5k">Under $5,000</option>
+                <option value="5k-15k">$5,000 - $15,000</option>
+                <option value="15k-30k">$15,000 - $30,000</option>
+                <option value="30k-plus">$30,000+</option>
+                <option value="not-sure">Not sure yet</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="timeline" class="form-label">Timeline</label>
+              <select id="timeline" name="timeline" class="form-select">
+                <option value="">Select timeline</option>
+                <option value="asap">ASAP (1-2 weeks)</option>
+                <option value="1-month">Within 1 month</option>
+                <option value="2-3-months">2-3 months</option>
+                <option value="flexible">Flexible</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="project-details" class="form-label">Tell us about your project *</label>
+            <textarea 
+              id="project-details" 
+              name="projectDetails" 
+              rows="5" 
+              class="form-textarea" 
+              placeholder="Describe your current challenges, goals, and what you're hoping to achieve..."
+              required
+            ></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary full-width">
+            Send My Project Details
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- What Happens Next -->
+  <section class="process">
+    <div class="container">
+      <h2 class="section-title">What Happens Next</h2>
+      <p class="section-subtitle">Our consultation process: from initial contact to project completion</p>
+      
+      <div class="process-steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h3>Free Audit</h3>
+            <p>We analyze your current website performance, security, and optimization opportunities</p>
+          </div>
+        </div>
+        
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h3>Strategy Call</h3>
+            <p>30-minute consultation to discuss findings and create a custom roadmap for your goals</p>
+          </div>
+        </div>
+        
+        <div class="step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h3>Custom Proposal</h3>
+            <p>Detailed project proposal with timeline, deliverables, and transparent pricing</p>
+          </div>
+        </div>
+        
+        <div class="step">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <h3>Migration Plan</h3>
+            <p>Step-by-step execution with regular updates and zero-downtime guarantee</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final Testimonial -->
+  <section class="final-testimonial">
+    <div class="container">
+      <div class="testimonial">
+        <blockquote class="quote">"{testimonials[1].quote}"</blockquote>
+        <div class="author">
+          <div class="author-info">
+            <div class="name">{testimonials[1].author}</div>
+            <div class="title">{testimonials[1].title}, {testimonials[1].company}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta">
+    <div class="container">
+      <h2>Ready to Get Started?</h2>
+      <p>Book your free consultation and get your website transformation roadmap</p>
+      <a href="https://calendly.com/youragency/consultation" class="btn btn-primary large">
+        Book Your Free Consultation
+      </a>
+      <p class="cta-note">Available Mon-Fri • 24-hour response guaranteed</p>
+    </div>
+  </section>
+</main>
 
 <style define:vars={{
+  // Theme integration
   primaryColor: theme.colors.primary[500],
   primaryHover: theme.colors.primary[600],
   primaryLight: theme.colors.primary[100],
   successColor: theme.colors.success[500],
-  errorColor: theme.colors.error[500],
   neutralWhite: theme.colors.neutral[50],
   neutralGray: theme.colors.neutral[500],
   neutralDark: theme.colors.neutral[900],
   neutralLight: theme.colors.neutral[100],
   borderColor: theme.colors.border,
+  
+  // Typography
   fontSans: theme.typography.fontFamily.sans.join(', '),
   fontDisplay: theme.typography.fontFamily.display.join(', '),
+  
+  // Spacing
+  spacing2: theme.spacing[2],
+  spacing3: theme.spacing[3],
   spacing4: theme.spacing[4],
   spacing6: theme.spacing[6],
   spacing8: theme.spacing[8],
@@ -563,163 +464,314 @@ const {
   spacing16: theme.spacing[16],
   spacing20: theme.spacing[20],
   spacing24: theme.spacing[24],
+  
+  // Border radius
   borderRadiusLg: theme.borderRadius.lg,
   borderRadius2xl: theme.borderRadius['2xl'],
+  
+  // Shadows
   shadowMd: theme.boxShadow.md,
   shadowLg: theme.boxShadow.lg,
-  shadow2xl: theme.boxShadow['2xl']
+  
+  // Accessibility
+  touchTargetMin: theme.accessibility.touchTarget.min,
+  focusColor: theme.accessibility.focus.color
 }}>
+  /* Base Styles */
   .contact-page {
-    position: relative;
-    min-height: 100vh;
-    padding: var(--spacing24) 0;
-    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
-    overflow: hidden;
+    font-family: var(--fontSans);
+    line-height: 1.6;
+    color: var(--neutralDark);
   }
 
-  .contact-container {
-    max-width: 1400px;
+  .container {
+    max-width: 1200px;
     margin: 0 auto;
     padding: 0 var(--spacing4);
-    position: relative;
-    z-index: 10;
   }
 
   @media (min-width: 768px) {
-    .contact-container {
+    .container {
       padding: 0 var(--spacing6);
     }
   }
 
-  /* Page Header */
-  .contact-header {
-    text-align: center;
-    margin-bottom: var(--spacing20);
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
+  /* Section Styles */
+  section {
+    padding: var(--spacing20) 0;
   }
 
-  .contact-headline {
+  .section-title {
     font-family: var(--fontDisplay);
     font-size: 2.5rem;
     font-weight: 700;
-    line-height: 1.2;
-    color: var(--neutralDark);
-    margin: 0 0 var(--spacing6) 0;
-  }
-
-  @media (min-width: 768px) {
-    .contact-headline {
-      font-size: 3.5rem;
-    }
-  }
-
-  .contact-description {
-    font-size: 1.25rem;
-    line-height: 1.7;
-    color: var(--neutralGray);
-    margin: 0;
-  }
-
-  /* Main Layout */
-  .contact-main {
-    display: grid;
-    gap: var(--spacing12);
-    grid-template-columns: 1fr;
-  }
-
-  @media (min-width: 1024px) {
-    .contact-main {
-      grid-template-columns: 2fr 1fr;
-      gap: var(--spacing20);
-    }
-  }
-
-  /* Form Section */
-  .contact-form-section {
-    background: var(--neutralWhite);
-    border-radius: var(--borderRadius2xl);
-    padding: var(--spacing8);
-    box-shadow: var(--shadowLg);
-    border: 1px solid var(--borderColor);
-  }
-
-  @media (min-width: 768px) {
-    .contact-form-section {
-      padding: var(--spacing12);
-    }
-  }
-
-  .form-header {
-    margin-bottom: var(--spacing8);
-  }
-
-  .form-title {
-    font-family: var(--fontDisplay);
-    font-size: 1.875rem;
-    font-weight: 600;
-    color: var(--neutralDark);
+    text-align: center;
     margin: 0 0 var(--spacing4) 0;
   }
 
-  .form-subtitle {
-    font-size: 1.125rem;
-    line-height: 1.6;
+  .section-subtitle {
+    font-size: 1.25rem;
+    text-align: center;
     color: var(--neutralGray);
-    margin: 0;
+    margin: 0 0 var(--spacing12) 0;
   }
 
-  /* Form Styles */
-  .contact-form {
+  /* Hero Section */
+  .hero {
+    background: linear-gradient(135deg, var(--primaryColor) 0%, #0f172a 100%);
+    color: var(--neutralWhite);
+    text-align: center;
+  }
+
+  .hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .headline {
+    font-family: var(--fontDisplay);
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin: 0 0 var(--spacing6) 0;
+  }
+
+  .subheadline {
+    font-size: 1.5rem;
+    margin: 0 0 var(--spacing4) 0;
+    opacity: 0.9;
+  }
+
+  .guarantee {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--borderRadiusLg);
+    padding: var(--spacing3) var(--spacing6);
+    font-weight: 600;
+    margin: 0 0 var(--spacing8) 0;
+    backdrop-filter: blur(10px);
+  }
+
+  .hero-cta {
     display: flex;
-    flex-direction: column;
-    gap: var(--spacing8);
+    gap: var(--spacing4);
+    justify-content: center;
+    flex-wrap: wrap;
   }
 
-  .form-grid {
+  /* Button Styles */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing2);
+    min-height: var(--touchTargetMin);
+    padding: var(--spacing3) var(--spacing6);
+    border: 2px solid transparent;
+    border-radius: var(--borderRadiusLg);
+    font-family: var(--fontSans);
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .btn:focus-visible {
+    outline: 3px solid var(--focusColor);
+    outline-offset: 2px;
+  }
+
+  .btn-primary {
+    background: var(--primaryColor);
+    border-color: var(--primaryColor);
+    color: var(--neutralWhite);
+  }
+
+  .btn-primary:hover {
+    background: var(--primaryHover);
+    border-color: var(--primaryHover);
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    border-color: var(--neutralWhite);
+    color: var(--neutralWhite);
+  }
+
+  .btn-secondary:hover {
+    background: var(--neutralWhite);
+    color: var(--primaryColor);
+  }
+
+  .btn.large {
+    font-size: 1.25rem;
+    padding: var(--spacing4) var(--spacing8);
+  }
+
+  .btn.full-width {
+    width: 100%;
+  }
+
+  /* Services Section */
+  .services {
+    background: var(--neutralLight);
+  }
+
+  .services-grid {
     display: grid;
-    gap: var(--spacing8);
+    gap: var(--spacing6);
     grid-template-columns: 1fr;
   }
 
   @media (min-width: 768px) {
-    .form-grid {
+    .services-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .service-card {
+    background: var(--neutralWhite);
+    padding: var(--spacing6);
+    border-radius: var(--borderRadius2xl);
+    box-shadow: var(--shadowMd);
+    border: 1px solid var(--borderColor);
+    text-align: left;
+  }
+
+  .service-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 var(--spacing3) 0;
+    color: var(--primaryColor);
+  }
+
+  .service-description {
+    margin: 0 0 var(--spacing4) 0;
+    line-height: 1.6;
+  }
+
+  .best-for {
+    font-size: 0.9rem;
+    color: var(--neutralGray);
+    background: var(--neutralLight);
+    padding: var(--spacing2) var(--spacing3);
+    border-radius: var(--borderRadiusLg);
+  }
+
+  /* Testimonial Styles */
+  .testimonial-section {
+    background: var(--primaryLight);
+  }
+
+  .testimonial {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .quote {
+    font-family: var(--fontDisplay);
+    font-size: 1.5rem;
+    font-style: italic;
+    margin: 0 0 var(--spacing6) 0;
+    color: var(--neutralDark);
+  }
+
+  .author-info {
+    text-align: center;
+  }
+
+  .name {
+    font-weight: 600;
+    margin-bottom: var(--spacing2);
+  }
+
+  .title {
+    color: var(--neutralGray);
+    font-size: 0.9rem;
+  }
+
+  /* Audit Section */
+  .audit-section {
+    background: var(--neutralWhite);
+  }
+
+  .audit-content {
+    display: grid;
+    gap: var(--spacing12);
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .audit-content {
       grid-template-columns: 1fr 1fr;
     }
   }
 
-  .form-section {
-    background: var(--neutralLight);
-    border-radius: var(--borderRadiusLg);
-    padding: var(--spacing6);
-    border: 1px solid var(--borderColor);
+  .audit-text h2 {
+    font-family: var(--fontDisplay);
+    font-size: 2rem;
+    margin: 0 0 var(--spacing4) 0;
   }
 
-  .form-section.full-width {
-    grid-column: 1 / -1;
+  .audit-text p {
+    font-size: 1.25rem;
+    color: var(--neutralGray);
+    margin: 0 0 var(--spacing6) 0;
   }
 
-  .section-title {
+  .audit-benefits {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .audit-benefits li {
     display: flex;
     align-items: center;
     gap: var(--spacing3);
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--neutralDark);
-    margin: 0 0 var(--spacing6) 0;
-    padding-bottom: var(--spacing3);
-    border-bottom: 1px solid var(--borderColor);
+    margin-bottom: var(--spacing3);
   }
 
-  .section-icon {
-    font-size: 1.125rem;
+  .audit-benefits li::before {
+    content: '✓';
+    background: var(--successColor);
+    color: var(--neutralWhite);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+
+  /* Form Styles */
+  .audit-form,
+  .contact-form {
+    background: var(--neutralLight);
+    padding: var(--spacing8);
+    border-radius: var(--borderRadius2xl);
+    border: 1px solid var(--borderColor);
+  }
+
+  .form-group {
+    margin-bottom: var(--spacing6);
+    width: 100%;
   }
 
   .form-row {
     display: grid;
     gap: var(--spacing4);
     grid-template-columns: 1fr;
+    margin-bottom: var(--spacing6);
+  }
+
+  .form-row:last-child {
+    margin-bottom: 0;
   }
 
   @media (min-width: 640px) {
@@ -728,30 +780,36 @@ const {
     }
   }
 
-  .form-group {
-    margin-bottom: var(--spacing4);
-  }
-
   .form-label {
     display: block;
-    font-size: 0.9375rem;
     font-weight: 600;
-    color: var(--neutralDark);
+    font-size: 0.95rem;
     margin-bottom: var(--spacing2);
+    color: var(--neutralDark);
+    line-height: 1.2;
   }
 
   .form-input,
   .form-select,
   .form-textarea {
     width: 100%;
+    min-height: var(--touchTargetMin);
     padding: var(--spacing3) var(--spacing4);
     border: 1px solid var(--borderColor);
     border-radius: var(--borderRadiusLg);
     font-family: var(--fontSans);
     font-size: 1rem;
-    color: var(--neutralDark);
+    line-height: 1.5;
     background: var(--neutralWhite);
-    transition: all 0.3s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    box-sizing: border-box;
+  }
+
+  .form-textarea {
+    min-height: 120px;
+    resize: vertical;
+    padding-top: var(--spacing3);
+    padding-bottom: var(--spacing3);
   }
 
   .form-input:focus,
@@ -762,667 +820,309 @@ const {
     box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
   }
 
-  .form-input:invalid:not(:focus):not(:placeholder-shown),
-  .form-select:invalid:not(:focus),
-  .form-textarea:invalid:not(:focus):not(:placeholder-shown) {
-    border-color: var(--errorColor);
-  }
-
-  .form-textarea {
-    resize: vertical;
-    min-height: 120px;
-  }
-
-  .form-hint {
-    font-size: 0.875rem;
+  .form-input::placeholder,
+  .form-textarea::placeholder {
     color: var(--neutralGray);
-    margin-top: var(--spacing2);
+    opacity: 0.7;
   }
 
-  /* Checkboxes */
-  .checkbox-group {
+  .form-note {
+    font-size: 0.9rem;
+    color: var(--neutralGray);
+    text-align: center;
+    margin-top: var(--spacing4);
+    margin-bottom: 0;
+  }
+
+  /* Contact Methods */
+  .methods-grid {
     display: grid;
-    gap: var(--spacing3);
+    gap: var(--spacing6);
     grid-template-columns: 1fr;
   }
 
-  @media (min-width: 640px) {
-    .checkbox-group {
+  @media (min-width: 768px) {
+    .methods-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .method-card {
+    background: var(--neutralWhite);
+    padding: var(--spacing6);
+    border-radius: var(--borderRadius2xl);
+    box-shadow: var(--shadowMd);
+    border: 1px solid var(--borderColor);
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+
+  .method-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadowLg);
+  }
+
+  .method-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 var(--spacing3) 0;
+    color: var(--primaryColor);
+  }
+
+  .method-value {
+    font-weight: 600;
+    margin: 0 0 var(--spacing2) 0;
+  }
+
+  .method-available {
+    font-size: 0.9rem;
+    color: var(--neutralGray);
+  }
+
+  /* Contact Form Section */
+  .contact-form-section {
+    background: var(--neutralLight);
+  }
+
+  .form-content {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .form-text {
+    text-align: center;
+    margin-bottom: var(--spacing8);
+  }
+
+  .form-text h2 {
+    font-family: var(--fontDisplay);
+    font-size: 2rem;
+    margin: 0 0 var(--spacing4) 0;
+  }
+
+  .form-text p {
+    font-size: 1.125rem;
+    color: var(--neutralGray);
+    margin: 0;
+  }
+
+  /* Fix for form spacing in contact section */
+  .contact-form .form-row .form-group {
+    margin-bottom: 0;
+  }
+
+  .contact-form .form-group:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Process Section */
+  .process-steps {
+    display: grid;
+    gap: var(--spacing8);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 768px) {
+    .process-steps {
       grid-template-columns: repeat(2, 1fr);
     }
   }
 
-  .checkbox-label {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing3);
-    font-size: 0.9375rem;
-    color: var(--neutralDark);
-    cursor: pointer;
-    position: relative;
+  @media (min-width: 1024px) {
+    .process-steps {
+      grid-template-columns: repeat(4, 1fr);
+    }
   }
 
-  .checkbox-label.required {
-    grid-column: 1 / -1;
-  }
-
-  .form-checkbox {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .checkbox-custom {
-    width: 18px;
-    height: 18px;
-    border: 2px solid var(--borderColor);
-    border-radius: 4px;
-    background: var(--neutralWhite);
-    transition: all 0.3s ease;
-    position: relative;
-    flex-shrink: 0;
-  }
-
-  .checkbox-custom::after {
-    content: '';
-    position: absolute;
-    top: 1px;
-    left: 5px;
-    width: 6px;
-    height: 10px;
-    border: solid var(--neutralWhite);
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg) scale(0);
-    transition: transform 0.2s ease;
-  }
-
-  .form-checkbox:checked + .checkbox-custom {
-    background: var(--primaryColor);
-    border-color: var(--primaryColor);
-  }
-
-  .form-checkbox:checked + .checkbox-custom::after {
-    transform: rotate(45deg) scale(1);
-  }
-
-  .form-checkbox:focus + .checkbox-custom {
-    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
-  }
-
-  /* Form Footer */
-  .form-footer {
-    margin-top: var(--spacing8);
-    padding-top: var(--spacing6);
-    border-top: 1px solid var(--borderColor);
-  }
-
-  .privacy-notice {
-    margin-bottom: var(--spacing6);
-  }
-
-  .privacy-notice a {
-    color: var(--primaryColor);
-    text-decoration: underline;
-  }
-
-  .privacy-notice a:hover {
-    text-decoration: none;
-  }
-
-  .form-submit {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--spacing3);
-    width: 100%;
-    padding: var(--spacing4) var(--spacing8);
-    background: var(--primaryColor);
-    color: var(--neutralWhite);
-    border: none;
-    border-radius: var(--borderRadiusLg);
-    font-family: var(--fontSans);
-    font-size: 1.125rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: var(--shadowMd);
-  }
-
-  .form-submit:hover,
-  .form-submit:focus {
-    background: var(--primaryHover);
-    transform: translateY(-2px);
-    box-shadow: var(--shadowLg);
-  }
-
-  .form-submit:focus {
-    outline: 2px solid var(--primaryColor);
-    outline-offset: 2px;
-  }
-
-  .form-submit:disabled {
-    background: var(--neutralGray);
-    cursor: not-allowed;
-    transform: none;
-  }
-
-  .submit-arrow {
-    transition: transform 0.3s ease;
-  }
-
-  .form-submit:hover .submit-arrow {
-    transform: translateX(4px);
-  }
-
-  /* Success Message */
-  .form-success {
-    background: var(--neutralWhite);
-    border-radius: var(--borderRadius2xl);
-    padding: var(--spacing12);
-    box-shadow: var(--shadowLg);
-    border: 1px solid var(--borderColor);
+  .step {
     text-align: center;
   }
 
-  .success-content {
-    max-width: 500px;
-    margin: 0 auto;
-  }
-
-  .success-icon {
-    margin-bottom: var(--spacing6);
-  }
-
-  .success-title {
-    font-family: var(--fontDisplay);
-    font-size: 1.875rem;
-    font-weight: 600;
-    color: var(--neutralDark);
-    margin: 0 0 var(--spacing4) 0;
-  }
-
-  .success-message {
-    font-size: 1.125rem;
-    line-height: 1.6;
-    color: var(--neutralGray);
-    margin: 0 0 var(--spacing8) 0;
-  }
-
-  .success-next-steps {
-    background: var(--neutralLight);
-    border-radius: var(--borderRadiusLg);
-    padding: var(--spacing6);
-    text-align: left;
-  }
-
-  .success-next-steps h4 {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: var(--neutralDark);
-    margin: 0 0 var(--spacing4) 0;
-  }
-
-  .success-next-steps ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .success-next-steps li {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing3);
-    margin-bottom: var(--spacing3);
-    font-size: 0.9375rem;
-    color: var(--neutralGray);
-  }
-
-  .success-next-steps li::before {
-    content: '✓';
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 20px;
-    height: 20px;
-    background: var(--successColor);
-    color: var(--neutralWhite);
-    border-radius: 50%;
-    font-size: 0.75rem;
-    font-weight: bold;
-    flex-shrink: 0;
-  }
-
-  /* Sidebar */
-  .contact-sidebar {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing8);
-  }
-
-  .sidebar-title {
-    font-family: var(--fontDisplay);
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--neutralDark);
-    margin: 0 0 var(--spacing4) 0;
-  }
-
-  /* Contact Methods */
-  .contact-methods {
-    background: var(--neutralWhite);
-    border-radius: var(--borderRadius2xl);
-    padding: var(--spacing6);
-    box-shadow: var(--shadowMd);
-    border: 1px solid var(--borderColor);
-  }
-
-  .contact-method {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--spacing4);
-    padding: var(--spacing4);
-    border-radius: var(--borderRadiusLg);
-    text-decoration: none;
-    transition: all 0.3s ease;
-    margin-bottom: var(--spacing4);
-  }
-
-  .contact-method:last-child {
-    margin-bottom: 0;
-  }
-
-  .contact-method:hover {
-    background: var(--primaryLight);
-    transform: translateY(-2px);
-  }
-
-  .method-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 48px;
-    height: 48px;
-    background: var(--primaryLight);
-    border-radius: var(--borderRadiusLg);
-    font-size: 1.5rem;
-    flex-shrink: 0;
-  }
-
-  .method-content {
-    flex: 1;
-  }
-
-  .method-title {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: var(--neutralDark);
-    margin: 0 0 var(--spacing2) 0;
-  }
-
-  .method-description {
-    font-size: 0.9375rem;
-    line-height: 1.5;
-    color: var(--neutralGray);
-    margin: 0 0 var(--spacing2) 0;
-  }
-
-  .method-value {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--primaryColor);
-    margin-bottom: var(--spacing2);
-  }
-
-  .method-availability {
-    font-size: 0.875rem;
-    color: var(--neutralGray);
-    font-style: italic;
-  }
-
-  /* Response Info */
-  .response-info {
-    background: var(--neutralWhite);
-    border-radius: var(--borderRadius2xl);
-    padding: var(--spacing6);
-    box-shadow: var(--shadowMd);
-    border: 1px solid var(--borderColor);
-  }
-
-  .response-description {
-    font-size: 1rem;
-    line-height: 1.6;
-    color: var(--neutralGray);
-    margin: 0 0 var(--spacing6) 0;
-  }
-
-  .response-steps {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing4);
-  }
-
-  .response-step {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--spacing4);
-  }
-
   .step-number {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
+    width: 60px;
+    height: 60px;
     background: var(--primaryColor);
     color: var(--neutralWhite);
     border-radius: 50%;
-    font-weight: 600;
-    font-size: 0.875rem;
-    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0 auto var(--spacing4) auto;
   }
 
-  .step-content h4 {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--neutralDark);
-    margin: 0 0 var(--spacing2) 0;
-  }
-
-  .step-content p {
-    font-size: 0.9375rem;
-    line-height: 1.5;
-    color: var(--neutralGray);
-    margin: 0;
-  }
-
-  /* Office Locations */
-  .office-locations {
-    background: var(--neutralWhite);
-    border-radius: var(--borderRadius2xl);
-    padding: var(--spacing6);
-    box-shadow: var(--shadowMd);
-    border: 1px solid var(--borderColor);
-  }
-
-  .office-item {
-    padding: var(--spacing4);
-    background: var(--neutralLight);
-    border-radius: var(--borderRadiusLg);
-    margin-bottom: var(--spacing4);
-  }
-
-  .office-item:last-child {
-    margin-bottom: 0;
-  }
-
-  .office-city {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: var(--neutralDark);
+  .step-content h3 {
+    font-size: 1.25rem;
     margin: 0 0 var(--spacing3) 0;
   }
 
-  .office-address {
-    font-size: 0.9375rem;
-    line-height: 1.5;
+  .step-content p {
     color: var(--neutralGray);
-    margin-bottom: var(--spacing3);
+    line-height: 1.6;
   }
 
-  .office-contact {
-    display: block;
-    font-size: 0.9375rem;
-    color: var(--primaryColor);
-    text-decoration: none;
-    margin-bottom: var(--spacing2);
+  /* Final Testimonial */
+  .final-testimonial {
+    background: var(--neutralLight);
   }
 
-  .office-contact:hover {
-    text-decoration: underline;
+  /* Final CTA */
+  .final-cta {
+    background: var(--primaryColor);
+    color: var(--neutralWhite);
+    text-align: center;
   }
 
-  .office-timezone {
-    font-size: 0.875rem;
-    color: var(--neutralGray);
-    font-style: italic;
+  .final-cta h2 {
+    font-family: var(--fontDisplay);
+    font-size: 2.5rem;
+    margin: 0 0 var(--spacing4) 0;
   }
 
-  /* Trust Signals */
-  .trust-signals {
-    background: var(--neutralWhite);
-    border-radius: var(--borderRadius2xl);
-    padding: var(--spacing6);
-    box-shadow: var(--shadowMd);
-    border: 1px solid var(--borderColor);
-  }
-
-  .trust-items {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing4);
-  }
-
-  .trust-item {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--spacing3);
-  }
-
-  .trust-icon {
+  .final-cta p {
     font-size: 1.25rem;
-    flex-shrink: 0;
+    margin: 0 0 var(--spacing8) 0;
+    opacity: 0.9;
   }
 
-  .trust-content h4 {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--neutralDark);
-    margin: 0 0 var(--spacing2) 0;
-  }
-
-  .trust-content p {
-    font-size: 0.875rem;
-    line-height: 1.5;
-    color: var(--neutralGray);
-    margin: 0;
-  }
-
-  /* Background */
-  .contact-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1;
-    pointer-events: none;
-  }
-
-  .bg-shapes {
-    position: relative;
-    width: 100%;
-    height: 100%;
-  }
-
-  .bg-shape {
-    position: absolute;
-    border-radius: 50%;
-    background: linear-gradient(45deg, var(--primaryColor), rgba(14, 165, 233, 0));
-    opacity: 0.05;
-    animation: float 20s ease-in-out infinite;
-  }
-
-  .shape-1 {
-    width: 300px;
-    height: 300px;
-    top: 10%;
-    left: -150px;
-    animation-delay: 0s;
-  }
-
-  .shape-2 {
-    width: 200px;
-    height: 200px;
-    top: 60%;
-    right: -100px;
-    animation-delay: 7s;
-  }
-
-  .shape-3 {
-    width: 150px;
-    height: 150px;
-    bottom: 20%;
-    left: 40%;
-    animation-delay: 14s;
-  }
-
-  @keyframes float {
-    0%, 100% { transform: translateY(0px) rotate(0deg); }
-    50% { transform: translateY(-30px) rotate(180deg); }
-  }
-
-  /* Animations */
-  [data-animate] {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.8s ease;
-  }
-
-  [data-animate="fade-left"] {
-    transform: translateX(30px);
-  }
-
-  [data-animate].animate {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  [data-animate="fade-left"].animate {
-    transform: translateX(0);
-  }
-
-  /* Screen Reader Only */
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
+  .cta-note {
+    font-size: 0.9rem;
+    margin-top: var(--spacing4) !important;
+    opacity: 0.8;
   }
 
   /* Mobile Optimizations */
   @media (max-width: 640px) {
-    .contact-page {
-      padding: var(--spacing16) 0;
+    section {
+      padding: var(--spacing12) 0;
     }
 
-    .contact-headline {
+    .section-title {
       font-size: 2rem;
     }
 
-    .contact-form-section {
-      padding: var(--spacing6);
+    .hero-cta {
+      flex-direction: column;
+      align-items: center;
     }
 
-    .form-title {
-      font-size: 1.5rem;
+    .btn {
+      width: 100%;
+      max-width: 300px;
     }
 
-    .form-grid {
+    .services-grid,
+    .methods-grid,
+    .process-steps {
       grid-template-columns: 1fr;
+    }
+
+    .audit-content {
+      grid-template-columns: 1fr;
+      text-align: center;
     }
 
     .form-row {
       grid-template-columns: 1fr;
     }
 
-    .checkbox-group {
-      grid-template-columns: 1fr;
+    .quote {
+      font-size: 1.25rem;
     }
 
-    .bg-shapes {
-      display: none;
+    /* Mobile form adjustments */
+    .audit-form,
+    .contact-form {
+      padding: var(--spacing6);
+    }
+
+    .form-group {
+      margin-bottom: var(--spacing4);
+    }
+
+    .form-row {
+      margin-bottom: var(--spacing4);
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      font-size: 16px; /* Prevents zoom on iOS */
     }
   }
 
   /* Reduced Motion */
   @media (prefers-reduced-motion: reduce) {
-    .contact-method,
-    .form-submit,
-    .bg-shape {
-      animation: none;
+    .btn,
+    .method-card,
+    .service-card {
       transition: none;
     }
     
-    .contact-method:hover,
-    .form-submit:hover {
+    .btn:hover,
+    .method-card:hover {
       transform: none;
+    }
+  }
+
+  /* High Contrast Mode */
+  @media (prefers-contrast: high) {
+    .btn {
+      border-width: 3px;
+    }
+    
+    .service-card,
+    .method-card {
+      border-width: 2px;
     }
   }
 </style>
 
 <script>
-  // Contact Form Controller
-  class ContactFormManager {
+  // Simplified Contact Page Controller
+  class ContactPageManager {
     constructor() {
-      this.form = document.getElementById('contact-form');
-      this.submitBtn = document.getElementById('submit-btn');
-      this.successMessage = document.getElementById('form-success');
-      this.animatedElements = document.querySelectorAll('.contact-page [data-animate]');
-      
+      this.auditForm = document.querySelector('form[name="website-audit"]');
+      this.contactForm = document.querySelector('form[name="contact"]');
       this.init();
     }
 
     init() {
-      this.setupScrollAnimations();
+      this.setupSmoothScrolling();
       this.setupFormValidation();
       this.setupFormSubmission();
-      this.setupFormInteractions();
     }
 
-    setupScrollAnimations() {
-      const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-      };
-
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting && !entry.target.hasAnimated) {
-            const delay = parseInt(entry.target.dataset.delay) || 0;
-            setTimeout(() => {
-              entry.target.classList.add('animate');
-            }, delay);
-            entry.target.hasAnimated = true;
+    setupSmoothScrolling() {
+      // Smooth scroll to form sections
+      const ctaButtons = document.querySelectorAll('a[href^="#"]');
+      ctaButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = button.getAttribute('href').substring(1);
+          const targetElement = document.getElementById(targetId);
+          
+          if (targetElement) {
+            targetElement.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
           }
         });
-      }, observerOptions);
-
-      this.animatedElements.forEach(el => {
-        observer.observe(el);
       });
     }
 
     setupFormValidation() {
-      if (!this.form) return;
+      [this.auditForm, this.contactForm].forEach(form => {
+        if (!form) return;
 
-      const inputs = this.form.querySelectorAll('input, select, textarea');
-      
-      inputs.forEach(input => {
-        // Real-time validation
-        input.addEventListener('blur', () => {
-          this.validateField(input);
-        });
-
-        input.addEventListener('input', () => {
-          // Clear error state on input
-          if (input.classList.contains('error')) {
-            input.classList.remove('error');
-          }
+        const inputs = form.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+          input.addEventListener('blur', () => this.validateField(input));
+          input.addEventListener('input', () => this.clearFieldError(input));
         });
       });
     }
@@ -1431,10 +1131,8 @@ const {
       const isValid = field.checkValidity();
       
       if (!isValid) {
-        field.classList.add('error');
         this.showFieldError(field);
       } else {
-        field.classList.remove('error');
         this.hideFieldError(field);
       }
       
@@ -1448,7 +1146,7 @@ const {
         errorElement = document.createElement('div');
         errorElement.className = 'field-error';
         errorElement.style.cssText = `
-          color: var(--errorColor);
+          color: #dc2626;
           font-size: 0.875rem;
           margin-top: 4px;
         `;
@@ -1458,9 +1156,7 @@ const {
       if (field.validity.valueMissing) {
         errorElement.textContent = 'This field is required';
       } else if (field.validity.typeMismatch) {
-        errorElement.textContent = 'Please enter a valid ' + field.type;
-      } else if (field.validity.tooShort) {
-        errorElement.textContent = `Minimum ${field.minLength} characters required`;
+        errorElement.textContent = field.type === 'email' ? 'Please enter a valid email address' : 'Please enter a valid URL';
       } else {
         errorElement.textContent = 'Please check this field';
       }
@@ -1473,26 +1169,26 @@ const {
       }
     }
 
+    clearFieldError(field) {
+      this.hideFieldError(field);
+    }
+
     setupFormSubmission() {
-      if (!this.form) return;
+      [this.auditForm, this.contactForm].forEach(form => {
+        if (!form) return;
 
-      this.form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        // Validate all fields
-        const isValid = this.validateForm();
-        
-        if (!isValid) {
-          this.scrollToFirstError();
-          return;
-        }
-
-        await this.submitForm();
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          
+          if (this.validateForm(form)) {
+            await this.submitForm(form);
+          }
+        });
       });
     }
 
-    validateForm() {
-      const requiredFields = this.form.querySelectorAll('[required]');
+    validateForm(form) {
+      const requiredFields = form.querySelectorAll('[required]');
       let isValid = true;
       
       requiredFields.forEach(field => {
@@ -1504,200 +1200,120 @@ const {
       return isValid;
     }
 
-    scrollToFirstError() {
-      const firstError = this.form.querySelector('.error');
-      if (firstError) {
-        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        firstError.focus();
+    async submitForm(form) {
+      const submitButton = form.querySelector('button[type="submit"]');
+      const originalText = submitButton.textContent;
+      
+      // Check reCAPTCHA
+      const recaptchaResponse = grecaptcha.getResponse();
+      if (!recaptchaResponse) {
+        this.showErrorMessage('Please complete the reCAPTCHA verification.');
+        return;
       }
-    }
-
-    async submitForm() {
-      this.setSubmitState('loading');
+      
+      // Update button state
+      submitButton.disabled = true;
+      submitButton.textContent = 'Sending...';
       
       try {
-        // Netlify Forms handles the submission automatically
-        // But we'll use fetch for better UX control
-        const formData = new FormData(this.form);
+        const formData = new FormData(form);
+        formData.append('g-recaptcha-response', recaptchaResponse);
         
-        const response = await fetch('/', {
+        const response = await fetch(form.action, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: new URLSearchParams(formData).toString()
+          body: formData
         });
 
         if (response.ok) {
-          this.showSuccessMessage();
-          this.trackFormSubmission();
+          this.showSuccessMessage(form);
+          this.trackFormSubmission(form);
+          // Reset reCAPTCHA
+          grecaptcha.reset();
         } else {
           throw new Error('Form submission failed');
         }
       } catch (error) {
         console.error('Form submission error:', error);
-        this.showErrorMessage();
+        this.showErrorMessage('Sorry, there was an error sending your message. Please try again.');
+        // Reset reCAPTCHA on error
+        grecaptcha.reset();
       } finally {
-        this.setSubmitState('default');
+        submitButton.disabled = false;
+        submitButton.textContent = originalText;
       }
     }
 
-    setSubmitState(state) {
-      if (!this.submitBtn) return;
+    showSuccessMessage(form) {
+      const isAuditForm = form.name === 'website-audit';
+      const message = isAuditForm 
+        ? 'Thank you! We\'ll email your website audit report within 48 hours.'
+        : 'Thank you! We\'ll respond to your inquiry within 24 hours.';
 
-      const submitText = this.submitBtn.querySelector('.submit-text');
-      const submitArrow = this.submitBtn.querySelector('.submit-arrow');
-      const submitLoading = this.submitBtn.querySelector('.submit-loading');
+      // Create success message
+      const successDiv = document.createElement('div');
+      successDiv.style.cssText = `
+        background: #10B981;
+        color: white;
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+        margin-top: 20px;
+        font-weight: 600;
+      `;
+      successDiv.textContent = message;
 
-      switch (state) {
-        case 'loading':
-          this.submitBtn.disabled = true;
-          submitText.textContent = 'Sending...';
-          submitArrow.style.display = 'none';
-          submitLoading.style.display = 'block';
-          break;
-        case 'success':
-          submitText.textContent = 'Sent Successfully!';
-          submitArrow.style.display = 'none';
-          submitLoading.style.display = 'none';
-          break;
-        case 'error':
-          this.submitBtn.disabled = false;
-          submitText.textContent = 'Try Again';
-          submitArrow.style.display = 'block';
-          submitLoading.style.display = 'none';
-          break;
-        default:
-          this.submitBtn.disabled = false;
-          submitText.textContent = 'Send My Project Details';
-          submitArrow.style.display = 'block';
-          submitLoading.style.display = 'none';
-      }
-    }
+      // Replace form with success message
+      form.style.display = 'none';
+      form.parentNode.appendChild(successDiv);
 
-    showSuccessMessage() {
-      if (!this.successMessage) return;
-
-      // Hide form and show success message
-      this.form.style.display = 'none';
-      this.successMessage.style.display = 'block';
-      
       // Scroll to success message
-      this.successMessage.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      
-      // Focus management for accessibility
-      const successTitle = this.successMessage.querySelector('.success-title');
-      if (successTitle) {
-        successTitle.focus();
-      }
+      successDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
-    showErrorMessage() {
-      // Show error notification
+    showErrorMessage(message = 'Sorry, there was an error sending your message. Please try again or contact us directly.') {
       const errorDiv = document.createElement('div');
-      errorDiv.className = 'form-error-notification';
       errorDiv.style.cssText = `
         position: fixed;
         top: 20px;
         right: 20px;
-        background: var(--errorColor);
+        background: #dc2626;
         color: white;
         padding: 16px 24px;
         border-radius: 8px;
         z-index: 1000;
-        animation: slideInRight 0.3s ease;
+        max-width: 400px;
       `;
-      errorDiv.textContent = 'Sorry, there was an error sending your message. Please try again or contact us directly.';
+      errorDiv.textContent = message;
       
       document.body.appendChild(errorDiv);
       
-      // Remove after 5 seconds
       setTimeout(() => {
         errorDiv.remove();
       }, 5000);
     }
 
-    trackFormSubmission() {
-      // Analytics tracking
-      const formData = new FormData(this.form);
-      const projectType = formData.get('projectType');
-      const budget = formData.get('budget');
+    trackFormSubmission(form) {
+      const formType = form.name;
+      const formData = new FormData(form);
       
-      console.log('Form submitted:', {
-        projectType,
-        budget,
+      console.log(`${formType} form submitted:`, {
+        type: formType,
         timestamp: new Date().toISOString()
       });
       
-      // Google Analytics event (if available)
+      // Google Analytics tracking if available
       if (typeof gtag !== 'undefined') {
         gtag('event', 'form_submit', {
           event_category: 'Contact',
-          event_label: projectType,
-          value: budget
+          event_label: formType,
+          value: 1
         });
       }
-    }
-
-    setupFormInteractions() {
-      // Auto-expand textareas
-      const textareas = this.form?.querySelectorAll('textarea');
-      textareas?.forEach(textarea => {
-        textarea.addEventListener('input', () => {
-          textarea.style.height = 'auto';
-          textarea.style.height = textarea.scrollHeight + 'px';
-        });
-      });
-
-      // Project type change handling
-      const projectTypeSelect = this.form?.querySelector('#projectType');
-      if (projectTypeSelect) {
-        projectTypeSelect.addEventListener('change', (e) => {
-          this.handleProjectTypeChange(e.target.value);
-        });
-      }
-
-      // Budget change handling
-      const budgetSelect = this.form?.querySelector('#budget');
-      if (budgetSelect) {
-        budgetSelect.addEventListener('change', (e) => {
-          this.handleBudgetChange(e.target.value);
-        });
-      }
-    }
-
-    handleProjectTypeChange(projectType) {
-      // Customize form based on project type
-      const timelineSelect = document.getElementById('timeline');
-      if (!timelineSelect) return;
-
-      // Update timeline options based on project type
-      const rushOption = timelineSelect.querySelector('option[value="asap"]');
-      if (rushOption) {
-        if (projectType === 'consultation') {
-          rushOption.style.display = 'none';
-        } else {
-          rushOption.style.display = 'block';
-        }
-      }
-    }
-
-    handleBudgetChange(budget) {
-      // Show/hide relevant fields based on budget
-      console.log('Budget changed to:', budget);
-      
-      // Could show additional fields for larger budgets
-      // or provide different messaging
     }
   }
 
   // Initialize when DOM is loaded
   document.addEventListener('DOMContentLoaded', () => {
-    new ContactFormManager();
+    new ContactPageManager();
   });
-
-  // Performance optimization
-  if ('requestIdleCallback' in window) {
-    requestIdleCallback(() => {
-      console.log('Contact form optimized');
-    });
-  }
 </script>
